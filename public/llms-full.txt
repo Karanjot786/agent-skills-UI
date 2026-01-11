@@ -1,0 +1,393 @@
+# Agent Skills CLI - Complete Documentation
+
+> The Universal Skill Manager for AI Coding Agents
+
+Version: 1.0.2
+License: MIT
+Author: Karanjot Singh
+Repository: https://github.com/Karanjot786/agent-skills-cli
+
+---
+
+## Table of Contents
+
+1. Introduction
+2. Installation
+3. Quick Start
+4. Supported Platforms
+5. Core Commands
+6. Marketplace Commands
+7. Export Commands
+8. Utility Commands
+9. API Reference
+10. FAQ
+
+---
+
+## 1. Introduction
+
+Agent Skills CLI is a command-line interface tool designed to help developers install, manage, and synchronize AI coding skills across multiple platforms. With access to over 50,000 skills from the Agent Skills marketplace, developers can enhance their AI coding assistants with specialized capabilities.
+
+### What are Skills?
+
+Skills are Markdown-formatted instruction files that teach AI coding assistants how to perform specific tasks. They can include:
+- Step-by-step workflows
+- Code templates
+- Best practices
+- Domain-specific knowledge
+
+---
+
+## 2. Installation
+
+### npm (Recommended)
+```bash
+npm install -g agent-skills-cli
+```
+
+### yarn
+```bash
+yarn global add agent-skills-cli
+```
+
+### pnpm
+```bash
+pnpm add -g agent-skills-cli
+```
+
+### Verify Installation
+```bash
+skills --version
+# Output: 1.0.2
+```
+
+---
+
+## 3. Quick Start
+
+### Install Your First Skill
+```bash
+skills install @anthropic/xlsx
+```
+
+### List Installed Skills
+```bash
+skills list
+```
+
+### Search the Marketplace
+```bash
+skills search "pdf manipulation"
+```
+
+---
+
+## 4. Supported Platforms
+
+Agent Skills CLI supports the following AI coding platforms:
+
+| Platform | Directory Path | Install Flag |
+|----------|---------------|--------------|
+| Cursor | `.cursor/skills/` | `-t cursor` |
+| Claude Code | `.claude/skills/` | `-t claude` |
+| GitHub Copilot | `.github/skills/` | `-t copilot` |
+| OpenAI Codex | `.codex/skills/` | `-t codex` |
+| Antigravity | `.agent/workflows/` | `-t antigravity` |
+
+### Auto-Detection
+
+By default, the CLI auto-detects which platforms are installed in your project directory and installs skills to all detected platforms.
+
+### Platform Targeting
+
+To install to specific platforms:
+```bash
+skills install @author/skill -t claude,cursor
+```
+
+To install to all platforms:
+```bash
+skills install @author/skill --all
+```
+
+---
+
+## 5. Core Commands
+
+### skills list
+List all discovered skills from installed directories.
+
+```bash
+skills list
+skills list --json
+skills list --table
+skills list -v  # verbose
+```
+
+### skills show <name>
+Display detailed information about a specific skill.
+
+```bash
+skills show xlsx
+```
+
+### skills validate <path>
+Validate a skill against the Agent Skills specification.
+
+```bash
+skills validate ~/.antigravity/skills/my-skill
+```
+
+### skills init <name>
+Create a new skill from template.
+
+```bash
+skills init my-new-skill
+skills init my-skill -d /custom/directory
+```
+
+### skills prompt
+Generate system prompt XML for discovered skills.
+
+```bash
+skills prompt
+skills prompt --output json
+```
+
+---
+
+## 6. Marketplace Commands
+
+### skills market-list (ml)
+List skills from the marketplace.
+
+```bash
+skills market-list
+skills ml --limit 10
+skills ml --page 2
+```
+
+### skills market-search (ms)
+Search skills in the marketplace.
+
+```bash
+skills market-search python
+skills ms "machine learning" --limit 5
+```
+
+### skills install (i)
+Install a skill by scoped name.
+
+```bash
+skills install <name>
+skills install @author/skill
+skills install pdf -t cursor,claude
+skills install xlsx --all
+```
+
+Options:
+- `-p, --platform <platforms>` - Target platforms (comma-separated)
+- `-t, --target <platforms>` - Alias for --platform
+- `--all` - Install to all platforms
+
+### skills install-url (iu)
+Install a skill from a GitHub URL.
+
+```bash
+skills install-url https://github.com/user/repo
+```
+
+### skills market-uninstall (mu)
+Uninstall a marketplace-installed skill.
+
+```bash
+skills market-uninstall skill-name
+```
+
+### skills market-installed (mind)
+List skills installed from marketplaces.
+
+```bash
+skills market-installed
+```
+
+---
+
+## 7. Export Commands
+
+### skills export
+Export skills to different AI agent formats.
+
+```bash
+skills export
+skills export -t cursor
+skills export -t copilot -d /project
+skills export -n xlsx  # export specific skill
+```
+
+### skills sync
+Sync skills to .agent/workflows/ for auto-discovery.
+
+```bash
+skills sync
+```
+
+### skills setup
+Interactive setup wizard for installing and exporting skills.
+
+```bash
+skills setup
+```
+
+---
+
+## 8. Utility Commands
+
+### skills run <skill> <script>
+Execute a script from an installed skill.
+
+```bash
+skills run pdf extract_form.py
+skills run pdf check.py -a input.pdf
+```
+
+### skills scripts <skill>
+List available scripts in a skill.
+
+```bash
+skills scripts pdf
+```
+
+### skills context
+Generate system prompt context for AI agents.
+
+```bash
+skills context
+skills context --format json
+```
+
+### skills preview <skill>
+Open skill detail page in browser.
+
+```bash
+skills preview xlsx
+```
+
+### skills assets <skill>
+List and fetch assets for a skill.
+
+```bash
+skills assets pdf
+skills assets pdf --manifest
+skills assets pdf --get templates/form.json
+```
+
+### skills info
+Show installation status and paths.
+
+```bash
+skills info
+```
+
+### skills update
+Update installed skills to latest versions.
+
+```bash
+skills update
+skills update skill-name
+skills update --check
+```
+
+### skills doctor
+Diagnose and fix common installation issues.
+
+```bash
+skills doctor
+skills doctor --fix
+```
+
+### skills completion <shell>
+Generate shell completion script.
+
+```bash
+skills completion bash
+skills completion zsh
+skills completion fish
+```
+
+---
+
+## 9. API Reference
+
+### Environment Variables
+
+- `SKILLS_HOME` - Custom skills directory (default: `~/.antigravity/skills`)
+- `SKILLS_MARKETPLACE_URL` - Custom marketplace URL
+
+### Configuration File
+
+Located at `~/.antigravity/marketplace.json`:
+
+```json
+{
+  "sources": [
+    {
+      "name": "Agent Skills",
+      "url": "https://agentskills.in/api"
+    }
+  ],
+  "installed": []
+}
+```
+
+---
+
+## 10. FAQ
+
+### How do I create my own skill?
+
+Use the `skills init` command:
+```bash
+skills init my-skill
+```
+
+Then edit the generated `SKILL.md` file in your skill directory.
+
+### Can I use skills offline?
+
+Yes, once installed, skills are stored locally and work offline.
+
+### How do I update a skill?
+
+```bash
+skills update skill-name
+```
+
+### How do I uninstall a skill?
+
+```bash
+skills market-uninstall skill-name
+```
+
+### Where are skills stored?
+
+Skills are stored in platform-specific directories:
+- Cursor: `.cursor/skills/`
+- Claude: `.claude/skills/`
+- Copilot: `.github/skills/`
+- Codex: `.codex/skills/`
+- Antigravity: `.agent/workflows/`
+
+---
+
+## Contact & Support
+
+- Website: https://agentskills.in
+- Documentation: https://agentskills.in/docs
+- Marketplace: https://agentskills.in/marketplace
+- GitHub Issues: https://github.com/Karanjot786/agent-skills-cli/issues
+- Author: Karanjot Singh (@Karanjot786)
+
+---
+
+© 2024-2026 Agent Skills. Open Source under MIT License.

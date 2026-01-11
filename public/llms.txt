@@ -1,0 +1,49 @@
+# Agent Skills CLI
+
+> The Universal Skill Manager for AI Coding Agents
+
+Agent Skills CLI is a command-line tool that enables developers to install, manage, and sync 50,000+ skills across all major AI coding assistants including Cursor, Claude Code, GitHub Copilot, OpenAI Codex, and Antigravity.
+
+## Quick Start
+
+```bash
+npm install -g agent-skills-cli
+skills install @anthropic/xlsx
+```
+
+## Key Features
+
+- **50,000+ Skills**: Access the largest marketplace of AI agent skills
+- **Universal Compatibility**: Works with Cursor, Claude Code, GitHub Copilot, OpenAI Codex, Antigravity
+- **One Command Install**: `skills install <skill-name>`
+- **Auto-Detection**: Automatically detects installed AI agents
+- **Platform Targeting**: Install to specific platforms with `-t claude,cursor`
+
+## Supported Platforms
+
+| Platform | Directory | Status |
+|----------|-----------|--------|
+| Cursor | `.cursor/skills` | ✓ Supported |
+| Claude Code | `.claude/skills` | ✓ Supported |
+| GitHub Copilot | `.github/skills` | ✓ Supported |
+| OpenAI Codex | `.codex/skills` | ✓ Supported |
+| Antigravity | `.agent/workflows` | ✓ Supported |
+
+## Core Commands
+
+- `skills install <name>` - Install a skill
+- `skills list` - List installed skills
+- `skills search <query>` - Search marketplace
+- `skills update` - Update installed skills
+- `skills doctor` - Diagnose issues
+
+## Resources
+
+- Documentation: https://agentskills.in/docs
+- Marketplace: https://agentskills.in/marketplace
+- GitHub: https://github.com/Karanjot786/agent-skills-cli
+- npm: https://www.npmjs.com/package/agent-skills-cli
+
+## Optional
+
+For complete documentation, see: /llms-full.txt
