@@ -5,8 +5,8 @@ const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Cache for 5 minutes
-export const revalidate = 300;
+// Cache for 24 hours (categories rarely change)
+export const revalidate = 86400;
 
 export async function GET() {
     try {

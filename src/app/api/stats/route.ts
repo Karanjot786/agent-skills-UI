@@ -5,8 +5,8 @@ const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Cache response for 5 minutes
-export const revalidate = 300;
+// Cache response for 1 hour
+export const revalidate = 3600;
 
 interface CachedStats {
     total_skills: number;

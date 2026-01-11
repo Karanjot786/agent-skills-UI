@@ -152,6 +152,10 @@ export async function GET(request: Request) {
             total: count,
             limit,
             offset,
+        }, {
+            headers: {
+                'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+            },
         });
     } catch (error) {
         console.error('API error:', error);

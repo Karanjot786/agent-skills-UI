@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SkillGridSkeleton } from "@/components/skeletons";
 
 interface Skill {
     id: string;
@@ -119,7 +120,7 @@ function MarketplaceContent() {
     const [hasContent, setHasContent] = useState(searchParams.get('hasContent') === 'true');
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
-    const LIMIT = 30;
+    const LIMIT = 20; // Reduced from 30 for faster initial load
 
     // Fetch categories on mount
     useEffect(() => {
@@ -411,78 +412,82 @@ function MarketplaceContent() {
                 </div>
 
                 {/* Results Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {skills.map((skill, i) => (
-                        <motion.div
-                            key={skill.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.02 }}
-                            className="bg-zinc-900/30 border border-white/5 rounded-xl p-5 hover:border-cyan-500/30 hover:bg-zinc-900/50 transition-all group shimmer relative overflow-hidden"
-                        >
-                            <Link href={`/marketplace/${skill.scopedName || skill.name}`} className="block">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div className="font-semibold text-lg text-cyan-100 truncate pr-4 group-hover:text-cyan-400 transition-colors">
-                                        {highlightText(skill.name, query)}
+                {loading ? (
+                    <SkillGridSkeleton count={12} />
+                ) : (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {skills.map((skill, i) => (
+                            <motion.div
+                                key={skill.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.02 }}
+                                className="bg-zinc-900/30 border border-white/5 rounded-xl p-5 hover:border-cyan-500/30 hover:bg-zinc-900/50 transition-all group shimmer relative overflow-hidden"
+                            >
+                                <Link href={`/marketplace/${skill.scopedName || skill.name}`} className="block">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div className="font-semibold text-lg text-cyan-100 truncate pr-4 group-hover:text-cyan-400 transition-colors">
+                                            {highlightText(skill.name, query)}
+                                        </div>
+                                        <Badge variant="secondary" className="bg-white/5 text-zinc-400 gap-1 shrink-0 group-hover:bg-yellow-500/10 group-hover:text-yellow-400 transition-colors">
+                                            <Star className="size-3 text-yellow-500 fill-yellow-500" />
+                                            {skill.stars?.toLocaleString() || 0}
+                                        </Badge>
                                     </div>
-                                    <Badge variant="secondary" className="bg-white/5 text-zinc-400 gap-1 shrink-0 group-hover:bg-yellow-500/10 group-hover:text-yellow-400 transition-colors">
-                                        <Star className="size-3 text-yellow-500 fill-yellow-500" />
-                                        {skill.stars?.toLocaleString() || 0}
-                                    </Badge>
-                                </div>
 
-                                <p className="text-sm text-zinc-400 mb-4 h-10 overflow-hidden line-clamp-2">
-                                    {highlightText(skill.description || `A useful skill for ${skill.name} development.`, query)}
+                                    <p className="text-sm text-zinc-400 mb-4 h-10 overflow-hidden line-clamp-2">
+                                        {highlightText(skill.description || `A useful skill for ${skill.name} development.`, query)}
+                                    </p>
+                                </Link>
+
+                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                                    <div className="flex items-center gap-2">
+                                        <img
+                                            src={skill.authorAvatar || `https://github.com/${skill.author}.png`}
+                                            alt={skill.author}
+                                            className="size-5 rounded-full"
+                                        />
+                                        <span className="text-xs text-zinc-500">{skill.author}</span>
+                                    </div>
+                                    <Button
+                                        size="sm"
+                                        variant="secondary"
+                                        className={`h-8 gap-2 transition-all ${copied === skill.name
+                                            ? 'bg-green-500/20 text-green-400'
+                                            : 'bg-white/5 hover:bg-cyan-500/20 hover:text-cyan-400 text-zinc-300'
+                                            }`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            copyCommand(skill.scopedName || skill.name);
+                                        }}
+                                    >
+                                        {copied === skill.name ? (
+                                            <>
+                                                <Check className="size-3" />
+                                                Copied!
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Copy className="size-3" />
+                                                Install
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </motion.div>
+                        ))}
+
+                        {!loading && skills.length === 0 && (
+                            <div className="col-span-full text-center py-20">
+                                <Package className="size-12 mx-auto text-zinc-600 mb-4" />
+                                <div className="text-zinc-400 mb-2">No skills found</div>
+                                <p className="text-sm text-zinc-500">
+                                    {query ? `Try a different search term` : 'Check back later for new skills'}
                                 </p>
-                            </Link>
-
-                            <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
-                                <div className="flex items-center gap-2">
-                                    <img
-                                        src={skill.authorAvatar || `https://github.com/${skill.author}.png`}
-                                        alt={skill.author}
-                                        className="size-5 rounded-full"
-                                    />
-                                    <span className="text-xs text-zinc-500">{skill.author}</span>
-                                </div>
-                                <Button
-                                    size="sm"
-                                    variant="secondary"
-                                    className={`h-8 gap-2 transition-all ${copied === skill.name
-                                        ? 'bg-green-500/20 text-green-400'
-                                        : 'bg-white/5 hover:bg-cyan-500/20 hover:text-cyan-400 text-zinc-300'
-                                        }`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        copyCommand(skill.scopedName || skill.name);
-                                    }}
-                                >
-                                    {copied === skill.name ? (
-                                        <>
-                                            <Check className="size-3" />
-                                            Copied!
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Copy className="size-3" />
-                                            Install
-                                        </>
-                                    )}
-                                </Button>
                             </div>
-                        </motion.div>
-                    ))}
-
-                    {!loading && skills.length === 0 && (
-                        <div className="col-span-full text-center py-20">
-                            <Package className="size-12 mx-auto text-zinc-600 mb-4" />
-                            <div className="text-zinc-400 mb-2">No skills found</div>
-                            <p className="text-sm text-zinc-500">
-                                {query ? `Try a different search term` : 'Check back later for new skills'}
-                            </p>
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Load More */}
                 {skills.length > 0 && skills.length < total && (
