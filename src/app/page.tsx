@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from "react";
 import CountUp from 'react-countup';
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { TerminalAnimation } from "@/components/terminal-animation";
 
 interface Skill {
   id: string;
@@ -122,7 +123,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 id="install"
-                className="w-full max-w-xl mb-8"
+                className="w-full max-w-xl mb-6"
               >
                 <div
                   onClick={copyInstall}
@@ -136,12 +137,22 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              {/* Quick actions */}
+              {/* Terminal Animation - moved up */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="w-full"
+              >
+                <TerminalAnimation />
+              </motion.div>
+
+              {/* Quick actions - now after terminal */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-wrap items-center justify-center gap-4"
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="flex flex-wrap items-center justify-center gap-4 mt-4"
               >
                 <Button size="lg" className="bg-white text-black hover:bg-zinc-200 font-bold gap-2" asChild>
                   <Link href="/marketplace">
