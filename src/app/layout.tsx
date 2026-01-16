@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: `${siteUrl}/api/og`,
+        url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "Agent Skills CLI - The Universal Skill Manager",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     title: "Agent Skills CLI - Universal Skill Manager",
     description: "Install 50,000+ skills for Cursor, Claude, Copilot, Codex, and Antigravity.",
     creator: "@Karanjot786",
-    images: [`${siteUrl}/api/og`],
+    images: [`${siteUrl}/og-image.png`],
   },
 
   // Robots
