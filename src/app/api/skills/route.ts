@@ -1,9 +1,21 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import prisma from '@/lib/db';
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+interface Skill {
+    id: string;
+    name: string;
+    description: string | null;
+    author: string;
+    stars: number;
+    forks: number;
+    githubUrl: string;
+    scopedName: string | null;
+    authorAvatar: string | null;
+    repoFullName: string | null;
+    path: string | null;
+    category: string | null;
+    hasContent: boolean;
+}
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -17,100 +29,80 @@ export async function GET(request: Request) {
     const hasContent = searchParams.get('hasContent') === 'true';
 
     try {
-        // If searching, try to use the ranked search RPC first
+        // Build where clause
+        const where: {
+            OR?: { name?: object; description?: object; author?: object }[];
+            category?: string;
+            author?: string;
+            stars?: object;
+            content?: object;
+        } = {};
+
+        // Search filter
         if (search && search.trim()) {
-            const { data: rpcData, error: rpcError } = await supabase.rpc('search_skills_ranked', {
-                search_query: search.trim(),
-                result_limit: limit,
-                result_offset: offset,
-                filter_category: category && category !== 'all' ? category : null,
-                filter_author: author || null,
-                filter_min_stars: minStars,
-                filter_has_content: hasContent,
-                sort_by: sortBy === 'stars' ? 'stars' : sortBy === 'recent' ? 'recent' : sortBy === 'name' ? 'name' : 'rank'
-            });
-
-            if (!rpcError && rpcData) {
-                const skills = rpcData.map((skill: any) => ({
-                    id: skill.id,
-                    name: skill.name,
-                    description: skill.description,
-                    author: skill.author,
-                    stars: skill.stars,
-                    forks: skill.forks,
-                    githubUrl: skill.github_url,
-                    scopedName: skill.scoped_name,
-                    authorAvatar: skill.author_avatar,
-                    repoFullName: skill.repo_full_name,
-                    path: skill.path,
-                    category: skill.category,
-                    hasContent: skill.has_content,
-                }));
-
-                return NextResponse.json({
-                    skills,
-                    total: skills.length, // RPC doesn't return total, estimate
-                    limit,
-                    offset,
-                });
-            }
-
-            // Fallback: Use ILIKE but ORDER by exact name match first
-            console.log('RPC not available, falling back to ILIKE with ordering');
-        }
-
-        // No search or RPC failed - use standard query
-        let query = supabase
-            .from('skills')
-            .select('id, name, description, author, stars, forks, github_url, scoped_name, author_avatar, repo_full_name, path, category, content', { count: 'exact' });
-
-        // Search with prioritized ILIKE (name first)
-        if (search && search.trim()) {
-            // Use textSearch if available, fallback to ILIKE
-            query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%,author.ilike.%${search}%`);
+            where.OR = [
+                { name: { contains: search, mode: 'insensitive' } },
+                { description: { contains: search, mode: 'insensitive' } },
+                { author: { contains: search, mode: 'insensitive' } },
+            ];
         }
 
         // Category filter
         if (category && category !== 'all') {
-            query = query.eq('category', category);
+            where.category = category;
         }
 
         // Author filter
         if (author) {
-            query = query.eq('author', author);
+            where.author = author;
         }
 
-        // Star range filter
+        // Minimum stars filter
         if (minStars > 0) {
-            query = query.gte('stars', minStars);
+            where.stars = { gte: minStars };
         }
 
         // Has content filter
         if (hasContent) {
-            query = query.not('content', 'is', null);
+            where.content = { not: null };
         }
 
-        // Sorting
-        if (sortBy === 'stars') {
-            query = query.order('stars', { ascending: false });
-        } else if (sortBy === 'recent') {
-            query = query.order('updated_at', { ascending: false, nullsFirst: false });
+        // Build orderBy
+        let orderBy: { stars?: 'desc' | 'asc'; updated_at?: 'desc' | 'asc'; name?: 'asc' | 'desc' } = { stars: 'desc' };
+        if (sortBy === 'recent') {
+            orderBy = { updated_at: 'desc' };
         } else if (sortBy === 'name') {
-            query = query.order('name', { ascending: true });
+            orderBy = { name: 'asc' };
         }
 
-        // Pagination
-        query = query.range(offset, offset + limit - 1);
+        // Execute queries in parallel
+        const [data, total] = await Promise.all([
+            prisma.skills.findMany({
+                where,
+                orderBy,
+                skip: offset,
+                take: limit,
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    author: true,
+                    stars: true,
+                    forks: true,
+                    github_url: true,
+                    scoped_name: true,
+                    author_avatar: true,
+                    repo_full_name: true,
+                    path: true,
+                    category: true,
+                    content: true,
+                },
+            }),
+            prisma.skills.count({ where }),
+        ]);
 
-        const { data, error, count } = await query;
-
-        if (error) {
-            console.error('Supabase error:', error);
-            return NextResponse.json({ error: error.message }, { status: 500 });
-        }
-
-        // Transform and sort: if searching, put exact name matches first
-        let skills = data?.map(skill => ({
+        // Transform to response format
+        let skills: Skill[] = data.map((skill: typeof data[number]) => ({
             id: skill.id,
             name: skill.name,
             description: skill.description,
@@ -124,32 +116,30 @@ export async function GET(request: Request) {
             path: skill.path,
             category: skill.category,
             hasContent: !!skill.content,
-        })) || [];
+        }));
 
         // If searching, re-sort to prioritize name matches
         if (search && search.trim() && sortBy !== 'name') {
             const searchLower = search.toLowerCase();
-            skills = skills.sort((a, b) => {
+            skills = skills.sort((a: Skill, b: Skill) => {
                 const aNameMatch = a.name.toLowerCase().includes(searchLower) ? 1 : 0;
                 const bNameMatch = b.name.toLowerCase().includes(searchLower) ? 1 : 0;
                 const aExactMatch = a.name.toLowerCase() === searchLower ? 2 : 0;
                 const bExactMatch = b.name.toLowerCase() === searchLower ? 2 : 0;
 
-                // Higher score = earlier position
                 const aScore = aExactMatch + aNameMatch;
                 const bScore = bExactMatch + bNameMatch;
 
                 if (aScore !== bScore) {
-                    return bScore - aScore; // Higher score first
+                    return bScore - aScore;
                 }
-                // If same match type, keep original order (by stars/recent)
                 return 0;
             });
         }
 
         return NextResponse.json({
             skills,
-            total: count,
+            total,
             limit,
             offset,
         }, {

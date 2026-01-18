@@ -1,0 +1,58 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model skills {
+  id               String    @id
+  name             String
+  author           String
+  scoped_name      String?
+  description      String?
+  author_avatar    String?
+  github_url       String    @unique
+  raw_url          String?
+  repo_full_name   String?
+  stars            Int       @default(0)
+  forks            Int       @default(0)
+  path             String?
+  branch           String    @default("main")
+  has_marketplace  Boolean   @default(false)
+  indexed_at       DateTime  @default(now()) @db.Timestamptz
+  updated_at       DateTime? @db.Timestamptz
+  content          String?
+  folder_url       String?
+  from_manifest    Boolean   @default(false)
+  manifest_version String?
+  category         String?
+
+  @@index([author])
+  @@index([name])
+  @@index([stars(sort: Desc)])
+  @@index([category])
+  @@index([updated_at(sort: Desc)])
+}
+
+model categories {
+  id          String   @id
+  name        String
+  icon        String
+  keywords    String[]
+  skill_count Int      @default(0)
+  sort_order  Int      @default(0)
+
+  @@index([sort_order])
+}
+
+model skill_stats {
+  id             String   @id @default("global")
+  total_skills   Int      @default(0)
+  unique_authors Int      @default(0)
+  top_authors    Json     @default("[]")
+  updated_at     DateTime @default(now()) @db.Timestamptz
+}

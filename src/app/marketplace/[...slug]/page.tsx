@@ -7,16 +7,12 @@ import { CopyButton } from "@/components/copy-button";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
-import { createClient } from '@supabase/supabase-js';
+import prisma from '@/lib/db';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import type { Metadata } from 'next';
-
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
@@ -24,12 +20,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
     const scopedName = slug.map(s => decodeURIComponent(s)).join('/');
 
-    const { data: skill } = await supabase
-        .from('skills')
-        .select('name, description, author, scoped_name')
-        .eq('scoped_name', scopedName)
-        .limit(1)
-        .single();
+    const skill = await prisma.skills.findFirst({
+        where: { scoped_name: scopedName },
+        select: { name: true, description: true, author: true, scoped_name: true },
+    });
 
     if (!skill) {
         return {
@@ -84,41 +78,50 @@ interface Skill {
 async function getSkill(scopedName: string): Promise<Skill | null> {
     try {
         // First try exact match on scoped_name
-        let { data } = await supabase
-            .from('skills')
-            .select('*')
-            .eq('scoped_name', scopedName)
-            .limit(1)
-            .single();
+        let data = await prisma.skills.findFirst({
+            where: { scoped_name: scopedName },
+        });
 
         if (!data) {
-            // Try ilike for partial match
-            const { data: ilikeData } = await supabase
-                .from('skills')
-                .select('*')
-                .ilike('scoped_name', `%${scopedName}%`)
-                .order('stars', { ascending: false })
-                .limit(1)
-                .single();
-            data = ilikeData;
+            // Try contains for partial match
+            data = await prisma.skills.findFirst({
+                where: { scoped_name: { contains: scopedName, mode: 'insensitive' } },
+                orderBy: { stars: 'desc' },
+            });
         }
 
         if (!data) {
             // Fallback: try match on name only (last segment)
             const name = scopedName.split('/').pop();
             if (name) {
-                const { data: nameData } = await supabase
-                    .from('skills')
-                    .select('*')
-                    .eq('name', name)
-                    .order('stars', { ascending: false })
-                    .limit(1)
-                    .single();
-                data = nameData;
+                data = await prisma.skills.findFirst({
+                    where: { name },
+                    orderBy: { stars: 'desc' },
+                });
             }
         }
 
-        return data;
+        if (!data) return null;
+
+        // Transform Prisma result to match Skill interface
+        return {
+            id: data.id,
+            name: data.name,
+            description: data.description || '',
+            author: data.author,
+            stars: data.stars,
+            forks: data.forks,
+            github_url: data.github_url,
+            raw_url: data.raw_url || '',
+            repo_full_name: data.repo_full_name || '',
+            path: data.path || '',
+            branch: data.branch,
+            author_avatar: data.author_avatar || '',
+            updated_at: data.updated_at?.toISOString() || '',
+            scoped_name: data.scoped_name || '',
+            content: data.content || undefined,
+            folder_url: data.folder_url || undefined,
+        };
     } catch (error) {
         console.error('Error fetching skill:', error);
         return null;
@@ -127,15 +130,33 @@ async function getSkill(scopedName: string): Promise<Skill | null> {
 
 async function getRelatedSkills(skill: Skill): Promise<Skill[]> {
     // Get other skills by same author
-    const { data } = await supabase
-        .from('skills')
-        .select('*')
-        .eq('author', skill.author)
-        .neq('id', skill.id)
-        .order('stars', { ascending: false })
-        .limit(4);
+    const data = await prisma.skills.findMany({
+        where: {
+            author: skill.author,
+            id: { not: skill.id },
+        },
+        orderBy: { stars: 'desc' },
+        take: 4,
+    });
 
-    return data || [];
+    return data.map((s: typeof data[number]) => ({
+        id: s.id,
+        name: s.name,
+        description: s.description || '',
+        author: s.author,
+        stars: s.stars,
+        forks: s.forks,
+        github_url: s.github_url,
+        raw_url: s.raw_url || '',
+        repo_full_name: s.repo_full_name || '',
+        path: s.path || '',
+        branch: s.branch,
+        author_avatar: s.author_avatar || '',
+        updated_at: s.updated_at?.toISOString() || '',
+        scoped_name: s.scoped_name || '',
+        content: s.content || undefined,
+        folder_url: s.folder_url || undefined,
+    }));
 }
 
 export default async function SkillPage({ params }: { params: Promise<{ slug: string[] }> }) {

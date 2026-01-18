@@ -1,8 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+import prisma from '@/lib/db';
 import { MetadataRoute } from 'next';
-
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_ANON_KEY!;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://agentskills.in';
@@ -33,23 +30,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     let skillPages: MetadataRoute.Sitemap = [];
 
     try {
-        const supabase = createClient(supabaseUrl, supabaseKey);
-
         // Fetch all skill scoped names (paginated for large datasets)
-        const { data: skills, error } = await supabase
-            .from('skills')
-            .select('scoped_name, updated_at')
-            .order('stars', { ascending: false })
-            .limit(10000); // Top 10k most popular skills for sitemap
+        const skills = await prisma.skills.findMany({
+            select: { scoped_name: true, updated_at: true },
+            orderBy: { stars: 'desc' },
+            take: 10000, // Top 10k most popular skills for sitemap
+        });
 
-        if (!error && skills) {
-            skillPages = skills.map((skill) => ({
-                url: `${baseUrl}/marketplace/${encodeURIComponent(skill.scoped_name)}`,
+        skillPages = skills
+            .filter(skill => skill.scoped_name) // Only include skills with scoped_name
+            .map((skill) => ({
+                url: `${baseUrl}/marketplace/${encodeURIComponent(skill.scoped_name!)}`,
                 lastModified: skill.updated_at ? new Date(skill.updated_at) : new Date(),
                 changeFrequency: 'weekly' as const,
                 priority: 0.7,
             }));
-        }
     } catch (error) {
         console.error('Error fetching skills for sitemap:', error);
     }
