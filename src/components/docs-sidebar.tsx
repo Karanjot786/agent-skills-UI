@@ -44,6 +44,7 @@ const sections: SidebarSection[] = [
             { id: 'validate', label: 'validate' },
             { id: 'init', label: 'init' },
             { id: 'prompt', label: 'prompt' },
+            { id: 'search', label: 'search', alias: 's' },
         ]
     },
     {

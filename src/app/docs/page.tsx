@@ -119,6 +119,37 @@ Body Content: ✓ Valid
                     "skills prompt --output json"
                 ],
                 status: 'pass' as const
+            },
+            {
+                name: "search",
+                alias: "s",
+                description: "Search and install skills interactively (67K+ skills).",
+                usage: [
+                    "skills search <query>",
+                    "skills search python",
+                    "skills search react --limit 10",
+                    "skills search docker --json",
+                    "skills search api --sort name"
+                ],
+                options: [
+                    { flag: "-l, --limit <n>", description: "Maximum results (default: 20)" },
+                    { flag: "-s, --sort <by>", description: "Sort: stars, recent, name" },
+                    { flag: "--json", description: "JSON output (non-interactive)" }
+                ],
+                example: {
+                    input: "skills search python",
+                    output: `🔍 Searching for "python"...
+
+Found 2,085 skills. Select to install:
+
+? Select skills (Space to select, Enter to confirm):
+❯ ○ python-testing ⭐ 25,798 @wshobson
+  ○ python-api ⭐ 22,050 @jlowin
+  ○ python-packaging ⭐ 18,392 @openai
+
+✨ Installation complete!`
+                },
+                status: 'interactive' as const
             }
         ]
     },
@@ -130,7 +161,7 @@ Body Content: ✓ Valid
             {
                 name: "market-list",
                 alias: "ml",
-                description: "List skills from the marketplace (40k+ skills).",
+                description: "List skills from the marketplace (50,000+ skills).",
                 usage: [
                     "skills market-list",
                     "skills ml --limit 10",
@@ -550,7 +581,7 @@ export default function DocsPage() {
                             </h2>
                             <div className="space-y-6">
                                 {[
-                                    { step: 1, title: "Search for a skill", code: "skills market-search react" },
+                                    { step: 1, title: "Search for a skill", code: "skills search react" },
                                     { step: 2, title: "Install it", code: "skills install react-best-practices" },
                                     { step: 3, title: "Export to your project", code: "skills export" }
                                 ].map((item) => (
@@ -617,7 +648,7 @@ export default function DocsPage() {
                         {/* Footer CTA */}
                         <section className="mt-16 p-8 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl text-center">
                             <h3 className="text-2xl font-bold mb-3">Ready to get started?</h3>
-                            <p className="text-zinc-400 mb-6">Browse 50,000+ skills in our marketplace</p>
+                            <p className="text-zinc-400 mb-6">Browse 67,000+ skills in our marketplace</p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Button asChild className="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold">
                                     <Link href="/marketplace">
