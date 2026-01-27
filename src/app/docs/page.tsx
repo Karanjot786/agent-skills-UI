@@ -420,6 +420,33 @@ Found 2,085 skills. Select to install:
                 status: 'pass' as const
             },
             {
+                name: "check",
+                description: "Check installed skills across all 29 agents.",
+                usage: [
+                    "skills check",
+                    "skills check --agent cursor",
+                    "skills check --global",
+                    "skills check --json"
+                ],
+                options: [
+                    { flag: "-a, --agent <agent>", description: "Check specific agent only" },
+                    { flag: "-g, --global", description: "Check globally installed skills" },
+                    { flag: "--json", description: "Output as JSON" }
+                ],
+                example: {
+                    input: "skills check",
+                    output: `📦 Found 3 installed skill(s):
+
+  remotion-best-practices (Antigravity)
+    .agent/skills/remotion-best-practices
+  deep-researcher (Clawdbot)
+    skills/deep-researcher
+
+Tip: Run \`skills update\` to update all skills.`
+                },
+                status: 'pass' as const
+            },
+            {
                 name: "completion",
                 description: "Generate shell completion script.",
                 usage: [
@@ -439,7 +466,12 @@ const platforms = [
     { name: "Claude Code", directory: ".claude/skills/", status: true },
     { name: "GitHub Copilot", directory: ".github/skills/", status: true },
     { name: "OpenAI Codex", directory: ".codex/skills/", status: true },
-    { name: "Antigravity", directory: ".agent/workflows/", status: true }
+    { name: "Windsurf", directory: ".windsurf/skills/", status: true },
+    { name: "Cline", directory: ".cline/skills/", status: true },
+    { name: "Gemini CLI", directory: ".gemini/skills/", status: true },
+    { name: "Antigravity", directory: ".agent/skills/", status: true },
+    { name: "OpenCode", directory: ".opencode/skill/", status: true },
+    { name: "Amp", directory: ".agents/skills/", status: true },
 ];
 
 // Status badge component
@@ -546,10 +578,13 @@ export default function DocsPage() {
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
-                                    v1.0.2
+                                    v1.0.7
                                 </Badge>
                                 <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
                                     {totalCommands} Commands
+                                </Badge>
+                                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                                    29 Agents
                                 </Badge>
                             </div>
                             <h1 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
@@ -557,7 +592,7 @@ export default function DocsPage() {
                             </h1>
                             <p className="text-lg text-zinc-400 max-w-2xl">
                                 Complete reference for the Agent Skills CLI. Install, manage, and sync AI skills
-                                across Cursor, Claude Code, GitHub Copilot, and more.
+                                across 29 agents including Cursor, Claude Code, GitHub Copilot, Windsurf, Cline, and more.
                             </p>
                         </div>
 
