@@ -154,18 +154,20 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: 0.5 }}
                 className="flex flex-wrap items-center justify-center gap-4 mt-4"
               >
-                <Button size="lg" className="bg-white text-black hover:bg-zinc-200 font-bold gap-2" asChild>
-                  <Link href="/marketplace">
-                    <Search className="size-4" />
-                    Browse Skills
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="border-white/20 hover:bg-white/5 gap-2" asChild>
-                  <Link href="/docs">
-                    Read Docs
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
+                <Link
+                  href="/marketplace"
+                  className="rounded-full font-bold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-6 py-3 text-base"
+                >
+                  <Search className="size-4" />
+                  Browse Skills
+                </Link>
+                <Link
+                  href="/docs"
+                  className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center border border-white/20 hover:bg-white/5 text-white px-6 py-3 text-base"
+                >
+                  Read Docs
+                  <ArrowRight className="size-4" />
+                </Link>
               </motion.div>
             </div>
           </div>
@@ -213,7 +215,7 @@ export default function Home() {
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Terminal className="size-5 text-green-400" />
-                  <span className="text-3xl font-bold text-white">4</span>
+                  <span className="text-3xl font-bold text-white">29</span>
                 </div>
                 <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">Agent Platforms</div>
               </motion.div>
@@ -491,18 +493,21 @@ export default function Home() {
                 Install skills in seconds. Share your own. Join the fastest-growing AI skills ecosystem.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4">
-                <Button size="lg" className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold gap-2 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-shadow" asChild>
-                  <Link href="/marketplace">
-                    <Package className="size-5" />
-                    Explore Skills
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="border-white/20 gap-2" asChild>
-                  <a href="https://github.com/Karanjot786/agent-skills-cli" target="_blank">
-                    <Star className="size-4" />
-                    Star on GitHub
-                  </a>
-                </Button>
+                <Link
+                  href="/marketplace"
+                  className="rounded-full font-bold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-6 py-3 text-base"
+                >
+                  <Package className="size-5" />
+                  Explore Skills
+                </Link>
+                <a
+                  href="https://github.com/Karanjot786/agent-skills-cli"
+                  target="_blank"
+                  className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center border border-white/20 hover:bg-white/5 text-white px-6 py-3 text-base"
+                >
+                  <Star className="size-4" />
+                  Star on GitHub
+                </a>
               </div>
             </motion.div>
           </div>

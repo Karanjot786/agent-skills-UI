@@ -51,6 +51,22 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
+# You.com AI
+User-agent: YouBot
+Allow: /
+
+# Brave Search AI
+User-agent: BraveBot
+Allow: /
+
+# Apple Bot (Siri/Spotlight)
+User-agent: Applebot
+Allow: /
+
+# Gemini / Google AI Studio
+User-agent: GoogleOther
+Allow: /
+
 # ===========================================
 # Crawl Delay (be respectful)
 # ===========================================

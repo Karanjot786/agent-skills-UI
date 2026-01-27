@@ -1,49 +1,58 @@
 # Agent Skills CLI
 
-> The Universal Skill Manager for AI Coding Agents
+> The universal skill manager for 29 AI coding agents. Install 100,000+ skills for Cursor, Claude, Copilot, Gemini CLI, Windsurf, Cline, and more. For complete documentation, see [Full Documentation](https://agentskills.in/llms-full.txt).
 
-Agent Skills CLI is a command-line tool that enables developers to install, manage, and sync 50,000+ skills across all major AI coding assistants including Cursor, Claude Code, GitHub Copilot, OpenAI Codex, and Antigravity.
+## Products
 
-## Quick Start
+- [CLI Tool](https://agentskills.in/docs): Command-line interface to install, search, and manage AI skills across all supported agents
+- [Skill Marketplace](https://agentskills.in/marketplace): Browse and search 100,000+ skills organized by category, author, and popularity
+- [npm Package](https://www.npmjs.com/package/agent-skills-cli): Install globally with `npm install -g agent-skills-cli`
 
-```bash
-npm install -g agent-skills-cli
-skills install @anthropic/xlsx
-```
+## Supported Agents (29 Total)
 
-## Key Features
+### Primary Agents
+- [Cursor](https://agentskills.in/docs#cursor): Install skills to `.cursor/skills/` directory
+- [Claude Code](https://agentskills.in/docs#claude): Install skills to `.claude/skills/` directory
+- [GitHub Copilot](https://agentskills.in/docs#copilot): Install skills to `.github/skills/` directory
+- [OpenAI Codex](https://agentskills.in/docs#codex): Install skills to `.codex/skills/` directory
+- [Gemini CLI](https://agentskills.in/docs#gemini-cli): Install skills to `.gemini/skills/` directory
+- [Windsurf](https://agentskills.in/docs#windsurf): Install skills to `.windsurf/skills/` directory
+- [Cline](https://agentskills.in/docs#cline): Install skills to `.cline/skills/` directory
+- [Antigravity](https://agentskills.in/docs#antigravity): Install skills to `.agent/workflows/` directory
 
-- **50,000+ Skills**: Access the largest marketplace of AI agent skills
-- **Universal Compatibility**: Works with Cursor, Claude Code, GitHub Copilot, OpenAI Codex, Antigravity
-- **One Command Install**: `skills install <skill-name>`
-- **Auto-Detection**: Automatically detects installed AI agents
-- **Platform Targeting**: Install to specific platforms with `-t claude,cursor`
-
-## Supported Platforms
-
-| Platform | Directory | Status |
-|----------|-----------|--------|
-| Cursor | `.cursor/skills` | ✓ Supported |
-| Claude Code | `.claude/skills` | ✓ Supported |
-| GitHub Copilot | `.github/skills` | ✓ Supported |
-| OpenAI Codex | `.codex/skills` | ✓ Supported |
-| Antigravity | `.agent/workflows` | ✓ Supported |
+### Additional Agents (21 more)
+- OpenCode, Amp, Continue, Trae, Qwen Code, Kiro CLI, Pi, Qoder, Zencoder, Neovate, MCPJam, Mux, OpenHands, Droid, Clawdbot, Crush, Command Code, CodeBuddy, CodeAide, JetBrains AI, Void
 
 ## Core Commands
 
-- `skills install <name>` - Install a skill
-- `skills list` - List installed skills
-- `skills search <query>` - Search marketplace
-- `skills update` - Update installed skills
-- `skills doctor` - Diagnose issues
+- `skills install <name>`: Install a skill from the marketplace
+- `skills search <query>`: Search 100,000+ skills by name or description
+- `skills list`: List all installed skills across detected agents
+- `skills check`: Check for available updates to installed skills
+- `skills update`: Update installed skills to latest versions
+- `skills doctor`: Diagnose and fix common installation issues
+
+## Documentation
+
+- [Quick Start Guide](https://agentskills.in/docs#quick-start): Install your first skill in 30 seconds
+- [Command Reference](https://agentskills.in/docs#commands): Complete list of all CLI commands
+- [Platform Targeting](https://agentskills.in/docs#targeting): Install to specific agents with `-t` flag
+- [Skill Authoring](https://agentskills.in/docs#authoring): Create and publish your own skills
+
+## Use Cases
+
+- [For Developers](https://agentskills.in/docs): Enhance your AI coding assistant with specialized skills
+- [For Teams](https://agentskills.in/docs#teams): Share skills across your development team
+- [For Skill Authors](https://agentskills.in/docs#authoring): Publish skills to the marketplace
 
 ## Resources
 
-- Documentation: https://agentskills.in/docs
-- Marketplace: https://agentskills.in/marketplace
-- GitHub: https://github.com/Karanjot786/agent-skills-cli
-- npm: https://www.npmjs.com/package/agent-skills-cli
+- [GitHub Repository](https://github.com/Karanjot786/agent-skills-cli): Source code, issues, and contributions
+- [FAQ](https://agentskills.in/faq): Frequently asked questions
+- [Changelog](https://github.com/Karanjot786/agent-skills-cli/blob/main/CHANGELOG.md): Version history and updates
 
 ## Optional
 
-For complete documentation, see: /llms-full.txt
+- [Full Documentation](https://agentskills.in/llms-full.txt): Complete 300+ line reference for all features
+- [API Endpoints](https://agentskills.in/api/skills): Programmatic access to skill data (JSON)
+- [Sitemap](https://agentskills.in/sitemap.xml): All indexed pages

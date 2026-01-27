@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     default: "Agent Skills CLI - The Universal Skill Manager for AI Agents",
     template: "%s | Agent Skills",
   },
-  description: "Install 50,000+ skills from the marketplace and sync them to Cursor, Claude Code, GitHub Copilot, OpenAI Codex, and Antigravity. The #1 CLI for AI Agent workflows.",
+  description: "Install 100,000+ skills for 29 AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
   keywords: [
     "agent skills",
     "ai agents",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   // OpenGraph
   openGraph: {
     title: "Agent Skills CLI - Universal Skill Manager for AI Agents",
-    description: "One CLI. 50,000+ Skills. All AI Agents. Install skills for Cursor, Claude, Copilot, Codex, and more.",
+    description: "One CLI. 100,000+ Skills. 29 AI Agents. Install skills for Cursor, Claude, Copilot, Gemini CLI, Windsurf, and more.",
     url: siteUrl,
     siteName: "Agent Skills",
     type: "website",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Agent Skills CLI - Universal Skill Manager",
-    description: "Install 50,000+ skills for Cursor, Claude, Copilot, Codex, and Antigravity.",
+    description: "Install 100,000+ skills for 29 AI agents: Cursor, Claude, Copilot, Gemini CLI, Windsurf, and more.",
     creator: "@Karanjot786",
     images: [`${siteUrl}/og-image.png`],
   },
@@ -181,12 +181,26 @@ const jsonLd = {
         ratingValue: "5",
         ratingCount: "50",
       },
-      softwareVersion: "1.0.2",
+      softwareVersion: "1.0.7",
       downloadUrl: "https://www.npmjs.com/package/agent-skills-cli",
       author: {
         "@type": "Person",
         name: "Karanjot Singh",
         url: "https://github.com/Karanjot786",
+        sameAs: [
+          "https://github.com/Karanjot786",
+          "https://www.linkedin.com/in/karanjot786",
+        ],
+        jobTitle: "Software Developer",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Agent Skills",
+        url: "https://agentskills.in",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://agentskills.in/icon-512.png",
+        },
       },
     },
   ],

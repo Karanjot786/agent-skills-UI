@@ -683,20 +683,24 @@ export default function DocsPage() {
                         {/* Footer CTA */}
                         <section className="mt-16 p-8 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl text-center">
                             <h3 className="text-2xl font-bold mb-3">Ready to get started?</h3>
-                            <p className="text-zinc-400 mb-6">Browse 67,000+ skills in our marketplace</p>
+                            <p className="text-zinc-400 mb-6">Browse 100,000+ skills in our marketplace</p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                                <Button asChild className="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold">
-                                    <Link href="/marketplace">
-                                        <Search className="size-4 mr-2" />
-                                        Browse Marketplace
-                                    </Link>
-                                </Button>
-                                <Button variant="outline" asChild className="border-white/20 hover:bg-white/5">
-                                    <a href="https://github.com/Karanjot786/agent-skills-cli" target="_blank" rel="noopener noreferrer">
-                                        <ExternalLink className="size-4 mr-2" />
-                                        View on GitHub
-                                    </a>
-                                </Button>
+                                <Link
+                                    href="/marketplace"
+                                    className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center justify-center gap-2 text-center bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-6 py-3"
+                                >
+                                    <Search className="size-4" />
+                                    Browse Marketplace
+                                </Link>
+                                <a
+                                    href="https://github.com/Karanjot786/agent-skills-cli"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center justify-center gap-2 text-center border border-white/20 hover:bg-white/5 text-white px-6 py-3"
+                                >
+                                    <ExternalLink className="size-4" />
+                                    View on GitHub
+                                </a>
                             </div>
                         </section>
                     </main>

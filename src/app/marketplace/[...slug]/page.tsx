@@ -180,8 +180,91 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
 
     const relatedSkills = await getRelatedSkills(skill);
 
+    // JSON-LD Structured Data for SEO
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://agentskills.in"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Marketplace",
+                        "item": "https://agentskills.in/marketplace"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": skill.name,
+                        "item": `https://agentskills.in/marketplace/${encodeURIComponent(skill.scoped_name)}`
+                    }
+                ]
+            },
+            {
+                "@type": "SoftwareApplication",
+                "name": skill.name,
+                "description": skill.description || `${skill.scoped_name} - A skill for AI coding assistants`,
+                "applicationCategory": "DeveloperApplication",
+                "operatingSystem": "Any",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                },
+                "author": {
+                    "@type": "Person",
+                    "name": skill.author,
+                    "url": `https://github.com/${skill.author}`
+                },
+                "aggregateRating": skill.stars > 0 ? {
+                    "@type": "AggregateRating",
+                    "ratingValue": "5",
+                    "ratingCount": String(skill.stars)
+                } : undefined
+            },
+            {
+                "@type": "HowTo",
+                "name": `How to Install ${skill.name}`,
+                "description": `Step-by-step guide to install the ${skill.name} skill for your AI coding assistant`,
+                "step": [
+                    {
+                        "@type": "HowToStep",
+                        "position": 1,
+                        "name": "Install Agent Skills CLI",
+                        "text": "Install the CLI globally: npm install -g agent-skills-cli"
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "position": 2,
+                        "name": "Install the skill",
+                        "text": `Run: skills install ${skill.scoped_name}`
+                    },
+                    {
+                        "@type": "HowToStep",
+                        "position": 3,
+                        "name": "Verify installation",
+                        "text": "Check installed skills with: skills list"
+                    }
+                ],
+                "totalTime": "PT1M"
+            }
+        ]
+    };
+
     return (
         <div className="min-h-screen bg-black text-white selection:bg-cyan-500/30">
+            {/* JSON-LD for SEO */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <Navbar />
 
             <main className="relative">

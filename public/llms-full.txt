@@ -1,8 +1,8 @@
 # Agent Skills CLI - Complete Documentation
 
-> The Universal Skill Manager for AI Coding Agents
+> The Universal Skill Manager for 29 AI Coding Agents
 
-Version: 1.0.2
+Version: 1.0.7
 License: MIT
 Author: Karanjot Singh
 Repository: https://github.com/Karanjot786/agent-skills-cli
@@ -19,14 +19,14 @@ Repository: https://github.com/Karanjot786/agent-skills-cli
 6. Marketplace Commands
 7. Export Commands
 8. Utility Commands
-9. API Reference
+9. Privacy & Telemetry
 10. FAQ
 
 ---
 
 ## 1. Introduction
 
-Agent Skills CLI is a command-line interface tool designed to help developers install, manage, and synchronize AI coding skills across multiple platforms. With access to over 50,000 skills from the Agent Skills marketplace, developers can enhance their AI coding assistants with specialized capabilities.
+Agent Skills CLI is a command-line interface tool designed to help developers install, manage, and synchronize AI coding skills across multiple platforms. With access to over 100,000 skills from the Agent Skills marketplace, developers can enhance their AI coding assistants with specialized capabilities.
 
 ### What are Skills?
 
@@ -58,7 +58,7 @@ pnpm add -g agent-skills-cli
 ### Verify Installation
 ```bash
 skills --version
-# Output: 1.0.2
+# Output: 1.0.7
 ```
 
 ---
@@ -84,7 +84,9 @@ skills search "pdf manipulation"
 
 ## 4. Supported Platforms
 
-Agent Skills CLI supports the following AI coding platforms:
+Agent Skills CLI supports 29 AI coding platforms:
+
+### Primary Platforms
 
 | Platform | Directory Path | Install Flag |
 |----------|---------------|--------------|
@@ -92,7 +94,16 @@ Agent Skills CLI supports the following AI coding platforms:
 | Claude Code | `.claude/skills/` | `-t claude` |
 | GitHub Copilot | `.github/skills/` | `-t copilot` |
 | OpenAI Codex | `.codex/skills/` | `-t codex` |
+| Gemini CLI | `.gemini/skills/` | `-t gemini-cli` |
+| Windsurf | `.windsurf/skills/` | `-t windsurf` |
+| Cline | `.cline/skills/` | `-t cline` |
 | Antigravity | `.agent/workflows/` | `-t antigravity` |
+| OpenCode | `.opencode/skills/` | `-t opencode` |
+| Amp | `.amp/skills/` | `-t amp` |
+
+### Additional Platforms (19 more)
+
+Continue, Trae, Qwen Code, Kiro CLI, Pi, Qoder, Zencoder, Neovate, MCPJam, Mux, OpenHands, Droid, Clawdbot, Crush, Command Code, CodeBuddy, and more.
 
 ### Auto-Detection
 
@@ -146,33 +157,34 @@ skills init my-new-skill
 skills init my-skill -d /custom/directory
 ```
 
-### skills prompt
-Generate system prompt XML for discovered skills.
+### skills check
+Check for available skill updates.
 
 ```bash
-skills prompt
-skills prompt --output json
+skills check
+skills check --agent cursor
+skills check --verbose
+```
+
+### skills update
+Update installed skills to latest versions.
+
+```bash
+skills update
+skills update skill-name
 ```
 
 ---
 
 ## 6. Marketplace Commands
 
-### skills market-list (ml)
-List skills from the marketplace.
-
-```bash
-skills market-list
-skills ml --limit 10
-skills ml --page 2
-```
-
-### skills market-search (ms)
+### skills search (s)
 Search skills in the marketplace.
 
 ```bash
-skills market-search python
-skills ms "machine learning" --limit 5
+skills search python
+skills search "machine learning" --limit 5
+skills search react --json
 ```
 
 ### skills install (i)
@@ -204,13 +216,6 @@ Uninstall a marketplace-installed skill.
 skills market-uninstall skill-name
 ```
 
-### skills market-installed (mind)
-List skills installed from marketplaces.
-
-```bash
-skills market-installed
-```
-
 ---
 
 ## 7. Export Commands
@@ -232,13 +237,6 @@ Sync skills to .agent/workflows/ for auto-discovery.
 skills sync
 ```
 
-### skills setup
-Interactive setup wizard for installing and exporting skills.
-
-```bash
-skills setup
-```
-
 ---
 
 ## 8. Utility Commands
@@ -258,44 +256,11 @@ List available scripts in a skill.
 skills scripts pdf
 ```
 
-### skills context
-Generate system prompt context for AI agents.
-
-```bash
-skills context
-skills context --format json
-```
-
-### skills preview <skill>
-Open skill detail page in browser.
-
-```bash
-skills preview xlsx
-```
-
-### skills assets <skill>
-List and fetch assets for a skill.
-
-```bash
-skills assets pdf
-skills assets pdf --manifest
-skills assets pdf --get templates/form.json
-```
-
 ### skills info
 Show installation status and paths.
 
 ```bash
 skills info
-```
-
-### skills update
-Update installed skills to latest versions.
-
-```bash
-skills update
-skills update skill-name
-skills update --check
 ```
 
 ### skills doctor
@@ -317,27 +282,22 @@ skills completion fish
 
 ---
 
-## 9. API Reference
+## 9. Privacy & Telemetry
 
-### Environment Variables
+Agent Skills CLI collects anonymous usage telemetry to improve the tool. This is completely optional and can be disabled.
 
-- `SKILLS_HOME` - Custom skills directory (default: `~/.antigravity/skills`)
-- `SKILLS_MARKETPLACE_URL` - Custom marketplace URL
+### What We Collect
+- Command names (install, search, check)
+- CLI version
+- CI environment detection
+- No personal data or skill contents
 
-### Configuration File
-
-Located at `~/.antigravity/marketplace.json`:
-
-```json
-{
-  "sources": [
-    {
-      "name": "Agent Skills",
-      "url": "https://agentskills.in/api"
-    }
-  ],
-  "installed": []
-}
+### Opt Out
+Set any of these environment variables:
+```bash
+export DISABLE_TELEMETRY=1
+# or
+export DO_NOT_TRACK=1
 ```
 
 ---
@@ -357,10 +317,10 @@ Then edit the generated `SKILL.md` file in your skill directory.
 
 Yes, once installed, skills are stored locally and work offline.
 
-### How do I update a skill?
+### How do I check for updates?
 
 ```bash
-skills update skill-name
+skills check
 ```
 
 ### How do I uninstall a skill?
@@ -376,6 +336,8 @@ Skills are stored in platform-specific directories:
 - Claude: `.claude/skills/`
 - Copilot: `.github/skills/`
 - Codex: `.codex/skills/`
+- Gemini CLI: `.gemini/skills/`
+- Windsurf: `.windsurf/skills/`
 - Antigravity: `.agent/workflows/`
 
 ---
