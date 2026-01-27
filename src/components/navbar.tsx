@@ -49,7 +49,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
 
             {/* Desktop Header */}
             <header
-                className={`fixed top-4 left-1/2 -translate-x-1/2 z-[9999] hidden md:flex flex-row items-center justify-between rounded-full bg-black/80 backdrop-blur-md border border-white/10 shadow-lg shadow-black/20 transition-all duration-300 ${isScrolled ? "max-w-3xl px-3" : "max-w-5xl px-5"
+                className={`sticky top-4 z-[9999] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-background/80 md:flex backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ${isScrolled ? "max-w-3xl px-2" : "max-w-5xl px-4"
                     } py-2`}
                 style={{
                     willChange: "transform",
@@ -161,7 +161,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
 
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-                <div className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm md:hidden">
+                <div className="sticky top-4 z-[9999] mx-4 flex w-auto flex-row items-center justify-between rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg md:hidden px-4 py-3fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm md:hidden">
                     <div className="absolute top-20 left-4 right-4 bg-zinc-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6">
                         <nav className="flex flex-col space-y-2">
                             <Link
