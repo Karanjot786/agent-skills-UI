@@ -56,3 +56,17 @@ model skill_stats {
   top_authors    Json     @default("[]")
   updated_at     DateTime @default(now()) @db.Timestamptz
 }
+
+// CLI Telemetry - anonymous usage tracking
+model telemetry_events {
+  id         String   @id @default(cuid())
+  event      String   // install, search, check, update, command
+  version    String   // CLI version
+  isCI       Boolean  @default(false) @map("is_ci")
+  metadata   String?  // JSON string with additional data
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([event])
+  @@index([createdAt(sort: Desc)])
+  @@map("telemetry_events")
+}
