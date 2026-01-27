@@ -23,7 +23,7 @@ interface SkillPreview {
 export async function GET() {
     try {
         // Start all queries in parallel for speed
-        const [cachedStats, trending, recent] = await Promise.all([
+        const [cachedStats, trending, recent, categoryCounts] = await Promise.all([
             // Get cached stats from skill_stats table (fast - just 1 row)
             prisma.skill_stats.findUnique({
                 where: { id: 'global' },
@@ -58,6 +58,12 @@ export async function GET() {
                 orderBy: { updated_at: 'desc' },
                 take: 6,
             }),
+
+            // Get category counts
+            prisma.skills.groupBy({
+                by: ['category'],
+                _count: { id: true },
+            }),
         ]);
 
         // Use cached stats or fallback values
@@ -65,12 +71,21 @@ export async function GET() {
         const uniqueAuthors = cachedStats?.unique_authors ?? 5000;
         const topAuthors = (cachedStats?.top_authors as unknown as TopAuthor[]) ?? [];
 
+        // Transform category counts to a map
+        const categoryMap: Record<string, number> = {};
+        for (const cat of categoryCounts) {
+            if (cat.category) {
+                categoryMap[cat.category.toLowerCase()] = cat._count.id;
+            }
+        }
+
         return NextResponse.json({
             stats: {
                 totalSkills,
                 uniqueAuthors,
                 totalStars: 0,
             },
+            categoryCounts: categoryMap,
             trending: trending.map((s: SkillPreview) => ({
                 id: s.id,
                 name: s.name,
@@ -96,3 +111,4 @@ export async function GET() {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
+

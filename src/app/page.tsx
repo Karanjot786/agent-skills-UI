@@ -10,6 +10,7 @@ import CountUp from 'react-countup';
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { TerminalAnimation } from "@/components/terminal-animation";
+import { CategoriesShowcase, TrendingSkills, TopContributors, RecentSkills } from "@/components/home";
 
 interface Skill {
   id: string;
@@ -46,6 +47,7 @@ export default function Home() {
   const [trending, setTrending] = useState<Skill[]>([]);
   const [recent, setRecent] = useState<Skill[]>([]);
   const [topAuthors, setTopAuthors] = useState<Author[]>([]);
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -56,6 +58,7 @@ export default function Home() {
         if (data.trending) setTrending(data.trending);
         if (data.recent) setRecent(data.recent);
         if (data.topAuthors) setTopAuthors(data.topAuthors);
+        if (data.categoryCounts) setCategoryCounts(data.categoryCounts);
       })
       .catch(console.error);
   }, []);
@@ -283,230 +286,16 @@ export default function Home() {
         </section>
 
         {/* Categories Grid */}
-        <section className="py-20">
-          <div className="container mx-auto px-6">
-            <div className="flex items-center justify-between mb-10">
-              <div>
-                <h2 className="text-3xl font-bold mb-2">Browse by Category</h2>
-                <p className="text-zinc-400">Find skills organized by use case</p>
-              </div>
-              <Button variant="ghost" className="text-cyan-400 hover:text-cyan-300" asChild>
-                <Link href="/marketplace">
-                  View All <ChevronRight className="size-4 ml-1" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {categories.map((cat, i) => (
-                <motion.div
-                  key={cat.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <Link
-                    href={cat.slug ? `/marketplace?category=${cat.slug}` : '/marketplace'}
-                    className="block p-6 rounded-2xl bg-zinc-900/50 border border-white/5 hover:border-white/20 hover:bg-zinc-900 transition-all group"
-                  >
-                    <div className={`size-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                      <cat.icon className="size-6 text-white" />
-                    </div>
-                    <div className="font-semibold mb-1">{cat.name}</div>
-                    <div className="text-sm text-zinc-500">{cat.count} skills</div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <CategoriesShowcase totalSkills={stats.totalSkills} categoryCounts={categoryCounts} />
 
         {/* Trending Skills */}
-        <section className="py-20 bg-zinc-900/30">
-          <div className="container mx-auto px-6">
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500">
-                  <TrendingUp className="size-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Trending Skills</h2>
-                  <p className="text-zinc-400 text-sm">Most popular this week</p>
-                </div>
-              </div>
-              <Button variant="ghost" className="text-cyan-400 hover:text-cyan-300" asChild>
-                <Link href="/marketplace?sortBy=stars">
-                  See More <ChevronRight className="size-4 ml-1" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {trending.map((skill, i) => (
-                <motion.div
-                  key={skill.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                  className="relative"
-                >
-                  {/* Rank Badge for top 3 */}
-                  {i < 3 && (
-                    <div className={`absolute -top-2 -left-2 z-10 size-8 rounded-full flex items-center justify-center text-xs font-bold shadow-lg ${i === 0 ? 'bg-gradient-to-br from-yellow-400 to-amber-500 text-black rank-gold' :
-                      i === 1 ? 'bg-gradient-to-br from-zinc-300 to-zinc-400 text-black' :
-                        'bg-gradient-to-br from-amber-600 to-amber-700 text-white'
-                      }`}>
-                      {i === 0 ? <Crown className="size-4" /> : `#${i + 1}`}
-                    </div>
-                  )}
-                  <Link
-                    href={`/marketplace/${skill.scopedName || skill.name}`}
-                    className={`block p-5 rounded-xl bg-black border transition-all group shimmer ${i === 0 ? 'border-yellow-500/30 hover:border-yellow-400/50' :
-                      'border-white/5 hover:border-cyan-500/30'
-                      }`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="font-semibold text-cyan-100 group-hover:text-cyan-400 transition-colors">{skill.name}</div>
-                      <div className="flex items-center gap-1 text-yellow-400 text-sm group-hover:scale-110 transition-transform">
-                        <Star className="size-3.5 fill-yellow-400" />
-                        {skill.stars?.toLocaleString()}
-                      </div>
-                    </div>
-                    <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
-                      {skill.description || 'A useful skill for AI development.'}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={skill.authorAvatar || `https://github.com/${skill.author}.png`}
-                        alt={skill.author}
-                        className="size-5 rounded-full"
-                      />
-                      <span className="text-xs text-zinc-500">{skill.author}</span>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <TrendingSkills skills={trending} />
 
         {/* Top Authors */}
-        <section className="py-20">
-          <div className="container mx-auto px-6">
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
-                  <Users className="size-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold">Top Contributors</h2>
-                  <p className="text-zinc-400 text-sm">Most active skill creators</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-              {topAuthors.map((author, i) => (
-                <motion.div
-                  key={author.name}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.03 }}
-                >
-                  <Link
-                    href={`/marketplace?author=${author.name}`}
-                    className="flex flex-col items-center p-4 rounded-xl bg-zinc-900/50 border border-white/5 hover:border-purple-500/30 hover:bg-zinc-900 transition-all group"
-                  >
-                    {/* Gradient ring around avatar */}
-                    <div className="avatar-ring p-[2px] rounded-full mb-3 group-hover:scale-110 transition-transform">
-                      <img
-                        src={author.avatar || `https://github.com/${author.name}.png`}
-                        alt={author.name}
-                        className="size-12 rounded-full bg-black"
-                      />
-                    </div>
-                    <div className="text-sm font-medium truncate w-full text-center group-hover:text-purple-300 transition-colors">{author.name}</div>
-                    <div className="text-xs text-zinc-500 flex items-center gap-1">
-                      <Package className="size-3" />
-                      {author.skillCount} skills
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <TopContributors authors={topAuthors} />
 
         {/* Recently Added */}
-        {recent.length > 0 && (
-          <section className="py-20 bg-zinc-900/30">
-            <div className="container mx-auto px-6">
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500">
-                    <Sparkles className="size-5 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold">Recently Added</h2>
-                    <p className="text-zinc-400 text-sm">Latest skills from the community</p>
-                  </div>
-                </div>
-                <Button variant="ghost" className="text-cyan-400 hover:text-cyan-300" asChild>
-                  <Link href="/marketplace?sortBy=recent">
-                    See More <ChevronRight className="size-4 ml-1" />
-                  </Link>
-                </Button>
-              </div>
-
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recent.map((skill, i) => (
-                  <motion.div
-                    key={skill.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Link
-                      href={`/marketplace/${skill.scopedName || skill.name}`}
-                      className="block p-5 rounded-xl bg-black border border-white/5 hover:border-green-500/30 transition-all group relative overflow-hidden"
-                    >
-                      {/* Animated NEW badge */}
-                      <div className="absolute -top-1 -right-1">
-                        <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs badge-new shadow-lg shadow-green-500/25">
-                          ✨ NEW
-                        </Badge>
-                      </div>
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="font-semibold text-zinc-100 group-hover:text-green-400 transition-colors">{skill.name}</div>
-                      </div>
-                      <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
-                        {skill.description || 'A useful skill for AI development.'}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={skill.authorAvatar || `https://github.com/${skill.author}.png`}
-                            alt={skill.author}
-                            className="size-5 rounded-full"
-                          />
-                          <span className="text-xs text-zinc-500">{skill.author}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-xs text-zinc-500">
-                          <Clock className="size-3" />
-                          <span>Just added</span>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <RecentSkills skills={recent} />
 
         {/* CTA Section */}
         <section className="py-24 relative overflow-hidden">
