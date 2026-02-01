@@ -127,6 +127,7 @@ Body Content: ✓ Valid
                 usage: [
                     "skills search <query>",
                     "skills search python",
+                    "skills search -i",
                     "skills search react --limit 10",
                     "skills search docker --json",
                     "skills search api --sort name"
@@ -134,6 +135,7 @@ Body Content: ✓ Valid
                 options: [
                     { flag: "-l, --limit <n>", description: "Maximum results (default: 20)" },
                     { flag: "-s, --sort <by>", description: "Sort: stars, recent, name" },
+                    { flag: "-i, --interactive", description: "FZF-style interactive search" },
                     { flag: "--json", description: "JSON output (non-interactive)" }
                 ],
                 example: {
@@ -393,12 +395,28 @@ Found 2,085 skills. Select to install:
             },
             {
                 name: "update",
-                description: "Update installed skills to latest versions.",
+                description: "Update installed skills from their source repos.",
                 usage: [
                     "skills update",
                     "skills update <skill-name>",
-                    "skills update --check"
+                    "skills update --all",
+                    "skills update -g"
                 ],
+                options: [
+                    { flag: "-a, --all", description: "Update all installed skills" },
+                    { flag: "-g, --global", description: "Only update globally installed skills" },
+                    { flag: "-y, --yes", description: "Skip confirmation prompts" }
+                ],
+                example: {
+                    input: "skills update --all",
+                    output: `📦 Updating 3 skill(s)...
+
+✓ @anthropic/xlsx: Updated successfully
+✓ react-best-practices: Updated successfully
+✓ my-skill: Updated successfully
+
+✨ Updated 3 skill(s)`
+                },
                 status: 'pass' as const
             },
             {
@@ -421,7 +439,7 @@ Found 2,085 skills. Select to install:
             },
             {
                 name: "check",
-                description: "Check installed skills across all 29 agents.",
+                description: "Check installed skills with source and version info.",
                 usage: [
                     "skills check",
                     "skills check --agent cursor",
@@ -437,14 +455,45 @@ Found 2,085 skills. Select to install:
                     input: "skills check",
                     output: `📦 Found 3 installed skill(s):
 
-  remotion-best-practices (Antigravity)
-    .agent/skills/remotion-best-practices
-  deep-researcher (Clawdbot)
-    skills/deep-researcher
+  @anthropic/xlsx [🌐 Database]
+    Agents: cursor, claude
+    Installed: 1/15/2026
+    Version: abc1234
+
+  my-skill [🐙 GitHub]
+    Agents: antigravity
+    Installed: 1/10/2026
 
 Tip: Run \`skills update\` to update all skills.`
                 },
                 status: 'pass' as const
+            },
+            {
+                name: "remove",
+                description: "Remove installed skills (interactive multi-select).",
+                usage: [
+                    "skills remove",
+                    "skills remove <skill-name>",
+                    "skills remove xlsx -y",
+                    "skills remove --all -g",
+                    "skills remove --agent cursor"
+                ],
+                options: [
+                    { flag: "-a, --agent <agent>", description: "Remove from specific agent only" },
+                    { flag: "-g, --global", description: "Remove globally installed skills" },
+                    { flag: "-y, --yes", description: "Skip confirmation prompts" },
+                    { flag: "--all", description: "Remove all skills" }
+                ],
+                example: {
+                    input: "skills remove",
+                    output: `? Select skills to remove:
+❯ ◉ xlsx
+  ◯ pdf
+  ◯ react-best-practices
+
+✓ Removed xlsx from cursor, claude`
+                },
+                status: 'interactive' as const
             },
             {
                 name: "completion",
@@ -578,13 +627,13 @@ export default function DocsPage() {
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
-                                    v1.0.7
+                                    v1.0.8
                                 </Badge>
                                 <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
                                     {totalCommands} Commands
                                 </Badge>
                                 <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
-                                    29 Agents
+                                    42 Agents
                                 </Badge>
                             </div>
                             <h1 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
@@ -592,7 +641,7 @@ export default function DocsPage() {
                             </h1>
                             <p className="text-lg text-zinc-400 max-w-2xl">
                                 Complete reference for the Agent Skills CLI. Install, manage, and sync AI skills
-                                across 29 agents including Cursor, Claude Code, GitHub Copilot, Windsurf, Cline, and more.
+                                across 42 agents including Cursor, Claude Code, GitHub Copilot, Windsurf, Cline, Zed, and more.
                             </p>
                         </div>
 
