@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Users, Package, Star } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Author {
     name: string;
@@ -16,6 +17,8 @@ interface TopContributorsProps {
 }
 
 export function TopContributors({ authors }: TopContributorsProps) {
+    const t = useTranslations('home');
+    const tc = useTranslations('common');
     const [isPaused, setIsPaused] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -43,13 +46,13 @@ export function TopContributors({ authors }: TopContributorsProps) {
                         </div>
                     </div>
                     <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                        Meet the{' '}
+                        {t('sections.contributors')}{' '}
                         <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            Community
+
                         </span>
                     </h2>
                     <p className="text-zinc-400 max-w-lg mx-auto">
-                        Talented developers creating and sharing skills for the AI ecosystem
+                        {t('sections.contributorsDesc')}
                     </p>
                 </motion.div>
 
@@ -107,7 +110,7 @@ export function TopContributors({ authors }: TopContributorsProps) {
                                         {/* Stats */}
                                         <div className="flex items-center gap-1 text-xs text-zinc-500">
                                             <Package className="size-3" />
-                                            {author.skillCount} skills
+                                            {author.skillCount} {tc('skills')}
                                         </div>
 
                                         {/* Hover reveal - skill count badge */}

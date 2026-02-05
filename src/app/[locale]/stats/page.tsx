@@ -1,7 +1,7 @@
 'use client';
 
 import { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { BarChart3, Users, Package, Star, TrendingUp, Globe, Terminal, Sparkles } from 'lucide-react';

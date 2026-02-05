@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Sparkles, Clock, ArrowRight, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 
 interface Skill {
     id: string;
@@ -33,6 +34,8 @@ function getTimeAgo(date?: string): string {
 }
 
 export function RecentSkills({ skills }: RecentSkillsProps) {
+    const t = useTranslations('home');
+    const tc = useTranslations('common');
     if (skills.length === 0) return null;
 
     return (
@@ -63,12 +66,12 @@ export function RecentSkills({ skills }: RecentSkillsProps) {
                         </div>
                         <div>
                             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-                                Recently{' '}
+                                {t('sections.recent')}{' '}
                                 <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                                    Added
+
                                 </span>
                             </h2>
-                            <p className="text-zinc-400 mt-1">Fresh skills from the community</p>
+                            <p className="text-zinc-400 mt-1">{t('sections.recentDesc')}</p>
                         </div>
                     </motion.div>
                     <motion.div
@@ -80,7 +83,7 @@ export function RecentSkills({ skills }: RecentSkillsProps) {
                             href="/marketplace?sortBy=recent"
                             className="hidden md:flex items-center gap-2 text-zinc-400 hover:text-green-400 transition-colors group"
                         >
-                            View All
+                            {tc('viewAll')}
                             <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </motion.div>
@@ -180,7 +183,7 @@ export function RecentSkills({ skills }: RecentSkillsProps) {
                         href="/marketplace?sortBy=recent"
                         className="flex items-center justify-center gap-2 w-full py-4 rounded-xl border border-white/10 text-zinc-400 hover:text-green-400 hover:border-green-500/30 transition-all"
                     >
-                        View All Recent
+                        {tc('viewAll')}
                         <ArrowRight className="size-4" />
                     </Link>
                 </motion.div>

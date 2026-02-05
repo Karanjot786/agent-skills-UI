@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Star, Crown, TrendingUp, ArrowRight, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Skill {
     id: string;
@@ -19,6 +20,8 @@ interface TrendingSkillsProps {
 }
 
 export function TrendingSkills({ skills }: TrendingSkillsProps) {
+    const t = useTranslations('home');
+    const tc = useTranslations('common');
     const top3 = skills.slice(0, 3);
     const remaining = skills.slice(3);
 
@@ -46,12 +49,12 @@ export function TrendingSkills({ skills }: TrendingSkillsProps) {
                         </div>
                         <div>
                             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-                                Trending{' '}
+                                {t('sections.trending')}{' '}
                                 <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-                                    Skills
+
                                 </span>
                             </h2>
-                            <p className="text-zinc-400 mt-1">Most popular this week</p>
+                            <p className="text-zinc-400 mt-1">{t('sections.trendingDesc')}</p>
                         </div>
                     </motion.div>
                     <motion.div
@@ -63,7 +66,7 @@ export function TrendingSkills({ skills }: TrendingSkillsProps) {
                             href="/marketplace?sortBy=stars"
                             className="hidden md:flex items-center gap-2 text-zinc-400 hover:text-amber-400 transition-colors group"
                         >
-                            View All
+                            {tc('viewAll')}
                             <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </motion.div>
@@ -217,7 +220,7 @@ export function TrendingSkills({ skills }: TrendingSkillsProps) {
                         href="/marketplace?sortBy=stars"
                         className="flex items-center justify-center gap-2 w-full py-4 rounded-xl border border-white/10 text-zinc-400 hover:text-amber-400 hover:border-amber-500/30 transition-all"
                     >
-                        View All Trending
+                        {tc('viewAll')}
                         <ArrowRight className="size-4" />
                     </Link>
                 </motion.div>

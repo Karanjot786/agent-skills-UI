@@ -1,7 +1,13 @@
-import Link from 'next/link';
+'use client';
+
+import { Link } from '@/i18n/navigation';
 import { Terminal } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function Footer() {
+    const t = useTranslations('footer');
+    const tn = useTranslations('nav');
+
     return (
         <footer className="border-t border-white/10 py-12 bg-black">
             <div className="container mx-auto px-6">
@@ -14,13 +20,13 @@ export function Footer() {
                     </Link>
 
                     <div className="flex gap-8 text-sm text-zinc-400">
-                        <Link href="/marketplace" className="hover:text-white transition-colors">Browse</Link>
-                        <Link href="/docs" className="hover:text-white transition-colors">Docs</Link>
-                        <a href="https://github.com/Karanjot786/agent-skills-cli" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
+                        <Link href="/marketplace" className="hover:text-white transition-colors">{tn('marketplace')}</Link>
+                        <Link href="/docs" className="hover:text-white transition-colors">{tn('docs')}</Link>
+                        <a href="https://github.com/Karanjot786/agent-skills-cli" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">{tn('github')}</a>
                     </div>
 
                     <div className="text-sm text-zinc-600">
-                        © {new Date().getFullYear()} Agent Skills. Open Source.
+                        {t('copyright', { year: new Date().getFullYear() })}
                     </div>
                 </div>
             </div>

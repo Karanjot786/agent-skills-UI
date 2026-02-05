@@ -1,0 +1,142 @@
+{
+    "common": {
+        "copied": "Đã sao chép!",
+        "clickToCopy": "Nhấp để sao chép",
+        "loading": "Đang tải...",
+        "viewAll": "Xem tất cả",
+        "learnMore": "Tìm hiểu thêm",
+        "getStarted": "Bắt đầu",
+        "browseSkills": "Duyệt kỹ năng",
+        "installNow": "Cài đặt ngay",
+        "skills": "Kỹ năng",
+        "agents": "Tác tử",
+        "authors": "Tác giả",
+        "available": "Có sẵn",
+        "skillsAvailable": "Kỹ năng có sẵn"
+    },
+    "nav": {
+        "docs": "Tài liệu",
+        "marketplace": "Chợ",
+        "faq": "Câu hỏi thường gặp",
+        "stats": "Thống kê",
+        "github": "GitHub",
+        "getStarted": "Bắt đầu"
+    },
+    "home": {
+        "badge": "{count}+ Kỹ năng có sẵn",
+        "title1": "",
+        "title2": "Trình quản lý gói",
+        "title3": "cho",
+        "title4": "Tác tử AI",
+        "title5": "Kỹ năng",
+        "subtitle": "Cài đặt, chia sẻ và khám phá kỹ năng cho Claude, Cursor, Copilot và nhiều hơn nữa. Giống như npm cho trợ lý lập trình AI.",
+        "install": "npm install -g agent-skills-cli",
+        "cta": {
+            "browse": "Duyệt kỹ năng",
+            "docs": "Đọc tài liệu",
+            "joinDevelopers": "Tham gia {count}+ nhà phát triển",
+            "title": "Sẵn sàng tăng cường",
+            "titleHighlight": "quy trình AI",
+            "subtitle": "Cài đặt kỹ năng trong vài giây. Chia sẻ của riêng bạn. Tham gia hệ sinh thái kỹ năng AI phát triển nhanh nhất.",
+            "exploreSkills": "Khám phá kỹ năng",
+            "starOnGithub": "Star trên GitHub"
+        },
+        "stats": {
+            "skills": "Tổng kỹ năng",
+            "agents": "Tác tử AI",
+            "authors": "Người đóng góp"
+        },
+        "sections": {
+            "trending": "Kỹ năng thịnh hành",
+            "trendingDesc": "Kỹ năng phổ biến nhất tuần này",
+            "recent": "Mới thêm gần đây",
+            "recentDesc": "Kỹ năng mới từ cộng đồng",
+            "categories": "Danh mục",
+            "categoriesDesc": "Duyệt theo danh mục",
+            "contributors": "Người đóng góp hàng đầu",
+            "contributorsDesc": "Tác giả kỹ năng hoạt động nhất"
+        },
+        "statsBar": {
+            "skillsAvailable": "Kỹ năng có sẵn",
+            "contributors": "Người đóng góp",
+            "agentPlatforms": "Nền tảng tác tử",
+            "openSource": "Mã nguồn mở"
+        }
+    },
+    "marketplace": {
+        "title": "Chợ kỹ năng",
+        "subtitle": "Khám phá {count}+ kỹ năng cho trợ lý lập trình AI",
+        "search": {
+            "placeholder": "Tìm kiếm kỹ năng...",
+            "noResults": "Không tìm thấy kỹ năng",
+            "loading": "Đang tìm kiếm..."
+        },
+        "filters": {
+            "all": "Tất cả",
+            "development": "Phát triển",
+            "testing": "Kiểm thử",
+            "devops": "DevOps",
+            "ai": "AI & ML",
+            "security": "Bảo mật"
+        },
+        "sort": {
+            "stars": "Nhiều sao nhất",
+            "recent": "Gần đây nhất",
+            "name": "Tên"
+        },
+        "card": {
+            "by": "bởi",
+            "stars": "sao",
+            "install": "Cài đặt"
+        }
+    },
+    "docs": {
+        "title": "Tài liệu CLI",
+        "subtitle": "Tham khảo đầy đủ cho Agent Skills CLI. Cài đặt, quản lý và đồng bộ kỹ năng AI trên {count} tác tử.",
+        "version": "v1.0.8",
+        "commands": "Lệnh",
+        "agents": "Tác tử",
+        "search": "Tìm kiếm tài liệu...",
+        "sections": {
+            "installation": "Cài đặt",
+            "quickstart": "Bắt đầu nhanh",
+            "platforms": "Hỗ trợ nền tảng",
+            "core": "Lệnh cốt lõi",
+            "marketplace": "Chợ",
+            "export": "Xuất",
+            "utilities": "Tiện ích"
+        },
+        "cta": {
+            "browse": "Duyệt chợ",
+            "github": "Xem trên GitHub"
+        }
+    },
+    "faq": {
+        "title": "Câu hỏi thường gặp",
+        "subtitle": "Mọi thứ bạn cần biết về Agent Skills CLI",
+        "categories": {
+            "general": "Tổng quan",
+            "installation": "Cài đặt",
+            "usage": "Sử dụng",
+            "troubleshooting": "Khắc phục sự cố"
+        }
+    },
+    "footer": {
+        "description": "Trình quản lý gói phổ quát cho kỹ năng tác tử AI.",
+        "links": {
+            "docs": "Tài liệu",
+            "marketplace": "Chợ",
+            "github": "GitHub",
+            "npm": "npm"
+        },
+        "copyright": "© {year} Agent Skills. Mã nguồn mở."
+    },
+    "categories": {
+        "development": "Phát triển",
+        "testing": "Kiểm thử",
+        "devops": "DevOps",
+        "ai": "AI & ML",
+        "security": "Bảo mật",
+        "all": "Tất cả kỹ năng"
+    }
+}

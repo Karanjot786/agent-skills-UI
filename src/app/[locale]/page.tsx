@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Terminal, Globe, Zap, Box, Code2, Search, Download, Share2, Star, TrendingUp, Users, Package, ChevronRight, Sparkles, Crown, Clock } from "lucide-react";
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState, useRef } from "react";
@@ -11,6 +11,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { TerminalAnimation } from "@/components/terminal-animation";
 import { CategoriesShowcase, TrendingSkills, TopContributors, RecentSkills } from "@/components/home";
+import { useTranslations } from 'next-intl';
 
 interface Skill {
   id: string;
@@ -43,6 +44,8 @@ const categories = [
 ];
 
 export default function Home() {
+  const t = useTranslations('home');
+  const tc = useTranslations('common');
   const [stats, setStats] = useState<Stats>({ totalSkills: 0, uniqueAuthors: 0 });
   const [trending, setTrending] = useState<Skill[]>([]);
   const [recent, setRecent] = useState<Skill[]>([]);
@@ -96,7 +99,7 @@ export default function Home() {
               >
                 <Badge variant="outline" className="inline-flex items-center gap-2 px-4 py-2 text-sm border-cyan-500/50 text-cyan-400 backdrop-blur-sm">
                   <Sparkles className="size-4" />
-                  <CountUp end={stats.totalSkills} duration={2} separator="," />+ Skills Available
+                  <CountUp end={stats.totalSkills} duration={2} separator="," />+ {tc('skillsAvailable')}
                 </Badge>
               </motion.div>
 
@@ -108,24 +111,22 @@ export default function Home() {
                 className="mb-8"
               >
                 <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-                  <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent">The </span>
-                  <strong className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Package Manager</strong>
+                  <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent">{t('title1')} </span>
+                  <strong className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{t('title2')}</strong>
                   <br />
-                  <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent"> for</span>
-                  <strong className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">AI Agent</strong>
-                  <em className="italic bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent"> Skills</em>
+                  <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent"> {t('title3')}</span>
+                  <strong className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{t('title4')}</strong>
+                  <em className="italic bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent"> {t('title5')}</em>
                 </h1>
               </motion.div>
 
-              {/* Description */}
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="mx-auto mb-10 max-w-2xl text-lg text-zinc-400 leading-relaxed"
               >
-                Install, share, and discover skills for Claude, Cursor, Copilot, and more.
-                Like npm, but for AI coding assistants.
+                {t('subtitle')}
               </motion.p>
             </div>
 
@@ -144,7 +145,7 @@ export default function Home() {
                 <span className="text-cyan-500 font-mono">$</span>
                 <code className="flex-1 text-zinc-300 font-mono text-sm">npm install -g agent-skills-cli</code>
                 <span className={`text-xs px-2 py-1 rounded ${copied ? 'bg-green-500/20 text-green-400' : 'bg-white/5 text-zinc-500 group-hover:text-cyan-400'} transition-colors`}>
-                  {copied ? 'Copied!' : 'Click to copy'}
+                  {copied ? tc('copied') : tc('clickToCopy')}
                 </span>
               </div>
             </motion.div>
@@ -187,7 +188,7 @@ export default function Home() {
                     <div className="border border-cyan-500/30 bg-gradient-to-b from-cyan-400 to-cyan-600 h-[40px] rounded-full flex items-center justify-center text-black">
                       <p className="font-semibold tracking-tight mr-3 ml-3 flex items-center gap-2 justify-center text-sm">
                         <Terminal className="size-4 animate-pulse" />
-                        Browse Skills
+                        {tc('browseSkills')}
                       </p>
                     </div>
                     <div className="text-muted-foreground group-hover:ml-4 ease-in-out transition-all size-[24px] flex items-center justify-center rounded-full border-2 border-border">
@@ -238,7 +239,7 @@ export default function Home() {
                     <CountUp end={stats.totalSkills} duration={2.5} separator="," />+
                   </span>
                 </div>
-                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">Skills Available</div>
+                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">{t('statsBar.skillsAvailable')}</div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -253,7 +254,7 @@ export default function Home() {
                     <CountUp end={stats.uniqueAuthors} duration={2.5} separator="," />+
                   </span>
                 </div>
-                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">Contributors</div>
+                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">{t('statsBar.contributors')}</div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -266,7 +267,7 @@ export default function Home() {
                   <Terminal className="size-5 text-green-400" />
                   <span className="text-3xl font-bold text-white">29</span>
                 </div>
-                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">Agent Platforms</div>
+                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">{t('statsBar.agentPlatforms')}</div>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -279,7 +280,7 @@ export default function Home() {
                   <Sparkles className="size-5 text-yellow-400" />
                   <span className="text-3xl font-bold text-white">100%</span>
                 </div>
-                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">Open Source</div>
+                <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">{t('statsBar.openSource')}</div>
               </motion.div>
             </div>
           </div>
@@ -317,15 +318,15 @@ export default function Home() {
                     <div key={i} className="size-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 border-2 border-black" />
                   ))}
                 </div>
-                <span className="text-sm text-zinc-400 ml-2">Join <span className="text-white font-semibold">{stats.uniqueAuthors.toLocaleString()}+</span> developers</span>
+                <span className="text-sm text-zinc-400 ml-2">{t('cta.joinDevelopers', { count: stats.uniqueAuthors.toLocaleString() })}</span>
               </div>
 
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to supercharge your{' '}
-                <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">AI workflow</span>?
+                {t('cta.title')}{' '}
+                <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{t('cta.titleHighlight')}</span>?
               </h2>
               <p className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
-                Install skills in seconds. Share your own. Join the fastest-growing AI skills ecosystem.
+                {t('cta.subtitle')}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <Link
@@ -333,7 +334,7 @@ export default function Home() {
                   className="rounded-full font-bold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-6 py-3 text-base"
                 >
                   <Package className="size-5" />
-                  Explore Skills
+                  {t('cta.exploreSkills')}
                 </Link>
                 <a
                   href="https://github.com/Karanjot786/agent-skills-cli"
@@ -341,7 +342,7 @@ export default function Home() {
                   className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center border border-white/20 hover:bg-white/5 text-white px-6 py-3 text-base"
                 >
                   <Star className="size-4" />
-                  Star on GitHub
+                  {t('cta.starOnGithub')}
                 </a>
               </div>
             </motion.div>

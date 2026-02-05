@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { ChevronDown, Terminal, HelpCircle, Zap, Shield, Globe } from 'lucide-react';

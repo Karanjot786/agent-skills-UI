@@ -7,7 +7,7 @@ import { Search, Loader2, Star, Copy, Terminal, Filter, ChevronDown, ArrowUpDown
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { SkillGridSkeleton } from "@/components/skeletons";

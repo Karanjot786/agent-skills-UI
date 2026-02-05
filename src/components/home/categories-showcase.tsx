@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Code2, Box, Globe, Sparkles, Zap, Package, ChevronRight, ArrowRight, Shield, Database, Cpu } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface CategoryCounts {
     [key: string]: number;
@@ -31,6 +32,9 @@ function formatCount(count: number): string {
 }
 
 export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: CategoriesShowcaseProps) {
+    const t = useTranslations('home');
+    const tc = useTranslations('categories');
+    const tcm = useTranslations('common');
     // Map display slugs to actual database category names
     const categoryMapping: Record<string, string[]> = {
         'development': ['ai-development', 'skill-tools'],
@@ -73,12 +77,12 @@ export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: Categor
                         viewport={{ once: true }}
                     >
                         <span className="text-cyan-400 text-sm font-medium tracking-wider uppercase mb-2 block">
-                            Explore
+                            {t('sections.categories')}
                         </span>
                         <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-                            Browse by{' '}
+                            {t('sections.categoriesDesc')}{' '}
                             <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                                Category
+
                             </span>
                         </h2>
                     </motion.div>
@@ -91,7 +95,7 @@ export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: Categor
                             href="/marketplace"
                             className="hidden md:flex items-center gap-2 text-zinc-400 hover:text-cyan-400 transition-colors group"
                         >
-                            View All Categories
+                            {tcm('viewAll')}
                             <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </motion.div>
@@ -144,7 +148,7 @@ export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: Categor
                                     <Package className="size-8 text-white" />
                                 </div>
                                 <h3 className="text-3xl font-bold mb-3 group-hover:text-cyan-400 transition-colors">
-                                    All Skills
+                                    {tc('all')}
                                 </h3>
                                 <p className="text-zinc-400 text-base leading-relaxed max-w-xs">
                                     Browse the complete collection of AI agent skills from the community
@@ -156,7 +160,7 @@ export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: Categor
                                     <span className="text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                                         {formatCount(totalSkills)}
                                     </span>
-                                    <p className="text-zinc-500 text-sm mt-1">Available skills</p>
+                                    <p className="text-zinc-500 text-sm mt-1">{tcm('skillsAvailable')}</p>
                                 </div>
                                 <div className="size-14 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:border-cyan-500 transition-all duration-300 group-hover:scale-110">
                                     <ArrowRight className="size-6 text-zinc-400 group-hover:text-black transition-colors" />
@@ -375,7 +379,7 @@ export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: Categor
                         href="/marketplace"
                         className="flex items-center justify-center gap-2 w-full py-4 rounded-xl border border-white/10 text-zinc-400 hover:text-cyan-400 hover:border-cyan-500/30 transition-all"
                     >
-                        View All Categories
+                        {tcm('viewAll')}
                         <ArrowRight className="size-4" />
                     </Link>
                 </motion.div>

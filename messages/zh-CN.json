@@ -1,0 +1,142 @@
+{
+    "common": {
+        "copied": "已复制！",
+        "clickToCopy": "点击复制",
+        "loading": "加载中...",
+        "viewAll": "查看全部",
+        "learnMore": "了解更多",
+        "getStarted": "开始使用",
+        "browseSkills": "浏览技能",
+        "installNow": "立即安装",
+        "skills": "技能",
+        "agents": "代理",
+        "authors": "作者",
+        "available": "可用",
+        "skillsAvailable": "个技能可用"
+    },
+    "nav": {
+        "docs": "文档",
+        "marketplace": "市场",
+        "faq": "常见问题",
+        "stats": "统计",
+        "github": "GitHub",
+        "getStarted": "开始使用"
+    },
+    "home": {
+        "badge": "{count}+ 个技能可用",
+        "title1": "",
+        "title2": "包管理器",
+        "title3": "用于",
+        "title4": "AI 代理",
+        "title5": "技能",
+        "subtitle": "为 Claude、Cursor、Copilot 等安装、分享和发现技能。就像用于 AI 编程助手的 npm。",
+        "install": "npm install -g agent-skills-cli",
+        "cta": {
+            "browse": "浏览技能",
+            "docs": "阅读文档",
+            "joinDevelopers": "加入 {count}+ 开发者",
+            "title": "准备好增强你的",
+            "titleHighlight": "AI工作流程",
+            "subtitle": "几秒钟内安装技能。分享你自己的。加入增长最快的AI技能生态系统。",
+            "exploreSkills": "探索技能",
+            "starOnGithub": "在GitHub上加星"
+        },
+        "stats": {
+            "skills": "技能总数",
+            "agents": "AI代理",
+            "authors": "贡献者"
+        },
+        "sections": {
+            "trending": "热门技能",
+            "trendingDesc": "本周最受欢迎的技能",
+            "recent": "最近添加",
+            "recentDesc": "来自社区的新技能",
+            "categories": "分类",
+            "categoriesDesc": "按分类浏览",
+            "contributors": "顶级贡献者",
+            "contributorsDesc": "最活跃的技能作者"
+        },
+        "statsBar": {
+            "skillsAvailable": "可用技能",
+            "contributors": "贡献者",
+            "agentPlatforms": "代理平台",
+            "openSource": "开源"
+        }
+    },
+    "marketplace": {
+        "title": "技能市场",
+        "subtitle": "发现 {count}+ 个用于 AI 编程助手的技能",
+        "search": {
+            "placeholder": "搜索技能...",
+            "noResults": "未找到技能",
+            "loading": "搜索中..."
+        },
+        "filters": {
+            "all": "全部",
+            "development": "开发",
+            "testing": "测试",
+            "devops": "DevOps",
+            "ai": "AI & ML",
+            "security": "安全"
+        },
+        "sort": {
+            "stars": "最多星标",
+            "recent": "最近更新",
+            "name": "名称"
+        },
+        "card": {
+            "by": "作者",
+            "stars": "星标",
+            "install": "安装"
+        }
+    },
+    "docs": {
+        "title": "CLI 文档",
+        "subtitle": "Agent Skills CLI 的完整参考。在 {count} 个代理之间安装、管理和同步 AI 技能。",
+        "version": "v1.0.8",
+        "commands": "命令",
+        "agents": "代理",
+        "search": "搜索文档...",
+        "sections": {
+            "installation": "安装",
+            "quickstart": "快速开始",
+            "platforms": "平台支持",
+            "core": "核心命令",
+            "marketplace": "市场",
+            "export": "导出",
+            "utilities": "实用工具"
+        },
+        "cta": {
+            "browse": "浏览市场",
+            "github": "在 GitHub 查看"
+        }
+    },
+    "faq": {
+        "title": "常见问题",
+        "subtitle": "关于 Agent Skills CLI 您需要了解的一切",
+        "categories": {
+            "general": "常规",
+            "installation": "安装",
+            "usage": "使用方法",
+            "troubleshooting": "故障排除"
+        }
+    },
+    "footer": {
+        "description": "AI 代理技能的通用包管理器。",
+        "links": {
+            "docs": "文档",
+            "marketplace": "市场",
+            "github": "GitHub",
+            "npm": "npm"
+        },
+        "copyright": "© {year} Agent Skills. 开源。"
+    },
+    "categories": {
+        "development": "开发",
+        "testing": "测试",
+        "devops": "DevOps",
+        "ai": "AI & ML",
+        "security": "安全",
+        "all": "所有技能"
+    }
+}

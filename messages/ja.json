@@ -1,0 +1,143 @@
+{
+    "common": {
+        "copied": "コピーしました！",
+        "clickToCopy": "クリックしてコピー",
+        "loading": "読み込み中...",
+        "viewAll": "すべて見る",
+        "learnMore": "詳細を見る",
+        "getStarted": "始める",
+        "browseSkills": "スキルを探す",
+        "installNow": "今すぐインストール",
+        "skills": "スキル",
+        "agents": "エージェント",
+        "authors": "作成者",
+        "available": "利用可能",
+        "skillsAvailable": "スキルが利用可能"
+    },
+    "nav": {
+        "docs": "ドキュメント",
+        "marketplace": "マーケットプレイス",
+        "faq": "よくある質問",
+        "stats": "統計",
+        "github": "GitHub",
+        "getStarted": "始める"
+    },
+    "home": {
+        "badge": "{count}+ スキルが利用可能",
+        "title1": "",
+        "title2": "パッケージマネージャー",
+        "title3": "",
+        "title4": "AIエージェント",
+        "title5": "スキル用",
+        "subtitle": "Claude、Cursor、Copilotなどのスキルをインストール、共有、発見。AIコーディングアシスタント用のnpmのようなツール。",
+        "install": "npm install -g agent-skills-cli",
+        "cta": {
+            "browse": "スキルを探す",
+            "docs": "ドキュメントを読む",
+            "joinDevelopers": "{count}+人の開発者に参加",
+            "title": "あなたの",
+            "titleHighlight": "AIワークフロー",
+            "titleEnd": "を強化する準備はできていますか？",
+            "subtitle": "数秒でスキルをインストール。あなた自身のものを共有。最も急成長しているAIスキルエコシステムに参加。",
+            "exploreSkills": "スキルを探す",
+            "starOnGithub": "GitHubでスター"
+        },
+        "stats": {
+            "skills": "総スキル数",
+            "agents": "AIエージェント",
+            "authors": "コントリビューター"
+        },
+        "sections": {
+            "trending": "人気のスキル",
+            "trendingDesc": "今週の人気スキル",
+            "recent": "最近追加",
+            "recentDesc": "コミュニティからの新しいスキル",
+            "categories": "カテゴリ",
+            "categoriesDesc": "カテゴリ別に閲覧",
+            "contributors": "トップ貢献者",
+            "contributorsDesc": "最も活発なスキル作成者"
+        },
+        "statsBar": {
+            "skillsAvailable": "スキル利用可能",
+            "contributors": "貢献者",
+            "agentPlatforms": "エージェントプラットフォーム",
+            "openSource": "オープンソース"
+        }
+    },
+    "marketplace": {
+        "title": "スキルマーケットプレイス",
+        "subtitle": "AIコーディングアシスタント用の{count}+スキルを発見",
+        "search": {
+            "placeholder": "スキルを検索...",
+            "noResults": "スキルが見つかりません",
+            "loading": "検索中..."
+        },
+        "filters": {
+            "all": "すべて",
+            "development": "開発",
+            "testing": "テスト",
+            "devops": "DevOps",
+            "ai": "AI・ML",
+            "security": "セキュリティ"
+        },
+        "sort": {
+            "stars": "スター順",
+            "recent": "新着順",
+            "name": "名前順"
+        },
+        "card": {
+            "by": "作成者",
+            "stars": "スター",
+            "install": "インストール"
+        }
+    },
+    "docs": {
+        "title": "CLIドキュメント",
+        "subtitle": "Agent Skills CLIの完全リファレンス。{count}のエージェント間でAIスキルをインストール、管理、同期。",
+        "version": "v1.0.8",
+        "commands": "コマンド",
+        "agents": "エージェント",
+        "search": "ドキュメントを検索...",
+        "sections": {
+            "installation": "インストール",
+            "quickstart": "クイックスタート",
+            "platforms": "プラットフォームサポート",
+            "core": "コアコマンド",
+            "marketplace": "マーケットプレイス",
+            "export": "エクスポート",
+            "utilities": "ユーティリティ"
+        },
+        "cta": {
+            "browse": "マーケットプレイスを見る",
+            "github": "GitHubで見る"
+        }
+    },
+    "faq": {
+        "title": "よくある質問",
+        "subtitle": "Agent Skills CLIについて知っておくべきすべてのこと",
+        "categories": {
+            "general": "一般",
+            "installation": "インストール",
+            "usage": "使用方法",
+            "troubleshooting": "トラブルシューティング"
+        }
+    },
+    "footer": {
+        "description": "AIエージェントスキルのためのユニバーサルパッケージマネージャー。",
+        "links": {
+            "docs": "ドキュメント",
+            "marketplace": "マーケットプレイス",
+            "github": "GitHub",
+            "npm": "npm"
+        },
+        "copyright": "© {year} Agent Skills. オープンソース。"
+    },
+    "categories": {
+        "development": "開発",
+        "testing": "テスト",
+        "devops": "DevOps",
+        "ai": "AI・ML",
+        "security": "セキュリティ",
+        "all": "すべてのスキル"
+    }
+}

@@ -1,0 +1,142 @@
+{
+    "common": {
+        "copied": "Copied!",
+        "clickToCopy": "Click to copy",
+        "loading": "Loading...",
+        "viewAll": "View all",
+        "learnMore": "Learn more",
+        "getStarted": "Get Started",
+        "browseSkills": "Browse Skills",
+        "installNow": "Install Now",
+        "skills": "Skills",
+        "agents": "Agents",
+        "authors": "Authors",
+        "available": "Available",
+        "skillsAvailable": "Skills Available"
+    },
+    "nav": {
+        "docs": "Documentation",
+        "marketplace": "Marketplace",
+        "faq": "FAQ",
+        "stats": "Stats",
+        "github": "GitHub",
+        "getStarted": "Get Started"
+    },
+    "home": {
+        "badge": "{count}+ Skills Available",
+        "title1": "The",
+        "title2": "Package Manager",
+        "title3": "for",
+        "title4": "AI Agent",
+        "title5": "Skills",
+        "subtitle": "Install, share, and discover skills for Claude, Cursor, Copilot, and more. Like npm, but for AI coding assistants.",
+        "install": "npm install -g agent-skills-cli",
+        "cta": {
+            "browse": "Browse Skills",
+            "docs": "Read Docs",
+            "joinDevelopers": "Join {count}+ developers",
+            "title": "Ready to supercharge your",
+            "titleHighlight": "AI workflow",
+            "subtitle": "Install skills in seconds. Share your own. Join the fastest-growing AI skills ecosystem.",
+            "exploreSkills": "Explore Skills",
+            "starOnGithub": "Star on GitHub"
+        },
+        "stats": {
+            "skills": "Total Skills",
+            "agents": "AI Agents",
+            "authors": "Contributors"
+        },
+        "sections": {
+            "trending": "Trending Skills",
+            "trendingDesc": "Most popular skills this week",
+            "recent": "Recently Added",
+            "recentDesc": "Fresh skills from the community",
+            "categories": "Categories",
+            "categoriesDesc": "Browse by category",
+            "contributors": "Top Contributors",
+            "contributorsDesc": "Most active skill authors"
+        },
+        "statsBar": {
+            "skillsAvailable": "Skills Available",
+            "contributors": "Contributors",
+            "agentPlatforms": "Agent Platforms",
+            "openSource": "Open Source"
+        }
+    },
+    "marketplace": {
+        "title": "Skills Marketplace",
+        "subtitle": "Discover {count}+ skills for AI coding assistants",
+        "search": {
+            "placeholder": "Search skills...",
+            "noResults": "No skills found",
+            "loading": "Searching..."
+        },
+        "filters": {
+            "all": "All",
+            "development": "Development",
+            "testing": "Testing",
+            "devops": "DevOps",
+            "ai": "AI & ML",
+            "security": "Security"
+        },
+        "sort": {
+            "stars": "Most Stars",
+            "recent": "Most Recent",
+            "name": "Name"
+        },
+        "card": {
+            "by": "by",
+            "stars": "stars",
+            "install": "Install"
+        }
+    },
+    "docs": {
+        "title": "CLI Documentation",
+        "subtitle": "Complete reference for the Agent Skills CLI. Install, manage, and sync AI skills across {count} agents.",
+        "version": "v1.0.8",
+        "commands": "Commands",
+        "agents": "Agents",
+        "search": "Search docs...",
+        "sections": {
+            "installation": "Installation",
+            "quickstart": "Quick Start",
+            "platforms": "Platform Support",
+            "core": "Core Commands",
+            "marketplace": "Marketplace",
+            "export": "Export",
+            "utilities": "Utilities"
+        },
+        "cta": {
+            "browse": "Browse Marketplace",
+            "github": "View on GitHub"
+        }
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "subtitle": "Everything you need to know about Agent Skills CLI",
+        "categories": {
+            "general": "General",
+            "installation": "Installation",
+            "usage": "Usage",
+            "troubleshooting": "Troubleshooting"
+        }
+    },
+    "footer": {
+        "description": "The universal package manager for AI agent skills.",
+        "links": {
+            "docs": "Documentation",
+            "marketplace": "Marketplace",
+            "github": "GitHub",
+            "npm": "npm"
+        },
+        "copyright": "© {year} Agent Skills. Open Source."
+    },
+    "categories": {
+        "development": "Development",
+        "testing": "Testing",
+        "devops": "DevOps",
+        "ai": "AI & ML",
+        "security": "Security",
+        "all": "All Skills"
+    }
+}
