@@ -105,6 +105,7 @@ export default async function sitemap(props: { id: string | Promise<string> }): 
 
     // Parse ID
     const parts = id.split('---');
+
     if (parts.length !== 4) {
         console.error(`Invalid sitemap ID structure: ${id}`);
         return [];
