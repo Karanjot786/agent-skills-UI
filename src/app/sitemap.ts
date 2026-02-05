@@ -159,7 +159,10 @@ export default async function sitemap(props: { id: string | Promise<string> }): 
         skills
             .filter(skill => skill.scoped_name)
             .forEach(skill => {
-                const skillPath = `/marketplace/${skill.scoped_name}`;
+                // Ensure proper URL encoding for scoped_name parts (e.g. handles spaces and &)
+                const parts = skill.scoped_name!.split('/');
+                const encodedScopedName = parts.map(part => encodeURIComponent(part)).join('/');
+                const skillPath = `/marketplace/${encodedScopedName}`;
 
                 sitemapEntries.push({
                     url: getUrl(skillPath, locale),
