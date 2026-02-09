@@ -4,8 +4,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Main connection URL with pooling parameters
+  // Add ?connection_limit=20&pool_timeout=30 to your DATABASE_URL env var
+  // Example: postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeout=30
+  url       = env("DATABASE_URL")
+  // Direct connection for migrations (bypasses pgBouncer if used)
+  directUrl = env("DIRECT_URL")
 }
 
 model skills {

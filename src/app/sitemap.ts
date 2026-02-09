@@ -51,27 +51,27 @@ export async function generateSitemaps(): Promise<{ id: string }[]> {
         sitemaps.push({ id: `${locale}---static---base---0` });
     }
 
-    // 2. Categories
+    // 2. Categories - Optimized with single grouped query
     try {
-        const categories = await prisma.categories.findMany({
-            select: { id: true }
+        // Single query: Get count per category instead of N separate count queries
+        const categoryCounts = await prisma.skills.groupBy({
+            by: ['category'],
+            _count: { id: true },
+            where: { category: { not: null } },
         });
 
-        for (const cat of categories) {
-            const count = await prisma.skills.count({
-                where: { category: cat.id }
-            });
-            const chunks = Math.ceil(count / CHUNK_SIZE);
-            if (count > 0) {
+        for (const cc of categoryCounts) {
+            if (cc.category && cc._count.id > 0) {
+                const chunks = Math.ceil(cc._count.id / CHUNK_SIZE);
                 for (const locale of locales) {
                     for (let i = 0; i < chunks; i++) {
-                        sitemaps.push({ id: `${locale}---category---${cat.id}---${i}` });
+                        sitemaps.push({ id: `${locale}---category---${cc.category}---${i}` });
                     }
                 }
             }
         }
 
-        // 3. Misc (Uncategorized)
+        // 3. Misc (Uncategorized) - Also optimized
         const miscCount = await prisma.skills.count({
             where: { category: null }
         });
