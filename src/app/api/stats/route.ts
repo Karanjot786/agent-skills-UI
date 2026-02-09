@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
 // Cache response for 1 hour
 export const revalidate = 3600;
@@ -20,7 +21,21 @@ interface SkillPreview {
     author_avatar: string | null;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+    // Rate limiting
+    const ip = getClientIp(request);
+    const rateLimitResult = rateLimit(`stats:${ip}`, RATE_LIMITS.stats);
+
+    if (!rateLimitResult.success) {
+        return NextResponse.json(
+            { error: 'Too many requests. Please try again later.' },
+            {
+                status: 429,
+                headers: rateLimitHeaders(rateLimitResult),
+            }
+        );
+    }
+
     try {
         // Start all queries in parallel for speed
         const [cachedStats, trending, recent, categoryCounts] = await Promise.all([

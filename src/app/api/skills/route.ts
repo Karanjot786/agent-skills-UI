@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface Skill {
     id: string;
@@ -18,6 +19,20 @@ interface Skill {
 }
 
 export async function GET(request: Request) {
+    // Rate limiting
+    const ip = getClientIp(request);
+    const rateLimitResult = rateLimit(`skills:${ip}`, RATE_LIMITS.search);
+
+    if (!rateLimitResult.success) {
+        return NextResponse.json(
+            { error: 'Too many requests. Please try again later.' },
+            {
+                status: 429,
+                headers: rateLimitHeaders(rateLimitResult),
+            }
+        );
+    }
+
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
     const limit = parseInt(searchParams.get('limit') || '30');
