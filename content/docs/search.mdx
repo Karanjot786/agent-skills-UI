@@ -1,0 +1,45 @@
+---
+title: "Search"
+order: 3
+icon: "search"
+description: "Search and install skills interactively"
+commands: ["search"]
+---
+
+### `search`
+
+Search and install skills from the marketplace with interactive FZF-style filtering.
+
+```bash
+skills search [query...] [options]
+# Alias: skills s [query...]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-l, --limit <n>` | Maximum results to show (default: 20) |
+| `-s, --sort <by>` | Sort by: `stars`, `recent`, `name` (default: `stars`) |
+| `-i, --interactive` | Launch interactive FZF-style search |
+| `--json` | Output as JSON for scripting (no interactive prompt) |
+
+**Examples:**
+```bash
+skills search react              # Interactive search with install prompt
+skills search typescript --json  # JSON output for scripting
+skills s --interactive           # Pure FZF-style browsing
+```
+
+**Output (`--json`):**
+```json
+{
+  "skills": [
+    {
+      "name": "typescript",
+      "description": "TypeScript code style...",
+      "author": "lobehub",
+      "stars": 71947,
+      "forks": 14595
+    }
+  ]
+}
+```

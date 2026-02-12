@@ -62,6 +62,24 @@
             "contributors": "貢献者",
             "agentPlatforms": "エージェントプラットフォーム",
             "openSource": "オープンソース"
+        },
+        "submitRepo": {
+            "contributors": "{count}+人の貢献者がスキルを共有中",
+            "title": "スキルリポジトリを",
+            "titleHighlight": "送信する",
+            "subtitle": "コミュニティとスキルを共有しましょう。GitHubリポジトリのリンクを貼るだけで、すべてのSKILL.mdファイルを即座にインデックスします。",
+            "browseMarketplace": "マーケットプレイスを見る",
+            "starOnGithub": "GitHubでスター",
+            "cliHint": "CLIからも可能:",
+            "placeholder": "ユーザー/リポ または GitHub URL",
+            "submit": "送信",
+            "indexing": "インデックス中...",
+            "fetchHint": "リポ情報の取得とSKILL.mdファイルのスキャンを自動で行います。",
+            "submitted": "送信完了！",
+            "skillsIndexed": "{count}件のスキルをインデックス",
+            "skillsIndexedPlural": "{count}件のスキルをインデックス",
+            "liveMessage": "スキルがマーケットプレイスに公開されました！",
+            "submitAnother": "別のリポジトリを送信"
         }
     },
     "marketplace": {

@@ -1,0 +1,134 @@
+---
+title: "Getting Started"
+order: 1
+icon: "book-open"
+description: "Installation, quick start, and platform support"
+commands: []
+---
+
+## Installation
+
+```bash
+npm install -g agent-skills-cli
+```
+
+Requires Node.js 18 or higher. After installation, the `skills` command will be available globally.
+
+## Quick Start
+
+```bash
+# ⭐ Install a skill (auto-detects platforms)
+skills install @facebook/verify
+
+# ⭐ Install from a GitHub repo
+skills add vercel-labs/agent-skills
+
+# Install to specific platforms
+skills install @anthropic/pdf -a claude,cursor
+
+# Install to ALL 42 platforms at once
+skills install @lobehub/typescript --all
+
+# Install globally (home directory)
+skills install pdf -g -a claude
+
+# Install specific skill from repo
+skills add anthropic/skills@xlsx
+
+# List skills in a repo
+skills add owner/repo --list
+
+# Remove installed skills
+skills remove xlsx
+
+# Check installed skills
+skills check
+
+# Update skills from source
+skills update --all
+
+# Search & install interactively
+skills search typescript
+
+# Export to AI agents
+skills export -t cursor,claude,copilot
+```
+
+## Platform Support
+
+All **42 agents** are supported. Each agent uses its own directory:
+
+| Agent | Directory |
+|-------|-----------|
+| Cursor | `.cursor/skills` |
+| Claude Code | `.claude/skills` |
+| GitHub Copilot | `.github/skills` |
+| Codex | `.codex/skills` |
+| Antigravity | `.agent/skills` |
+| OpenCode | `.opencode/skill` |
+| Amp | `.agents/skills` |
+| Kilo Code | `.kilocode/skills` |
+| Roo Code | `.roo/skills` |
+| Goose | `.goose/skills` |
+| Cline | `.cline/skills` |
+| CodeBuddy | `.codebuddy/skills` |
+| Command Code | `.commandcode/skills` |
+| Continue | `.continue/skills` |
+| Crush | `.crush/skills` |
+| Clawdbot | `skills` |
+| Droid | `.factory/skills` |
+| Gemini CLI | `.gemini/skills` |
+| Kiro CLI | `.kiro/skills` |
+| MCPJam | `.mcpjam/skills` |
+| Mux | `.mux/skills` |
+| OpenHands | `.openhands/skills` |
+| Pi | `.pi/skills` |
+| Qoder | `.qoder/skills` |
+| Qwen Code | `.qwen/skills` |
+| Trae | `.trae/skills` |
+| Windsurf | `.windsurf/skills` |
+| Zencoder | `.zencoder/skills` |
+| Neovate | `.neovate/skills` |
+| Ara | `.ara/skills` |
+| Aide | `.aide/skills` |
+| Alex | `.alex/skills` |
+| BB | `.bb/skills` |
+| CodeStory | `.codestory/skills` |
+| Helix AI | `.helix/skills` |
+| Meekia | `.meekia/skills` |
+| Pear AI | `.pearai/skills` |
+| Adal | `.adal/skills` |
+| Pochi | `.pochi/skills` |
+| Sourcegraph Cody | `.sourcegraph/skills` |
+| Void AI | `.void/skills` |
+| Zed | `.zed/skills` |
+
+## Environment & Configuration
+
+### Global Skills Directory
+```
+~/.antigravity/skills/          # All installed skills
+~/.antigravity/marketplace.json # Marketplace configuration
+```
+
+### Project Skills Directory
+```
+./skills/                       # Local project skills
+```
+
+### SKILL.md Format
+```markdown
+---
+name: my-skill
+description: What this skill does and when to use it
+---
+
+# My Skill
+
+## When to use this skill
+Use this skill when...
+
+## Instructions
+1. Step one...
+2. Step two...
+```

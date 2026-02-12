@@ -35,12 +35,20 @@ model skills {
   from_manifest    Boolean   @default(false)
   manifest_version String?
   category         String?
+  fts              Unsupported("tsvector")? @default(dbgenerated("((setweight(to_tsvector('english'::regconfig, COALESCE(name, ''::text)), 'A'::\"char\") || setweight(to_tsvector('english'::regconfig, COALESCE(description, ''::text)), 'B'::\"char\")) || setweight(to_tsvector('english'::regconfig, COALESCE(author, ''::text)), 'C'::\"char\"))"))
+  search_vector    Unsupported("tsvector")?
 
   @@index([author])
   @@index([name])
   @@index([stars(sort: Desc)])
   @@index([category])
   @@index([updated_at(sort: Desc)])
+  @@index([author, author_avatar], map: "idx_skills_author_avatar")
+  @@index([scoped_name], map: "skills_scoped_idx")
+  @@index([fts], type: Gin)
+  @@index([search_vector], map: "idx_skills_search", type: Gin)
+  @@index([search_vector], map: "idx_skills_search_vector", type: Gin)
+  @@index([stars(sort: Desc)], map: "idx_skills_stars")
 }
 
 model categories {
@@ -74,4 +82,24 @@ model telemetry_events {
   @@index([event])
   @@index([createdAt(sort: Desc)])
   @@map("telemetry_events")
+}
+
+// Community-submitted skills repositories
+model repo_submissions {
+  id             String   @id @default(cuid())
+  full_name      String   @unique  // owner/repo — the only user input
+  html_url       String?
+  description    String?
+  stars          Int      @default(0)
+  language       String?
+  license        String?
+  skills_count   Int      @default(0)
+  skill_paths    String[] @default([])
+  default_branch String   @default("main")
+  status         String   @default("pending") // pending, approved, rejected
+  reviewed_at    DateTime? @db.Timestamptz
+  submitted_at   DateTime @default(now()) @db.Timestamptz
+
+  @@index([status])
+  @@index([submitted_at(sort: Desc)])
 }

@@ -61,6 +61,24 @@
             "contributors": "Người đóng góp",
             "agentPlatforms": "Nền tảng tác tử",
             "openSource": "Mã nguồn mở"
+        },
+        "submitRepo": {
+            "contributors": "{count}+ người đóng góp chia sẻ kỹ năng",
+            "title": "Gửi",
+            "titleHighlight": "Kho Kỹ Năng",
+            "subtitle": "Chia sẻ kỹ năng với cộng đồng. Chỉ cần dán liên kết kho GitHub — chúng tôi sẽ lập chỉ mục tất cả tệp SKILL.md ngay lập tức.",
+            "browseMarketplace": "Duyệt chợ",
+            "starOnGithub": "Star trên GitHub",
+            "cliHint": "Cũng qua CLI:",
+            "placeholder": "chủ-sở-hữu/repo hoặc URL GitHub",
+            "submit": "Gửi",
+            "indexing": "Đang lập chỉ mục...",
+            "fetchHint": "Chúng tôi sẽ tự động lấy thông tin repo và quét tệp SKILL.md.",
+            "submitted": "Đã gửi!",
+            "skillsIndexed": "{count} kỹ năng đã lập chỉ mục",
+            "skillsIndexedPlural": "{count} kỹ năng đã lập chỉ mục",
+            "liveMessage": "Kỹ năng đã có trên chợ!",
+            "submitAnother": "Gửi thêm"
         }
     },
     "marketplace": {

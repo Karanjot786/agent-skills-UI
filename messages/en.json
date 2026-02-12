@@ -61,6 +61,24 @@
             "contributors": "Contributors",
             "agentPlatforms": "Agent Platforms",
             "openSource": "Open Source"
+        },
+        "submitRepo": {
+            "contributors": "{count}+ contributors sharing skills",
+            "title": "Submit Your",
+            "titleHighlight": "Skills Repo",
+            "subtitle": "Share your agent skills with the community. Just paste your GitHub repo link — we'll index all SKILL.md files instantly.",
+            "browseMarketplace": "Browse Marketplace",
+            "starOnGithub": "Star on GitHub",
+            "cliHint": "Also via CLI:",
+            "placeholder": "owner/repo or GitHub URL",
+            "submit": "Submit",
+            "indexing": "Indexing...",
+            "fetchHint": "We'll fetch repo info & scan for SKILL.md files automatically.",
+            "submitted": "Submitted!",
+            "skillsIndexed": "{count} skill indexed",
+            "skillsIndexedPlural": "{count} skills indexed",
+            "liveMessage": "Skills are now live in the marketplace!",
+            "submitAnother": "Submit another"
         }
     },
     "marketplace": {

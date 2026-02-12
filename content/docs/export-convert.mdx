@@ -1,0 +1,115 @@
+---
+title: "Export & Convert"
+order: 4
+icon: "upload"
+description: "Export skills to different AI agent formats and convert between them"
+commands: ["export", "convert", "bootstrap"]
+---
+
+### `export`
+
+Export skills to different AI agent formats. Supports **all 42 agents**.
+
+Every export follows the Agent Skills specification: `.agentname/skills/skillname/SKILL.md`
+
+```bash
+skills export [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-t, --target <agent>` | Target agent(s): any agent name, comma-separated, or `all` (default: `all`) |
+| `-d, --directory <dir>` | Project directory (default: `.`) |
+| `-n, --name <name>` | Export specific skill only |
+| `--list-agents` | List all 42 available agent targets |
+
+**Examples:**
+```bash
+skills export                                  # Export to ALL 42 agents
+skills export -t cursor                        # Cursor only
+skills export -t cursor,claude,copilot         # Comma-separated
+skills export -t gemini-cli,windsurf,trae      # New agents
+skills export -n xlsx -t cursor                # Single skill only
+skills export --list-agents                    # Show all 42 agents
+skills export -d /path/to/project              # Custom project directory
+```
+
+**Output:**
+```
+Exporting 18 skill(s) to 3 agent(s)...
+
+✔ Cursor: .cursor/skills/<skill>/SKILL.md
+✔ Claude Code: .claude/skills/<skill>/SKILL.md
+✔ GitHub Copilot: .github/skills/<skill>/SKILL.md
+
+✨ Export complete! (3/3 agents)
+```
+
+---
+
+### `convert`
+
+Convert skills between agent formats.
+
+```bash
+skills convert <source> <target-format> [options]
+# Alias: skills cv
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <path>` | Output file path (default: auto) |
+| `--overwrite` | Overwrite existing output file |
+
+**Supported formats:** `cursor`, `claude`, `copilot`, `codex`, `windsurf`, `antigravity`
+
+**Example:**
+```bash
+skills convert SKILL.md cursor
+skills convert .cursorrules antigravity -o ./output/SKILL.md
+skills cv SKILL.md copilot --overwrite
+```
+
+**Output:**
+```
+✔ Converted antigravity → cursor
+
+  Source: SKILL.md
+  Output: .cursor/skills/SKILL.md
+```
+
+---
+
+### `bootstrap`
+
+Auto-generate agent instruction files from your project's tech stack and conventions.
+
+```bash
+skills bootstrap [options]
+# Alias: skills bs
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --agents <agents>` | Comma-separated agent names (default: `all`) |
+| `-o, --output <dir>` | Output directory (default: `.`) |
+| `--overwrite` | Overwrite existing files |
+
+**Example:**
+```bash
+skills bootstrap --agents cursor,claude
+skills bs -o /tmp/my-project --overwrite
+```
+
+**Output:**
+```
+✔ Project analyzed
+
+📊 Project: my-project
+  Stack: typescript, react
+
+  ✓ .cursorrules
+  ✓ CLAUDE.md
+
+✨ Generated 2 agent instruction file(s)
+```

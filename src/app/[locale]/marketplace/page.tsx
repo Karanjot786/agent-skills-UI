@@ -3,7 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
-import { Search, Loader2, Star, Copy, Terminal, Filter, ChevronDown, ArrowUpDown, Package, Code2, TestTube, Sparkles, Zap, Cloud, FileText, Image, Plug, Bot, Settings, GraduationCap, MessageSquare, Database, Wrench, X, Check } from "lucide-react";
+import { Search, Loader2, Star, Copy, Terminal, Filter, ChevronDown, ArrowUpDown, Package, Code2, TestTube, Sparkles, Zap, Cloud, FileText, Image, Plug, Bot, Settings, GraduationCap, MessageSquare, Database, Wrench, X, Check, GitBranch } from "lucide-react";
+import { SubmitRepoForm } from "@/components/submit-repo-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -514,6 +515,29 @@ function MarketplaceContent() {
                         </Button>
                     </div>
                 )}
+            </div>
+
+            {/* Submit Your Skills Repo Section */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div className="relative overflow-hidden rounded-2xl border border-zinc-800/50 bg-gradient-to-b from-zinc-900/80 to-black p-8 sm:p-12">
+                    {/* Glow */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-blue-500/10 blur-3xl rounded-full" />
+                    <div className="relative z-10">
+                        <div className="text-center mb-8">
+                            <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-1.5 text-blue-400 text-sm font-medium mb-4">
+                                <GitBranch className="w-4 h-4" />
+                                Community Submissions
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                                Share Your Skills
+                            </h2>
+                            <p className="text-zinc-400 max-w-md mx-auto">
+                                Have a repo with SKILL.md files? Submit it for marketplace indexing — or use the CLI.
+                            </p>
+                        </div>
+                        <SubmitRepoForm />
+                    </div>
+                </div>
             </div>
 
             <Footer />

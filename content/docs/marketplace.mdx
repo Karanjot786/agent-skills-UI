@@ -1,0 +1,187 @@
+---
+title: "Marketplace"
+order: 6
+icon: "package"
+description: "Browse, search, and install skills from the marketplace"
+commands: ["market-list", "market-search", "market-install", "install-url", "market-uninstall", "market-installed", "market-sources", "market-add-source", "market-update-check"]
+---
+
+### `market-list`
+
+List skills from the SkillsMP marketplace (175,000+ skills).
+
+```bash
+skills market-list [options]
+# Alias: skills ml
+```
+
+| Option | Description |
+|--------|-------------|
+| `-l, --limit <number>` | Number of skills to show (default: 50) |
+| `-p, --page <number>` | Page number (default: 1) |
+| `--legacy` | Use legacy GitHub sources instead of SkillsMP |
+
+**Example:**
+```bash
+skills market-list --limit 5
+skills ml --page 2
+```
+
+**Output:**
+```
+🌐 Skills Marketplace
+
+Showing 5 of 175,737 skills (page 1)
+
+  verify ⭐242,799
+    Use when you want to validate changes...
+    by facebook
+  test ⭐242,799
+    Use when you need to run tests...
+    by facebook
+
+Total: 175,737 skills
+Next page: skills market-list --page 2
+```
+
+---
+
+### `market-search`
+
+Search skills in the marketplace by keyword.
+
+```bash
+skills market-search <query> [options]
+# Alias: skills ms <query>
+```
+
+| Option | Description |
+|--------|-------------|
+| `-l, --limit <number>` | Number of results (default: 20) |
+
+**Example:**
+```bash
+skills market-search typescript --limit 3
+skills ms react
+```
+
+---
+
+### `market-install`
+
+Install a skill from the marketplace (alias for `skills install`).
+
+```bash
+skills market-install <name>
+# Alias: skills mi <name>
+```
+
+---
+
+### `install-url`
+
+Install a skill directly from a GitHub URL or SkillsMP page URL.
+
+```bash
+skills install-url <url>
+# Alias: skills iu <url>
+```
+
+**Examples:**
+```bash
+skills install-url https://github.com/anthropics/skills/tree/main/algorithmic-art
+skills iu https://skillsmp.com/skill/typescript
+```
+
+---
+
+### `market-uninstall`
+
+Uninstall a marketplace-installed skill.
+
+```bash
+skills market-uninstall <name>
+# Alias: skills mu <name>
+```
+
+---
+
+### `market-installed`
+
+List all skills installed from marketplaces with their source and install date.
+
+```bash
+skills market-installed
+# Alias: skills mind
+```
+
+**Output:**
+```
+Installed marketplace skills:
+
+  pdf
+    Path: /Users/you/.antigravity/skills/pdf
+    Source: Anthropic Official Skills
+    Installed: 2026-01-03T17:11:18.181Z
+
+  frontend-design
+    Path: /Users/you/.antigravity/skills/frontend-design
+    Source: Anthropic Official Skills
+    Installed: 2026-01-03T18:19:34.267Z
+```
+
+---
+
+### `market-sources`
+
+List registered marketplace sources.
+
+```bash
+skills market-sources
+```
+
+**Output:**
+```
+🌐 Primary Marketplace:
+
+  SkillsMP ✓
+    URL: https://skillsmp.com
+    Skills: 40,000+
+    The largest Agent Skills marketplace
+
+Legacy GitHub Sources:
+
+  Anthropic Official Skills ✓
+    ID: anthropic-skills
+    Repo: anthropics/skills
+```
+
+---
+
+### `market-add-source`
+
+Add a custom marketplace source (GitHub-based).
+
+```bash
+skills market-add-source [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--id <id>` | Unique identifier |
+| `--name <name>` | Display name |
+| `--owner <owner>` | GitHub owner |
+| `--repo <repo>` | GitHub repository |
+| `--branch <branch>` | Branch name (default: `main`) |
+| `--path <path>` | Path to skills directory (default: `skills`) |
+
+---
+
+### `market-update-check`
+
+Check for available updates to installed marketplace skills.
+
+```bash
+skills market-update-check
+# Alias: skills muc
+```

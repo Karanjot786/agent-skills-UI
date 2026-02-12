@@ -1,0 +1,117 @@
+---
+title: "Install & Add"
+order: 2
+icon: "download"
+description: "Primary commands for installing skills from marketplace, GitHub, URLs, and local directories"
+commands: ["install", "add"]
+---
+
+### `install` / `add`
+
+Install skill(s) from the marketplace, GitHub repos, URLs, or local directories. Auto-detects platforms or lets you target specific agents.
+
+```bash
+skills install [source] [options]
+skills add [source] [options]
+# Alias: skills i [source]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --agent <agents...>` | Install to specific agents (e.g. `cursor,claude`) |
+| `--all` | Install to **all 42 agents** at once |
+| `-g, --global` | Install globally (user-wide, home directory) |
+| `-s, --skill <skills...>` | Install by marketplace skill name(s) |
+| `-y, --yes` | Skip confirmation prompts |
+
+#### Install from Marketplace (`@scope/name`)
+
+The primary way to install skills. Uses the `@author/skillname` scoped format to find and install from the marketplace database (175,000+ skills).
+
+```bash
+# Auto-detect: prompts you to pick which agents to install to
+skills install @facebook/verify
+
+# Install to specific agents
+skills install @facebook/verify -a cursor,claude
+
+# Install to ALL 42 agents
+skills install @facebook/verify --all
+
+# Install globally
+skills install @lobehub/typescript -g -a cursor
+
+# Using the 'add' alias (identical behavior)
+skills add @facebook/verify -a cursor
+```
+
+**Output:**
+```
+📦 Searching for "@facebook/verify"...
+
+Found: verify by facebook
+Stars: 242,799
+URL: https://github.com/facebook/react/tree/main/.claude/skills/verify
+
+Installing to: cursor, claude, copilot, ..., zed
+
+✔ Downloaded verify
+✔ Installed to .cursor/skills/verify
+✔ Installed to .claude/skills/verify
+✔ Installed to .github/skills/verify
+... (42 agents)
+
+✨ Successfully installed: verify
+   Scoped name: @facebook/verify
+   Platforms: cursor, claude, copilot, ..., zed
+```
+
+#### Install from GitHub (`owner/repo`)
+
+Clone a GitHub repo and install all skills found inside it.
+
+```bash
+# Clone and install all skills from a repo
+skills add vercel-labs/agent-skills
+skills install anthropics/courses -a cursor
+
+# Install specific skill from a repo
+skills add anthropic/skills@xlsx
+
+# Full GitHub URL also works
+skills install https://github.com/anthropics/courses -a cursor
+```
+
+#### Install by Skill Name (`-s` flag)
+
+```bash
+skills install -s verify -a cursor
+skills install -s xlsx,pdf -a cursor,claude
+```
+
+#### Install from Local Directory
+
+```bash
+skills install ./my-local-skill -a cursor,claude
+skills install . -a cursor   # Current directory as skill
+```
+
+#### Install from Lock File
+
+When you run `skills install` with no arguments and a `skills.lock` exists, it offers to reinstall all previously installed skills.
+
+```bash
+skills install   # Prompts: "Found N skills in lock file. Reinstall all?"
+```
+
+#### Error Handling
+
+```bash
+# Nonexistent scoped name — graceful error
+skills install @nonexistent/skill-xyz
+# ✖ Could not find "@nonexistent/skill-xyz" in marketplace
+
+# Nonexistent repo — git clone fails gracefully
+skills install nonexistent-owner/nonexistent-repo
+# Error: repository not found (exit 1)
+```

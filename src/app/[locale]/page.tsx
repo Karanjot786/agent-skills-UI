@@ -11,6 +11,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { TerminalAnimation } from "@/components/terminal-animation";
 import { CategoriesShowcase, TrendingSkills, TopContributors, RecentSkills } from "@/components/home";
+import { SubmitRepoForm } from "@/components/submit-repo-form";
 import { useTranslations } from 'next-intl';
 
 interface Skill {
@@ -298,7 +299,7 @@ export default function Home() {
         {/* Recently Added */}
         <RecentSkills skills={recent} />
 
-        {/* CTA Section */}
+        {/* Submit Your Skills Repo */}
         <section className="py-24 relative overflow-hidden">
           {/* Animated grid background */}
           <div className="absolute inset-0 hero-grid opacity-50" />
@@ -318,23 +319,35 @@ export default function Home() {
                     <div key={i} className="size-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 border-2 border-black" />
                   ))}
                 </div>
-                <span className="text-sm text-zinc-400 ml-2">{t('cta.joinDevelopers', { count: stats.uniqueAuthors.toLocaleString() })}</span>
+                <span className="text-sm text-zinc-400 ml-2">{t('submitRepo.contributors', { count: stats.uniqueAuthors.toLocaleString() })}</span>
               </div>
 
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                {t('cta.title')}{' '}
-                <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{t('cta.titleHighlight')}</span>?
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                {t('submitRepo.title')}{' '}
+                <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">{t('submitRepo.titleHighlight')}</span>
               </h2>
               <p className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
-                {t('cta.subtitle')}
+                {t('submitRepo.subtitle')}
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
+
+              <SubmitRepoForm translations={{
+                placeholder: t('submitRepo.placeholder'),
+                submit: t('submitRepo.submit'),
+                indexing: t('submitRepo.indexing'),
+                fetchHint: t('submitRepo.fetchHint'),
+                cliHint: t('submitRepo.cliHint'),
+                submitted: t('submitRepo.submitted'),
+                liveMessage: t('submitRepo.liveMessage'),
+                submitAnother: t('submitRepo.submitAnother'),
+              }} />
+
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
                 <Link
                   href="/marketplace"
                   className="rounded-full font-bold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-6 py-3 text-base"
                 >
                   <Package className="size-5" />
-                  {t('cta.exploreSkills')}
+                  {t('submitRepo.browseMarketplace')}
                 </Link>
                 <a
                   href="https://github.com/Karanjot786/agent-skills-cli"
@@ -342,7 +355,7 @@ export default function Home() {
                   className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-flex items-center gap-2 text-center border border-white/20 hover:bg-white/5 text-white px-6 py-3 text-base"
                 >
                   <Star className="size-4" />
-                  {t('cta.starOnGithub')}
+                  {t('submitRepo.starOnGithub')}
                 </a>
               </div>
             </motion.div>

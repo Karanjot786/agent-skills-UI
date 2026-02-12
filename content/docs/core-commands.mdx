@@ -1,0 +1,157 @@
+---
+title: "Core Commands"
+order: 5
+icon: "terminal"
+description: "Essential commands for managing skills"
+commands: ["list", "show", "validate", "prompt", "init"]
+---
+
+### `list`
+
+List all discovered skills from local and global directories.
+
+```bash
+skills list [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-p, --paths <paths...>` | Custom search paths |
+| `-v, --verbose` | Show detailed information |
+| `--json` | Output as JSON |
+| `--table` | Output as ASCII table |
+| `-q, --quiet` | Output names only (for scripting) |
+
+**Examples:**
+```bash
+skills list                     # List all skills with names
+skills list --json              # JSON array with name, description, path
+skills list --table             # ASCII table with Name/Description columns
+skills list --quiet             # Just names, one per line (pipe-friendly)
+skills list -p ./my-skills      # Search custom path
+```
+
+**Output (default):**
+```
+Found 19 skill(s):
+
+  xlsx
+  skill-writer
+  frontend-design
+  ...
+```
+
+---
+
+### `show`
+
+Show detailed information about a specific skill.
+
+```bash
+skills show <name>
+```
+
+**Example:**
+```bash
+skills show xlsx
+```
+
+**Output:**
+```
+xlsx
+────────────────────────────────────────
+Description: Comprehensive spreadsheet creation...
+Path: /Users/you/.antigravity/skills/xlsx
+License: Proprietary
+
+Instructions (preview):
+# Requirements for Outputs
+...
+```
+
+---
+
+### `validate`
+
+Validate a skill against the Agent Skills specification.
+
+```bash
+skills validate <path>
+```
+
+**Examples:**
+```bash
+skills validate ./my-skill         # Validate a local skill
+skills validate skills/test-skill  # Relative path
+```
+
+**Output (valid):**
+```
+Validating: test-skill
+
+Metadata:
+✓ Valid
+
+Body Content:
+✓ Valid
+
+────────────────────────────────────────
+✓ Skill is valid
+```
+
+---
+
+### `prompt`
+
+Generate system prompt XML for discovered skills.
+
+```bash
+skills prompt [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-f, --full` | Include full skill system instructions |
+
+**Output:**
+```xml
+<available_skills>
+  <skill>
+    <name>xlsx</name>
+    <description>Comprehensive spreadsheet creation...</description>
+    <location>/path/to/xlsx/SKILL.md</location>
+  </skill>
+  ...
+</available_skills>
+```
+
+---
+
+### `init`
+
+Create a new skill from template with the standard directory structure.
+
+```bash
+skills init <name> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-d, --directory <dir>` | Directory to create skill in (default: `./skills`) |
+
+**Example:**
+```bash
+skills init my-cool-skill
+skills init my-cool-skill -d /tmp
+```
+
+**Output:**
+```
+✓ Created skill: my-cool-skill
+  Path: ./skills/my-cool-skill
+
+Next steps:
+  1. Edit SKILL.md with your instructions
+  2. Add scripts to scripts/
+  3. Run: skills validate ./skills/my-cool-skill
+```

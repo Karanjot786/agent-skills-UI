@@ -61,6 +61,24 @@
             "contributors": "貢獻者",
             "agentPlatforms": "代理平台",
             "openSource": "開源"
+        },
+        "submitRepo": {
+            "contributors": "{count}+ 位貢獻者正在分享技能",
+            "title": "提交你的",
+            "titleHighlight": "技能倉庫",
+            "subtitle": "與社區分享你的代理技能。只需貼上 GitHub 倉庫連結 — 我們會立即索引所有 SKILL.md 檔案。",
+            "browseMarketplace": "瀏覽市集",
+            "starOnGithub": "在GitHub上加星",
+            "cliHint": "也可透過 CLI：",
+            "placeholder": "使用者/倉庫 或 GitHub URL",
+            "submit": "提交",
+            "indexing": "索引中...",
+            "fetchHint": "我們將自動取得倉庫資訊並掃描 SKILL.md 檔案。",
+            "submitted": "已提交！",
+            "skillsIndexed": "{count} 個技能已索引",
+            "skillsIndexedPlural": "{count} 個技能已索引",
+            "liveMessage": "技能現已在市集上線！",
+            "submitAnother": "提交另一個"
         }
     },
     "marketplace": {

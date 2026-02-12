@@ -61,6 +61,24 @@
             "contributors": "Colaboradores",
             "agentPlatforms": "Plataformas de agentes",
             "openSource": "Código abierto"
+        },
+        "submitRepo": {
+            "contributors": "{count}+ colaboradores compartiendo habilidades",
+            "title": "Envía tu",
+            "titleHighlight": "Repositorio de Habilidades",
+            "subtitle": "Comparte tus habilidades con la comunidad. Solo pega el enlace de tu repositorio de GitHub — indexaremos todos los archivos SKILL.md al instante.",
+            "browseMarketplace": "Explorar mercado",
+            "starOnGithub": "Estrella en GitHub",
+            "cliHint": "También por CLI:",
+            "placeholder": "usuario/repo o URL de GitHub",
+            "submit": "Enviar",
+            "indexing": "Indexando...",
+            "fetchHint": "Obtendremos la info del repo y buscaremos archivos SKILL.md automáticamente.",
+            "submitted": "¡Enviado!",
+            "skillsIndexed": "{count} habilidad indexada",
+            "skillsIndexedPlural": "{count} habilidades indexadas",
+            "liveMessage": "¡Las habilidades ya están en el mercado!",
+            "submitAnother": "Enviar otro"
         }
     },
     "marketplace": {

@@ -218,7 +218,7 @@ export default async function LocaleLayout({
     const messages = await getMessages();
 
     return (
-        <html lang={locale} className="dark">
+        <html lang={locale} className="dark" suppressHydrationWarning>
             <head>
                 {/* Google Analytics */}
                 <script
