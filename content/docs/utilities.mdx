@@ -1,0 +1,164 @@
+---
+title: "Utilities"
+order: 7
+icon: "wrench"
+description: "Diagnostic tools, updates, script execution, and skill management"
+commands: ["doctor", "check", "update", "exec", "run", "remove", "assets"]
+---
+
+### `doctor`
+
+Diagnose installation and configuration issues.
+
+```bash
+skills doctor [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-f, --fix` | Attempt to fix issues automatically |
+
+**Output:**
+```
+🔍 Diagnosing skills installation...
+
+  ✓ Node.js: v25.2.1
+  ✓ Git: available
+  ✓ GitHub API: accessible
+  ✓ Skills directory: /Users/you/.antigravity/skills
+  ✓ Valid skills: 17/17
+
+✓ No issues found
+```
+
+---
+
+### `check`
+
+Check installed skills and available updates.
+
+```bash
+skills check [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --agent <agent>` | Check specific agent only |
+| `-g, --global` | Check globally installed skills only |
+| `--json` | Output as JSON |
+
+**Examples:**
+```bash
+skills check            # Summary view
+skills check --json     # For scripting
+skills check -a cursor  # Cursor agent only
+```
+
+---
+
+### `update`
+
+Update installed skills from their sources.
+
+```bash
+skills update [skill-names...] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --all` | Update all installed skills |
+| `-g, --global` | Only update globally installed skills |
+| `-y, --yes` | Skip confirmation prompts |
+
+**Examples:**
+```bash
+skills update xlsx pdf      # Update specific skills
+skills update --all --yes   # Update everything, no prompts
+```
+
+---
+
+### `exec`
+
+Execute a bundled script from a skill.
+
+```bash
+skills exec <skill-name> [script-name] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --args <args...>` | Arguments to pass to the script |
+
+**Example:**
+```bash
+skills exec xlsx generate-report --args data.csv
+```
+
+---
+
+### `run`
+
+Execute a script from an installed skill with timeout control.
+
+```bash
+skills run <skill-name> <script> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --args <args...>` | Arguments to pass to the script |
+| `--timeout <ms>` | Timeout in milliseconds (default: 30000) |
+
+**Example:**
+```bash
+skills run pdf extract --args document.pdf --timeout 60000
+```
+
+---
+
+### `remove`
+
+Remove installed skills.
+
+```bash
+skills remove [skills...] [options]
+# Alias: skills rm
+```
+
+| Option | Description |
+|--------|-------------|
+| `-g, --global` | Remove from global installation |
+| `-a, --agent <agent>` | Remove from specific agent only |
+| `-y, --yes` | Skip confirmation prompt |
+| `--all` | Remove all installed skills |
+
+**Examples:**
+```bash
+skills remove xlsx pdf --yes
+skills rm --all --global
+skills remove xlsx -a cursor
+```
+
+---
+
+### `assets`
+
+List and fetch assets for a skill on-demand from GitHub.
+
+```bash
+skills assets <skill-name> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-l, --list` | List available assets |
+| `-m, --manifest` | Show asset manifest if available |
+| `-g, --get <path>` | Fetch and display specific asset content |
+| `--json` | Output in JSON format |
+
+**Example:**
+```bash
+skills assets xlsx --list
+skills assets pdf --get templates/invoice.pdf
+```

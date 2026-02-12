@@ -1,0 +1,99 @@
+---
+title: "Quality & Scoring"
+order: 12
+icon: "star"
+description: "Score skill quality across structure, clarity, specificity, and advanced features"
+commands: ["score"]
+---
+
+### `score`
+
+Score a skill's quality against four dimensions. Produces a 0-100 overall score with a letter grade (F, D, C, B, A). Useful for auditing your own skills before publishing.
+
+```bash
+skills score [path] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--json` | Output as JSON |
+| `-v, --verbose` | Show individual check details |
+
+**Default (no path):** Scores the current directory.
+
+**Scoring Dimensions:**
+
+| Dimension | Weight | What it checks |
+|-----------|--------|----------------|
+| Structure | 30% | SKILL.md exists, YAML frontmatter, name/description fields, directory structure |
+| Clarity | 30% | Description length, section headings, "When to Use" section, examples, body content, formatting |
+| Specificity | 30% | Code blocks, numbered steps, tool/command references, file paths, conditional logic, constraints |
+| Advanced | 10% | scripts/ directory, references/ directory, anti-patterns section, changelog, tests |
+
+**Grading Scale:**
+
+| Grade | Score Range |
+|-------|------------|
+| A | 80-100 |
+| B | 60-79 |
+| C | 40-59 |
+| D | 20-39 |
+| F | 0-19 |
+
+**Example (default):**
+```bash
+skills score ./my-skill
+```
+
+**Output:**
+```
+🎯 Skill Quality Score
+   /path/to/my-skill
+
+   Overall:  ███████████░░░░░░░░░ 57/100  D
+
+   30%  Structure    ███████████████ 100/100
+   30%  Clarity      ███████████░░░░ 75/100
+   30%  Specificity  ██░░░░░░░░░░░░░ 15/100
+   10%  Advanced     ░░░░░░░░░░░░░░░ 0/100
+
+   Use --verbose to see individual checks
+
+💡 Top improvements:
+   → Add code blocks with concrete examples agents can follow
+   → Add a scripts/ directory for automation hooks
+   → Use numbered steps (1. 2. 3.) for step-by-step instructions
+```
+
+**Example (verbose):**
+```bash
+skills score ./my-skill --verbose
+```
+
+Shows individual check results with pass/fail status, point breakdowns, and actionable improvement tips for each dimension.
+
+**Example (JSON):**
+```bash
+skills score ./my-skill --json
+```
+
+**Output:**
+```json
+{
+  "overall": 57,
+  "structure": 100,
+  "clarity": 75,
+  "specificity": 15,
+  "advanced": 0,
+  "grade": "D",
+  "details": [
+    {
+      "dimension": "structure",
+      "check": "SKILL.md file exists",
+      "passed": true,
+      "points": 25,
+      "maxPoints": 25
+    }
+  ]
+}
+```

@@ -1,0 +1,178 @@
+---
+title: "Skill Creation"
+order: 11
+icon: "hammer"
+description: "Create, generate, capture, and publish skills"
+commands: ["craft", "forge", "capture", "submit", "submit-repo"]
+---
+
+### `craft`
+
+Craft a new skill with full directory structure.
+
+```bash
+skills craft <name> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-f, --full` | Include all optional directories (scripts, references, assets) |
+| `-s, --scripts` | Include `scripts/` directory with templates |
+| `-r, --references` | Include `references/` directory |
+| `-a, --assets` | Include `assets/` directory |
+| `-d, --dir <path>` | Parent directory to create skill in (default: `.`) |
+
+**Example:**
+```bash
+skills craft my-new-skill --full -d /tmp
+```
+
+**Creates:**
+```
+my-new-skill/
+├── SKILL.md
+├── scripts/
+│   └── example.sh
+├── references/
+│   └── .gitkeep
+└── assets/
+    └── .gitkeep
+```
+
+---
+
+### `forge`
+
+AI-generate a skill from a natural language description.
+
+```bash
+skills forge <description> [options]
+# Alias: skills fg
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <dir>` | Output directory (default: `.`) |
+| `-a, --agent <agent>` | Target agent format |
+| `-m, --model <model>` | AI model to use (default: built-in) |
+| `-n, --dry-run` | Preview generated content without saving |
+
+**Example:**
+```bash
+skills forge "a skill for writing unit tests" --dry-run
+skills fg "React component generator with TypeScript" -o ./skills
+```
+
+**Output:**
+```
+✔ Skill forged!
+
+📄 Preview:
+────────────────────────────────────────
+---
+name: writing-unit-tests
+description: a skill for writing unit tests
+version: 1.0.0
+tags:
+  - writing
+  - unit
+  - tests
+---
+
+# Writing Unit Tests
+
+## Overview
+...
+```
+
+---
+
+### `capture`
+
+Capture a URL, text, or file as a skill.
+
+```bash
+skills capture <source> [options]
+# Alias: skills cp
+```
+
+| Option | Description |
+|--------|-------------|
+| `-n, --name <name>` | Skill name |
+| `-o, --output <dir>` | Output directory (default: `.`) |
+| `-t, --tags <tags>` | Comma-separated tags |
+| `--type <type>` | Source type: `url`, `file`, `text` (default: `auto`) |
+
+**Example:**
+```bash
+skills capture "https://docs.github.com/en/copilot" --name copilot-docs -o /tmp
+skills cp ./readme.md --name my-docs --tags docs,reference
+```
+
+**Output:**
+```
+✔ Captured as skill: copilot-docs
+
+  Source:  https://docs.github.com/en/copilot
+  Type:    url
+  Output:  /tmp/copilot-docs/SKILL.md
+  Size:    541.9 KB
+```
+
+---
+
+### `submit`
+
+Submit a skill to the Agent Skills marketplace.
+
+```bash
+skills submit [path] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-n, --dry-run` | Preview without uploading |
+| `--name <name>` | Custom skill name (overrides SKILL.md name) |
+
+**Example:**
+```bash
+skills submit ./my-skill --dry-run
+skills submit --name "my-awesome-skill"
+```
+
+---
+
+### `submit-repo`
+
+Submit a GitHub repo to be indexed in the marketplace. The CLI validates the repo exists on GitHub, then sends it to the indexing API. All SKILL.md files inside the repo get indexed and become installable.
+
+```bash
+skills submit-repo <repo>
+```
+
+| Argument | Description |
+|----------|-------------|
+| `repo` | GitHub repo in `owner/repo` format (e.g. `Jeffallan/claude-skills`) |
+
+**Examples:**
+```bash
+skills submit-repo Jeffallan/claude-skills
+skills submit-repo vercel-labs/agent-skills
+skills submit-repo facebook/react
+```
+
+**Output (success):**
+```
+✔ Found Jeffallan/claude-skills
+✔ Submitted successfully
+```
+
+**Output (already indexed):**
+```
+✔ Found Jeffallan/claude-skills
+✖ Failed (405)
+```
+A 405 means the repo is already indexed in the marketplace.
+
+After submission, the repo's skills appear at:
+`https://www.agentskills.in/marketplace?author=<owner>`

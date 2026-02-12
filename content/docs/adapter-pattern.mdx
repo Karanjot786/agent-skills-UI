@@ -1,0 +1,59 @@
+---
+title: "Adapter Pattern"
+order: 16
+icon: "layers"
+description: "Architecture deep-dive: how the CLI supports 42 agents through adapters"
+commands: []
+---
+
+The CLI uses a formal adapter pattern to support 42 agents through a single codebase. Each agent gets its own adapter that handles path generation, config rendering, and format detection.
+
+### Interface: `AgentAdapter`
+
+Every agent adapter implements this interface:
+
+```typescript
+interface AgentAdapter {
+    readonly name: string;          // Internal key, e.g. "cursor"
+    readonly displayName: string;   // Human-readable, e.g. "Cursor"
+
+    getProjectDir(): string;        // Relative project-level skill directory
+    getGlobalDir(): string;         // Absolute global skill directory
+    getConfigPath(skillName: string, global: boolean): string;
+    generateConfig(parsed: ParsedSkillInput): string;
+    supportsFormat(format: string): boolean;
+    getSkillFilename(): string;     // Usually "SKILL.md"
+}
+```
+
+### Base class: `BaseAdapter`
+
+Shared logic lives in `BaseAdapter`. It handles path joining, standard SKILL.md rendering with frontmatter, and format detection. Agent-specific adapters extend it.
+
+```
+AgentAdapter (interface)
+  └── BaseAdapter (abstract class)
+        ├── CursorAdapter      → .cursor/skills
+        ├── ClaudeAdapter      → .claude/skills
+        ├── CopilotAdapter     → .github/skills
+        └── UniversalAdapter   → .{agentname}/skills (handles remaining 39 agents)
+```
+
+### Factory: `getAdapter(agentName)`
+
+A cached factory function returns the right adapter for any agent name. Specialized adapters handle Cursor, Claude, and Copilot. All other agents route through `UniversalAdapter`, which reads agent configuration from the registry.
+
+```bash
+# The factory is used internally by install, export, and convert commands
+skills install @facebook/verify -a cursor    # Uses CursorAdapter
+skills export -t claude                      # Uses ClaudeAdapter
+skills export -t windsurf                    # Uses UniversalAdapter("windsurf")
+```
+
+### Adding a new agent
+
+To add agent support:
+
+1. Add the agent config to `src/cli/agents.ts` (name, displayName, projectDir, globalDir)
+2. The `UniversalAdapter` picks it up automatically
+3. For custom behavior, create a new adapter extending `BaseAdapter`

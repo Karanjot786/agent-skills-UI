@@ -1,0 +1,106 @@
+---
+title: "Project Analysis"
+order: 10
+icon: "bar-chart"
+description: "Analyze projects for skill suggestions, security audits, pattern mining, and insights"
+commands: ["suggest", "audit", "mine", "insight"]
+---
+
+### `suggest`
+
+Get skill suggestions based on your project's tech stack.
+
+```bash
+skills suggest [options]
+# Alias: skills sg
+```
+
+| Option | Description |
+|--------|-------------|
+| `-l, --limit <n>` | Maximum number of suggestions (default: 10) |
+| `-m, --min-score <n>` | Minimum match score 0–100 (default: 20) |
+| `-c, --category <cat>` | Filter by category |
+| `-t, --task <query>` | Search skills by task description |
+| `-v, --verbose` | Show detailed match reasons |
+| `-j, --json` | Output in JSON format |
+| `-p, --path <dir>` | Project path (default: current directory) |
+
+**Example:**
+```bash
+skills suggest --json
+skills sg -t "unit testing" -v
+skills suggest --min-score 50
+```
+
+---
+
+### `audit`
+
+Security audit — scan skills for vulnerabilities.
+
+```bash
+skills audit <path> [options]
+# Alias: skills scan <path>
+```
+
+| Option | Description |
+|--------|-------------|
+| `-f, --format <format>` | Output format: `summary`, `json`, `table`, `sarif` (default: `summary`) |
+| `--fail-on <severity>` | Exit code 1 if findings ≥ severity (`critical`, `high`, `medium`, `low`) |
+| `--skip-rules <rules>` | Comma-separated rule IDs to skip |
+
+**Examples:**
+```bash
+skills audit ./my-skill
+skills scan ./my-skill --format sarif
+skills audit ./skill --fail-on high    # CI/CD friendly
+```
+
+**Output:**
+```
+🔍 Scanning: my-skill
+
+  ✓ No security issues found
+
+  Checks: 12 passed, 0 warnings, 0 critical
+```
+
+---
+
+### `mine`
+
+Extract coding patterns and conventions from git history.
+
+```bash
+skills mine [options]
+# Alias: skills mn
+```
+
+| Option | Description |
+|--------|-------------|
+| `-d, --depth <n>` | Number of commits to analyze (default: 100) |
+| `-o, --output <path>` | Save patterns to file |
+| `-f, --format <fmt>` | Output format: `text`, `json`, `skill` (default: `text`) |
+
+**Example:**
+```bash
+skills mine --depth 5           # Analyze last 5 commits
+skills mine -f skill -o .       # Generate a skill from patterns
+skills mn --depth 50 -f json    # JSON for processing
+```
+
+---
+
+### `insight`
+
+Analyze installed skills — patterns, coverage, and gaps.
+
+```bash
+skills insight [options]
+# Alias: skills in
+```
+
+| Option | Description |
+|--------|-------------|
+| `-j, --json` | Output as JSON |
+| `-v, --verbose` | Show detailed breakdown |

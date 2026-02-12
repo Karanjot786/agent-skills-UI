@@ -8,7 +8,18 @@ import {
     Upload,
     Wrench,
     ChevronDown,
-    Search
+    Search,
+    Download,
+    Sparkles,
+    MessageSquare,
+    BarChart3,
+    Hammer,
+    Star,
+    Users,
+    Zap,
+    Clock,
+    Layers,
+    type LucideIcon
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -23,6 +34,25 @@ interface DocsSidebarProps {
     onSearchOpen: () => void;
 }
 
+const iconComponents: Record<string, LucideIcon> = {
+    'book-open': BookOpen,
+    'download': Download,
+    'search': Search,
+    'upload': Upload,
+    'terminal': Terminal,
+    'package': Package,
+    'wrench': Wrench,
+    'sparkles': Sparkles,
+    'message-square': MessageSquare,
+    'bar-chart': BarChart3,
+    'hammer': Hammer,
+    'star': Star,
+    'users': Users,
+    'zap': Zap,
+    'clock': Clock,
+    'layers': Layers,
+};
+
 const sections: SidebarSection[] = [
     {
         id: 'getting-started',
@@ -30,21 +60,44 @@ const sections: SidebarSection[] = [
         icon: <BookOpen className="size-4" />,
         items: [
             { id: 'installation', label: 'Installation' },
-            { id: 'quickstart', label: 'Quick Start' },
-            { id: 'platforms', label: 'Platform Support' },
         ]
     },
     {
-        id: 'core',
+        id: 'install',
+        title: 'Install & Add',
+        icon: <Download className="size-4" />,
+        items: [
+            { id: 'install--add', label: 'install / add', alias: 'i' },
+        ]
+    },
+    {
+        id: 'search',
+        title: 'Search',
+        icon: <Search className="size-4" />,
+        items: [
+            { id: 'search-cmd', label: 'search', alias: 's' },
+        ]
+    },
+    {
+        id: 'export-convert',
+        title: 'Export & Convert',
+        icon: <Upload className="size-4" />,
+        items: [
+            { id: 'export', label: 'export' },
+            { id: 'convert', label: 'convert', alias: 'cv' },
+            { id: 'bootstrap', label: 'bootstrap', alias: 'bs' },
+        ]
+    },
+    {
+        id: 'core-commands',
         title: 'Core Commands',
         icon: <Terminal className="size-4" />,
         items: [
             { id: 'list', label: 'list' },
             { id: 'show', label: 'show' },
             { id: 'validate', label: 'validate' },
-            { id: 'init', label: 'init' },
             { id: 'prompt', label: 'prompt' },
-            { id: 'search', label: 'search', alias: 's' },
+            { id: 'init', label: 'init' },
         ]
     },
     {
@@ -54,24 +107,13 @@ const sections: SidebarSection[] = [
         items: [
             { id: 'market-list', label: 'market-list', alias: 'ml' },
             { id: 'market-search', label: 'market-search', alias: 'ms' },
-            { id: 'install', label: 'install', alias: 'i' },
+            { id: 'market-install', label: 'market-install', alias: 'mi' },
             { id: 'install-url', label: 'install-url', alias: 'iu' },
-            { id: 'market-installed', label: 'market-installed', alias: 'mind' },
             { id: 'market-uninstall', label: 'market-uninstall', alias: 'mu' },
+            { id: 'market-installed', label: 'market-installed', alias: 'mind' },
             { id: 'market-sources', label: 'market-sources' },
             { id: 'market-add-source', label: 'market-add-source' },
             { id: 'market-update-check', label: 'market-update-check', alias: 'muc' },
-        ]
-    },
-    {
-        id: 'export',
-        title: 'Export',
-        icon: <Upload className="size-4" />,
-        items: [
-            { id: 'export', label: 'export' },
-            { id: 'sync', label: 'sync' },
-            { id: 'setup', label: 'setup' },
-            { id: 'export-interactive', label: 'export-interactive', alias: 'ei' },
         ]
     },
     {
@@ -79,16 +121,104 @@ const sections: SidebarSection[] = [
         title: 'Utilities',
         icon: <Wrench className="size-4" />,
         items: [
+            { id: 'doctor', label: 'doctor' },
+            { id: 'check', label: 'check' },
+            { id: 'update', label: 'update' },
+            { id: 'exec', label: 'exec' },
             { id: 'run', label: 'run' },
-            { id: 'scripts', label: 'scripts' },
+            { id: 'remove', label: 'remove', alias: 'rm' },
+            { id: 'assets', label: 'assets' },
+        ]
+    },
+    {
+        id: 'interactive-wizards',
+        title: 'Interactive Wizards',
+        icon: <Sparkles className="size-4" />,
+        items: [
+            { id: 'install-wizard', label: 'install-wizard', alias: 'iw' },
+            { id: 'export-interactive', label: 'export-interactive', alias: 'ei' },
+            { id: 'setup', label: 'setup' },
+        ]
+    },
+    {
+        id: 'context-prompt',
+        title: 'Context & Prompt',
+        icon: <MessageSquare className="size-4" />,
+        items: [
             { id: 'context', label: 'context' },
             { id: 'preview', label: 'preview' },
-            { id: 'assets', label: 'assets' },
+            { id: 'scripts', label: 'scripts' },
             { id: 'info', label: 'info' },
-            { id: 'update', label: 'update' },
-            { id: 'doctor', label: 'doctor' },
             { id: 'completion', label: 'completion' },
         ]
+    },
+    {
+        id: 'project-analysis',
+        title: 'Project Analysis',
+        icon: <BarChart3 className="size-4" />,
+        items: [
+            { id: 'suggest', label: 'suggest', alias: 'sg' },
+            { id: 'audit', label: 'audit' },
+            { id: 'mine', label: 'mine', alias: 'mn' },
+            { id: 'insight', label: 'insight', alias: 'in' },
+        ]
+    },
+    {
+        id: 'skill-creation',
+        title: 'Skill Creation',
+        icon: <Hammer className="size-4" />,
+        items: [
+            { id: 'craft', label: 'craft' },
+            { id: 'forge', label: 'forge', alias: 'fg' },
+            { id: 'capture', label: 'capture', alias: 'cp' },
+            { id: 'submit', label: 'submit' },
+            { id: 'submit-repo', label: 'submit-repo' },
+        ]
+    },
+    {
+        id: 'quality-scoring',
+        title: 'Quality & Scoring',
+        icon: <Star className="size-4" />,
+        items: [
+            { id: 'score', label: 'score' },
+        ]
+    },
+    {
+        id: 'team-collaboration',
+        title: 'Team & Collaboration',
+        icon: <Users className="size-4" />,
+        items: [
+            { id: 'collab', label: 'collab', alias: 'cl' },
+            { id: 'lockspec', label: 'lockspec', alias: 'ls' },
+            { id: 'grid', label: 'grid', alias: 'gd' },
+        ]
+    },
+    {
+        id: 'automation-rules',
+        title: 'Automation & Rules',
+        icon: <Zap className="size-4" />,
+        items: [
+            { id: 'trigger', label: 'trigger', alias: 'tr' },
+            { id: 'rule', label: 'rule', alias: 'rl' },
+            { id: 'blueprint', label: 'blueprint', alias: 'bp' },
+            { id: 'ci', label: 'ci' },
+        ]
+    },
+    {
+        id: 'session-management',
+        title: 'Session Management',
+        icon: <Clock className="size-4" />,
+        items: [
+            { id: 'track', label: 'track', alias: 'tk' },
+            { id: 'recall', label: 'recall', alias: 'rc' },
+            { id: 'method', label: 'method', alias: 'mt' },
+        ]
+    },
+    {
+        id: 'adapter-pattern',
+        title: 'Adapter Pattern',
+        icon: <Layers className="size-4" />,
+        items: []
     },
 ];
 
@@ -113,8 +243,12 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
             { rootMargin: '-20% 0% -70% 0%', threshold: 0 }
         );
 
-        // Observe all section elements
-        const allIds = sections.flatMap(s => s.items.map(i => i.id));
+        // Observe all section and item elements
+        const allIds = [
+            ...sections.map(s => s.id),
+            ...sections.flatMap(s => s.items.map(i => i.id)),
+            'installation',
+        ];
         allIds.forEach(id => {
             const element = document.getElementById(id);
             if (element) observer.observe(element);
@@ -127,7 +261,6 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
     useEffect(() => {
         const activeItem = itemRefs.current.get(activeId);
         if (activeItem && navRef.current) {
-            // Check if the item is outside the visible area of the nav
             const nav = navRef.current;
             const itemTop = activeItem.offsetTop;
             const itemBottom = itemTop + activeItem.offsetHeight;
@@ -135,10 +268,8 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
             const navHeight = nav.clientHeight;
 
             if (itemTop < navScrollTop + 60) {
-                // Item is above visible area
                 nav.scrollTo({ top: itemTop - 60, behavior: 'smooth' });
             } else if (itemBottom > navScrollTop + navHeight - 60) {
-                // Item is below visible area
                 nav.scrollTo({ top: itemBottom - navHeight + 60, behavior: 'smooth' });
             }
         }
@@ -164,6 +295,14 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
         }
     };
 
+    const handleSectionClick = (sectionId: string) => {
+        setActiveId(sectionId);
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     return (
         <aside className="w-full lg:w-72 shrink-0">
             <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-8rem)] flex flex-col">
@@ -183,7 +322,7 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
                 <nav ref={navRef} className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-700 hover:scrollbar-thumb-zinc-600">
                     {sections.map((section) => {
                         const isExpanded = expandedSections.has(section.id);
-                        const hasActiveItem = section.items.some(item => item.id === activeId);
+                        const hasActiveItem = section.items.some(item => item.id === activeId) || activeId === section.id;
 
                         return (
                             <div
@@ -195,7 +334,12 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
                             >
                                 {/* Section Header */}
                                 <button
-                                    onClick={() => toggleSection(section.id)}
+                                    onClick={() => {
+                                        if (section.items.length > 0) {
+                                            toggleSection(section.id);
+                                        }
+                                        handleSectionClick(section.id);
+                                    }}
                                     className="w-full flex items-center gap-2 p-4 text-left"
                                 >
                                     <span className={`${hasActiveItem ? 'text-cyan-400' : 'text-zinc-400'}`}>
@@ -205,39 +349,41 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
                                         }`}>
                                         {section.title}
                                     </span>
-                                    <Badge
-                                        variant="outline"
-                                        className={`text-xs ${hasActiveItem
-                                            ? 'text-cyan-400 border-cyan-500/30'
-                                            : 'text-zinc-500 border-zinc-700'
-                                            }`}
-                                    >
-                                        {section.items.length}
-                                    </Badge>
-                                    <ChevronDown
-                                        className={`size-4 text-zinc-500 transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'
-                                            }`}
-                                    />
+                                    {section.items.length > 0 && (
+                                        <>
+                                            <Badge
+                                                variant="outline"
+                                                className={`text-xs ${hasActiveItem
+                                                    ? 'text-cyan-400 border-cyan-500/30'
+                                                    : 'text-zinc-500 border-zinc-700'
+                                                    }`}
+                                            >
+                                                {section.items.length}
+                                            </Badge>
+                                            <ChevronDown
+                                                className={`size-4 text-zinc-500 transition-transform ${isExpanded ? 'rotate-0' : '-rotate-90'
+                                                    }`}
+                                            />
+                                        </>
+                                    )}
                                 </button>
 
                                 {/* Section Items */}
-                                {isExpanded && (
+                                {isExpanded && section.items.length > 0 && (
                                     <ul className="px-2 pb-3 space-y-0.5">
                                         {section.items.map((item) => {
                                             const isActive = activeId === item.id;
-                                            const isCommand = section.id !== 'getting-started';
 
                                             return (
                                                 <li key={item.id}>
                                                     <button
                                                         ref={(el) => { if (el) itemRefs.current.set(item.id, el); }}
                                                         onClick={() => handleItemClick(item.id)}
-                                                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 ${isActive
+                                                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all flex items-center gap-2 font-mono text-xs ${isActive
                                                             ? 'bg-cyan-500/20 text-cyan-400'
                                                             : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                                                            } ${isCommand ? 'font-mono text-xs' : ''}`}
+                                                            }`}
                                                     >
-                                                        {/* Active indicator */}
                                                         <span className={`w-1.5 h-1.5 rounded-full transition-colors ${isActive ? 'bg-cyan-400' : 'bg-transparent'
                                                             }`} />
                                                         <span className="flex-1">{item.label}</span>
@@ -273,7 +419,7 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
                             Marketplace
                         </a>
                         <span>•</span>
-                        <span className="text-zinc-600">v1.0.2</span>
+                        <span className="text-zinc-600">v1.0.9</span>
                     </div>
                 </div>
             </div>

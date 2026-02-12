@@ -1,0 +1,81 @@
+---
+title: "Team & Collaboration"
+order: 13
+icon: "users"
+description: "Team skill sharing, lock files, and P2P network discovery"
+commands: ["collab", "lockspec", "grid"]
+---
+
+### `collab`
+
+Team skill collaboration.
+
+```bash
+skills collab [command]
+# Alias: skills cl
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `init <team-name>` | Initialize team collaboration |
+| `add <member>` | Add a team member |
+| `share <skill>` | Share a skill with the team |
+| `status` | Show team collaboration status |
+| `sync` | Sync shared skills with team |
+
+**Example:**
+```bash
+skills collab init my-team
+skills collab add john@example.com
+skills collab share xlsx
+skills collab status
+skills collab sync
+```
+
+---
+
+### `lockspec`
+
+Generate or apply a team skill manifest (lock file).
+
+```bash
+skills lockspec [command]
+# Alias: skills ls
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `generate` | Generate lockspec from currently installed skills |
+| `verify` | Verify current installation matches lockspec |
+| `diff` | Show differences between lockspec and installed skills |
+
+**Example:**
+```bash
+skills lockspec generate     # Create skills.lock
+skills lockspec verify       # Check compliance
+skills lockspec diff         # Show drift
+```
+
+---
+
+### `grid`
+
+P2P skill sharing on local network.
+
+```bash
+skills grid [command]
+# Alias: skills gd
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `serve [options]` | Start sharing your skills on the local network |
+| `discover [options]` | Discover skills shared on the local network |
+| `status` | Show grid status |
+
+**Example:**
+```bash
+skills grid serve            # Start sharing
+skills grid discover         # Find peers
+skills grid status           # Show network status
+```

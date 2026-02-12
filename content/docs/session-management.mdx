@@ -1,0 +1,86 @@
+---
+title: "Session Management"
+order: 15
+icon: "clock"
+description: "Save/restore sessions, memory management, and methodology packs"
+commands: ["track", "recall", "method"]
+---
+
+### `track`
+
+Session state tracking — save and restore working context.
+
+```bash
+skills track [command]
+# Alias: skills tk
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `save [options] <name>` | Save current session state |
+| `restore <name>` | Restore a saved session |
+| `list` | List saved sessions |
+| `show <name>` | Show session details |
+| `delete <name>` | Delete a saved session |
+
+---
+
+### `recall`
+
+Session memory — store and recall context across sessions.
+
+```bash
+skills recall [command]
+# Alias: skills rc
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `save [options] <key> <value>` | Save a memory entry |
+| `get <key>` | Retrieve a memory entry |
+| `list [options]` | List all memory entries |
+| `search <query>` | Search memory entries |
+| `delete <key>` | Delete a memory entry |
+| `clear` | Clear all memory entries |
+
+**Example:**
+```bash
+skills recall save api-key "sk-123..."
+skills recall get api-key
+skills recall list
+skills recall search "api"
+```
+
+---
+
+### `method`
+
+Apply development methodology packs.
+
+```bash
+skills method [command]
+# Alias: skills mt
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `list` | List available methodology packs |
+| `show <name>` | Show methodology details |
+| `apply [options] <name>` | Apply a methodology as a skill |
+
+**Built-in Packs:**
+
+| Pack | Description |
+|------|-------------|
+| `tdd` | Test-Driven Development |
+| `ddd` | Domain-Driven Design |
+| `clean` | Clean Architecture |
+| `solid` | SOLID Principles |
+| `trunk` | Trunk-Based Development |
+
+**Example:**
+```bash
+skills method list
+skills method show tdd
+skills method apply tdd
+```

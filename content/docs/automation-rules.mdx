@@ -1,0 +1,89 @@
+---
+title: "Automation & Rules"
+order: 14
+icon: "zap"
+description: "Event triggers, coding rules, blueprints, and CI/CD generation"
+commands: ["trigger", "rule", "blueprint", "ci"]
+---
+
+### `trigger`
+
+Auto-trigger skills on events.
+
+```bash
+skills trigger [command]
+# Alias: skills tr
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `add [options] <name>` | Add a trigger rule |
+| `list` | List all trigger rules |
+| `enable <name>` | Enable a trigger |
+| `disable <name>` | Disable a trigger |
+| `remove <name>` | Remove a trigger |
+
+---
+
+### `rule`
+
+Manage always-on coding rules.
+
+```bash
+skills rule [command]
+# Alias: skills rl
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `add [options] <name>` | Add a coding rule |
+| `list [options]` | List all coding rules |
+| `enable [options] <name>` | Enable a rule |
+| `disable [options] <name>` | Disable a rule |
+| `remove [options] <name>` | Remove a rule |
+| `export [options]` | Export rules as a skill |
+
+---
+
+### `blueprint`
+
+Structured development plans.
+
+```bash
+skills blueprint [command]
+# Alias: skills bp
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `create [options] <name>` | Create a new blueprint |
+| `add-milestone <milestone>` | Add a milestone to the blueprint |
+| `add-task [options] <milestone> <task>` | Add a task to a milestone |
+| `status` | Show blueprint status |
+| `done <task-id>` | Mark a task as done |
+| `export [options]` | Export blueprint as markdown |
+
+---
+
+### `ci`
+
+Generate CI/CD workflow for skill validation.
+
+```bash
+skills ci [platform] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <dir>` | Output directory (auto-detected) |
+| `--audit` | Include security audit step (default: true) |
+| `--validate` | Include validation step (default: true) |
+
+**Supported platforms:** `github` (GitHub Actions)
+
+**Example:**
+```bash
+skills ci github
+```
+
+**Output:** Generates `.github/workflows/skills.yml` with validation and audit steps.

@@ -1,0 +1,126 @@
+---
+title: "Context & Prompt"
+order: 9
+icon: "message-square"
+description: "Generate system prompt context, preview skills, list scripts, and more"
+commands: ["context", "preview", "scripts", "info", "completion"]
+---
+
+### `context`
+
+Generate system prompt context for AI agents in multiple formats.
+
+```bash
+skills context [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-f, --format <format>` | Output format: `xml`, `json`, `markdown` (default: `xml`) |
+| `-s, --skills <skills...>` | Specific skills to include (default: all) |
+| `-o, --output <file>` | Write to file instead of stdout |
+
+**Examples:**
+```bash
+skills context                           # XML to stdout
+skills context -f json                   # JSON format
+skills context -f markdown -o context.md # Save markdown to file
+skills context -s xlsx,pdf               # Specific skills only
+```
+
+---
+
+### `preview`
+
+Open skill detail page in browser or print URL.
+
+```bash
+skills preview <skill-name> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--url-only` | Just print the URL without opening |
+
+**Example:**
+```bash
+skills preview xlsx            # Opens in browser
+skills preview xlsx --url-only # Prints: https://skills.karanjot.dev/marketplace/xlsx
+```
+
+---
+
+### `scripts`
+
+List available scripts in an installed skill with safety analysis.
+
+```bash
+skills scripts <skill-name>
+```
+
+**Output (with scripts):**
+```
+📜 Scripts in pdf:
+
+  ✓ extract.js
+  ⚠ install-deps.sh
+      Warning: Uses sudo
+
+Run with: skills run pdf <script>
+```
+
+---
+
+### `info`
+
+Show skills installation status and paths.
+
+```bash
+skills info
+```
+
+**Output:**
+```
+📦 Skills CLI Info
+
+📁 Paths:
+  ✓ Global skills: /Users/you/.antigravity/skills
+  ○ Project skills: ./.antigravity/skills
+  ✓ Config: /Users/you/.antigravity/marketplace.json
+
+📊 Stats:
+  Installed skills: 16
+  Platform: darwin
+  Node: v25.2.1
+
+🤖 Agent Directories:
+  ✓ Cursor: .cursor/skills
+  ✓ Claude: .claude/skills
+  ✓ Copilot: .github/skills
+  ○ Codex: .codex/skills
+  ✓ Antigravity: .agent/skills
+```
+
+---
+
+### `completion`
+
+Generate shell completion script.
+
+```bash
+skills completion <shell>
+```
+
+**Supported shells:** `bash`, `zsh`, `fish`
+
+**Example:**
+```bash
+# Add to ~/.bashrc
+eval "$(skills completion bash)"
+
+# Add to ~/.zshrc
+eval "$(skills completion zsh)"
+
+# Save for fish
+skills completion fish > ~/.config/fish/completions/skills.fish
+```

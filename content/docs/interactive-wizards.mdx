@@ -1,0 +1,55 @@
+---
+title: "Interactive Wizards"
+order: 8
+icon: "sparkles"
+description: "Guided interactive flows for installing, exporting, and setting up skills"
+commands: ["install-wizard", "export-interactive", "setup"]
+---
+
+### `install-wizard`
+
+Interactive skill installation wizard with checkbox selection.
+
+```bash
+skills install-wizard
+# Alias: skills iw
+```
+
+Fetches all skills from marketplaces and presents a checkbox UI for selection.
+
+---
+
+### `export-interactive`
+
+Interactive export with agent selection menu.
+
+```bash
+skills export-interactive
+# Alias: skills ei
+```
+
+Presents a checkbox UI to select which agents to export to:
+```
+? Select target AI agents:
+  ◉ GitHub Copilot  (.github/skills/<skill>/SKILL.md)
+  ◉ Cursor          (.cursor/skills/<skill>/SKILL.md)
+  ◉ Claude Code     (.claude/skills/<skill>/SKILL.md)
+  ◉ OpenAI Codex    (.codex/skills/<skill>/SKILL.md)
+  ◉ Antigravity     (.agent/skills/<skill>/SKILL.md)
+```
+
+---
+
+### `setup`
+
+Interactive setup wizard — install skills and export to your agents in one flow.
+
+```bash
+skills setup
+```
+
+Guides you through:
+1. Choose action: Install, Export, or Both
+2. Select skills to install from marketplace
+3. Select target AI agents for export
+4. Automatically installs and exports
