@@ -83,7 +83,7 @@ export function DocsClient({ sections }: DocsClientProps) {
                         <div className="mb-12">
                             <div className="flex items-center gap-3 mb-4">
                                 <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
-                                    v1.0.9
+                                    v1.1.0
                                 </Badge>
                                 <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
                                     {totalCommands > 0 ? totalCommands : 52} Commands
