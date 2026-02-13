@@ -1,0 +1,210 @@
+---
+title: "Private Sources"
+order: 3
+icon: "lock"
+description: "Install from private Git repos, npm packages, and enterprise registries with automatic authentication"
+commands: []
+---
+
+## Overview
+
+Agent Skills CLI supports installing from private and enterprise sources beyond the public marketplace. This includes private Git repositories (GitHub, GitLab, Bitbucket, self-hosted), npm packages (public and private registries), and SSH-based installations.
+
+## Private Git Repositories
+
+### SSH URLs
+
+SSH is the recommended method for private repos. The CLI automatically detects SSH keys from `ssh-agent` and `~/.ssh/`.
+
+```bash
+# GitHub private repo via SSH
+skills install git@github.com:team/private-skills.git
+
+# GitLab private repo
+skills install git@gitlab.com:company/internal-tools.git
+
+# Self-hosted Git
+skills install git@git.company.com:team/skills.git
+```
+
+### HTTPS with Token
+
+Use `--token` or environment variables for HTTPS-based private clone.
+
+```bash
+# Explicit token
+skills install https://gitlab.com/team/repo --token=glpat-xxxxxxxxxxxx
+
+# Environment variable (recommended for CI/CD)
+export GITLAB_TOKEN=glpat-xxxxxxxxxxxx
+skills install https://gitlab.com/team/repo
+```
+
+### Bitbucket
+
+```bash
+# Public Bitbucket repo
+skills install https://bitbucket.org/team/skills-repo
+
+# Private Bitbucket (set token)
+export BITBUCKET_TOKEN=xxxxxxxx
+skills install https://bitbucket.org/team/private-skills
+```
+
+### Self-Hosted Git Instances
+
+```bash
+# Custom Git server
+skills install https://git.company.com/team/skills --token=$COMPANY_TOKEN
+
+# With port
+skills install https://git.company.com:8443/team/skills --token=$COMPANY_TOKEN
+```
+
+---
+
+## Authentication Resolution
+
+The CLI resolves credentials in this priority order:
+
+| Priority | Method | How |
+|----------|--------|-----|
+| 1 | `--token` flag | `skills install <url> --token=xxx` |
+| 2 | Environment variables | `GH_TOKEN`, `GITLAB_TOKEN`, `BITBUCKET_TOKEN`, `GIT_TOKEN` |
+| 3 | SSH keys | Auto-detected from `ssh-agent` or `~/.ssh/` |
+| 4 | Git credential helper | System `git config credential.helper` |
+| 5 | `.netrc` file | `~/.netrc` machine entries |
+| 6 | None | Attempt public access |
+
+### Environment Variables
+
+| Variable | Provider |
+|----------|----------|
+| `GH_TOKEN` / `GITHUB_TOKEN` | GitHub |
+| `GITLAB_TOKEN` / `GL_TOKEN` | GitLab |
+| `BITBUCKET_TOKEN` / `BB_TOKEN` | Bitbucket |
+| `GIT_TOKEN` | Any Git host (fallback) |
+
+### Security
+
+- Tokens are **never** logged or displayed in error messages
+- URLs in logs are sanitized: `https://oauth2:***@gitlab.com/...`
+- `GIT_TERMINAL_PROMPT=0` is set automatically to prevent interactive prompts in CI
+
+---
+
+## npm Packages
+
+Install skills packaged as npm modules.
+
+```bash
+# Public npm package
+skills install npm:chalk
+skills install npm:@anthropic/skills
+
+# With version or tag
+skills install npm:@company/skills@1.1.1
+skills install npm:@company/skills@latest
+
+# Private registry
+skills install npm:@company/skills --registry https://npm.company.com
+```
+
+The CLI uses `npm pack` to download the package tarball, extracts it, and searches for `SKILL.md` files inside.
+
+---
+
+## `.skillsrc` Configuration
+
+Create a `.skillsrc` or `.skillsrc.json` file to pre-configure private sources and defaults for your project or globally.
+
+### File Locations
+
+| Location | Scope |
+|----------|-------|
+| `./.skillsrc` | Project (highest priority) |
+| `./.skillsrc.json` | Project |
+| `~/.skillsrc` | User-wide |
+| `~/.skillsrc.json` | User-wide |
+
+### Example Configuration
+
+```json
+{
+  "sources": [
+    {
+      "name": "company-gitlab",
+      "type": "git",
+      "url": "https://gitlab.company.com",
+      "auth_env": "COMPANY_GIT_TOKEN"
+    },
+    {
+      "name": "internal-npm",
+      "type": "npm",
+      "registry": "https://npm.company.com",
+      "scope": "@company"
+    },
+    {
+      "name": "bitbucket-skills",
+      "type": "git",
+      "url": "https://bitbucket.org/team",
+      "auth_env": "BB_TOKEN"
+    }
+  ],
+  "defaults": {
+    "agent": "cursor",
+    "global": false
+  }
+}
+```
+
+### Configuration Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `sources[].name` | string | Display name for the source |
+| `sources[].type` | `"git"` \| `"npm"` | Source type |
+| `sources[].url` | string | Git host URL or npm registry URL |
+| `sources[].auth_env` | string | Environment variable name for auth token |
+| `sources[].registry` | string | npm registry URL (for npm type) |
+| `sources[].scope` | string | npm scope (e.g. `@company`) |
+| `defaults.agent` | string | Default agent to install to |
+| `defaults.global` | boolean | Default to global install |
+
+---
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+- name: Install private skills
+  env:
+    GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+  run: |
+    npm install -g agent-skills-cli
+    skills install git@github.com:team/private-skills.git -a cursor -y
+    skills install npm:@company/skills --registry https://npm.company.com -a cursor -y
+```
+
+### GitLab CI
+
+```yaml
+install-skills:
+  script:
+    - npm install -g agent-skills-cli
+    - skills install https://gitlab.com/team/skills -a cursor -y
+  variables:
+    GITLAB_TOKEN: $GITLAB_TOKEN
+    GIT_TERMINAL_PROMPT: "0"
+```
+
+### Docker
+
+```dockerfile
+ENV GIT_TOKEN=your-token
+ENV GIT_TERMINAL_PROMPT=0
+RUN npm install -g agent-skills-cli && \
+    skills install git@github.com:team/skills.git -a cursor -y
+```

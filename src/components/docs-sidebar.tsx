@@ -419,7 +419,7 @@ export function DocsSidebar({ onSearchOpen }: DocsSidebarProps) {
                             Marketplace
                         </a>
                         <span>•</span>
-                        <span className="text-zinc-600">v1.1.0</span>
+                        <span className="text-zinc-600">v1.1.1</span>
                     </div>
                 </div>
             </div>

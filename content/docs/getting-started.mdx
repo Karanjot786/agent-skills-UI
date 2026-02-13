@@ -23,6 +23,14 @@ skills install @facebook/verify
 # ⭐ Install from a GitHub repo
 skills add vercel-labs/agent-skills
 
+# ⭐ Install from private Git (auto-detects credentials)
+skills install git@gitlab.com:team/internal-skills.git
+skills install https://git.company.com/team/repo --token $GIT_TOKEN
+
+# ⭐ Install from npm
+skills install npm:@company/skills
+skills install npm:@company/skills --registry https://npm.company.com
+
 # Install to specific platforms
 skills install @anthropic/pdf -a claude,cursor
 
@@ -59,7 +67,7 @@ skills export -t cursor,claude,copilot
 All **42 agents** are supported. Each agent uses its own directory:
 
 | Agent | Directory |
-|-------|-----------|
+|-------|-----------| 
 | Cursor | `.cursor/skills` |
 | Claude Code | `.claude/skills` |
 | GitHub Copilot | `.github/skills` |
@@ -105,15 +113,56 @@ All **42 agents** are supported. Each agent uses its own directory:
 
 ## Environment & Configuration
 
+### Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `GH_TOKEN` / `GITHUB_TOKEN` | GitHub private repo authentication |
+| `GITLAB_TOKEN` / `GL_TOKEN` | GitLab private repo authentication |
+| `BITBUCKET_TOKEN` / `BB_TOKEN` | Bitbucket private repo authentication |
+| `GIT_TOKEN` | Generic Git authentication (any host) |
+| `DISABLE_TELEMETRY` / `DO_NOT_TRACK` | Opt out of anonymous telemetry |
+
+### `.skillsrc` Configuration
+
+Create a `.skillsrc` or `.skillsrc.json` in your project root (or `~/.skillsrc` globally) to pre-configure private sources and defaults:
+
+```json
+{
+  "sources": [
+    {
+      "name": "company-gitlab",
+      "type": "git",
+      "url": "https://gitlab.company.com",
+      "auth_env": "COMPANY_GIT_TOKEN"
+    },
+    {
+      "name": "company-npm",
+      "type": "npm",
+      "registry": "https://npm.company.com",
+      "scope": "@company"
+    }
+  ],
+  "defaults": {
+    "agent": "cursor",
+    "global": false
+  }
+}
+```
+
+Config is loaded from: project `.skillsrc` → home `~/.skillsrc` (first found wins).
+
 ### Global Skills Directory
 ```
 ~/.antigravity/skills/          # All installed skills
 ~/.antigravity/marketplace.json # Marketplace configuration
+~/.skills/skills.lock           # Lock file tracking
 ```
 
 ### Project Skills Directory
 ```
 ./skills/                       # Local project skills
+./.skillsrc                     # Project-level configuration
 ```
 
 ### SKILL.md Format

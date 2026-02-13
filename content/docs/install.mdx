@@ -2,13 +2,13 @@
 title: "Install & Add"
 order: 2
 icon: "download"
-description: "Primary commands for installing skills from marketplace, GitHub, URLs, and local directories"
+description: "Install skills from marketplace, GitHub, private Git repos, npm registries, and local directories"
 commands: ["install", "add"]
 ---
 
 ### `install` / `add`
 
-Install skill(s) from the marketplace, GitHub repos, URLs, or local directories. Auto-detects platforms or lets you target specific agents.
+Install skill(s) from the marketplace, GitHub repos, private Git repos, npm registries, URLs, or local directories. Auto-detects platforms or lets you target specific agents.
 
 ```bash
 skills install [source] [options]
@@ -23,6 +23,8 @@ skills add [source] [options]
 | `-g, --global` | Install globally (user-wide, home directory) |
 | `-s, --skill <skills...>` | Install by marketplace skill name(s) |
 | `-y, --yes` | Skip confirmation prompts |
+| `--token <token>` | Authentication token for private Git repos |
+| `--registry <url>` | npm registry URL (for `npm:` sources) |
 
 #### Install from Marketplace (`@scope/name`)
 
@@ -82,6 +84,56 @@ skills add anthropic/skills@xlsx
 skills install https://github.com/anthropics/courses -a cursor
 ```
 
+#### Install from Private Git Repos
+
+Install from private or self-hosted Git repositories with automatic credential resolution.
+
+```bash
+# SSH (auto-detects SSH keys from ssh-agent or ~/.ssh/)
+skills install git@github.com:team/private-repo.git
+skills install git@gitlab.com:team/internal-skills.git
+
+# HTTPS with explicit token
+skills install https://git.company.com/team/repo --token=ghp_xxx
+
+# Token from environment variables
+GH_TOKEN=xxx skills install https://github.com/team/private-repo
+GITLAB_TOKEN=xxx skills install https://gitlab.com/team/repo
+BITBUCKET_TOKEN=xxx skills install https://bitbucket.org/team/repo
+
+# Bitbucket
+skills install https://bitbucket.org/team/skills-repo -a cursor
+
+# Self-hosted Git instances
+skills install https://git.company.com/team/skills --token=$COMPANY_TOKEN
+```
+
+**Auth resolution order:** `--token` flag → env vars → SSH keys → git credential helper → `.netrc` → none (public access)
+
+| Environment Variable | Provider |
+|---------------------|----------|
+| `GH_TOKEN` / `GITHUB_TOKEN` | GitHub |
+| `GITLAB_TOKEN` / `GL_TOKEN` | GitLab |
+| `BITBUCKET_TOKEN` / `BB_TOKEN` | Bitbucket |
+| `GIT_TOKEN` | Any Git host |
+
+#### Install from npm Packages
+
+Install skills packaged as npm modules (public or private registries).
+
+```bash
+# Public npm packages
+skills install npm:chalk
+skills install npm:@anthropic/skills
+
+# Scoped package with version or tag
+skills install npm:@company/skills@1.1.1
+skills install npm:@company/skills@latest
+
+# Private npm registry
+skills install npm:@company/skills --registry https://npm.company.com
+```
+
 #### Install by Skill Name (`-s` flag)
 
 ```bash
@@ -104,12 +156,47 @@ When you run `skills install` with no arguments and a `skills.lock` exists, it o
 skills install   # Prompts: "Found N skills in lock file. Reinstall all?"
 ```
 
+#### `.skillsrc` Configuration
+
+Create a `.skillsrc` or `.skillsrc.json` in your project root (or `~/.skillsrc` globally) to pre-configure private sources:
+
+```json
+{
+  "sources": [
+    {
+      "name": "company-gitlab",
+      "type": "git",
+      "url": "https://gitlab.company.com",
+      "auth_env": "COMPANY_GIT_TOKEN"
+    },
+    {
+      "name": "company-npm",
+      "type": "npm",
+      "registry": "https://npm.company.com",
+      "scope": "@company"
+    }
+  ],
+  "defaults": {
+    "agent": "cursor",
+    "global": false
+  }
+}
+```
+
+Config is loaded from: project `.skillsrc` → home `~/.skillsrc` (first found wins).
+
 #### Error Handling
 
 ```bash
 # Nonexistent scoped name — graceful error
 skills install @nonexistent/skill-xyz
 # ✖ Could not find "@nonexistent/skill-xyz" in marketplace
+
+# Auth failure — helpful error with env var suggestions
+skills install https://gitlab.com/team/private-repo
+# ✖ Authentication failed for https://gitlab.com/team/private-repo
+#   Set GITLAB_TOKEN or GL_TOKEN environment variable, or use --token flag.
+#   For SSH, ensure your key is added: ssh-add ~/.ssh/id_ed25519
 
 # Nonexistent repo — git clone fails gracefully
 skills install nonexistent-owner/nonexistent-repo
