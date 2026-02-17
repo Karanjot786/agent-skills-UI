@@ -89,7 +89,7 @@ export function TerminalAnimation() {
             ],
         },
         {
-            command: 'skills install @langgenius/frontend-code-review -t claude',
+            command: 'npx agent-skills-cli install @langgenius/frontend-code-review -t claude',
             description: 'Install skills from the marketplace.',
             stages: [
                 [

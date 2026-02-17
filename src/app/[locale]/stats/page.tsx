@@ -231,7 +231,7 @@ export default function StatsPage() {
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <span className="text-cyan-400 mt-1">•</span>
-                                    <span>Install any skill with one command: <code className="bg-zinc-800 px-2 py-0.5 rounded text-cyan-400">skills install @author/skill</code></span>
+                                    <span>Install any skill with one command: <code className="bg-zinc-800 px-2 py-0.5 rounded text-cyan-400">npx agent-skills-cli install @author/skill</code></span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <span className="text-cyan-400 mt-1">•</span>

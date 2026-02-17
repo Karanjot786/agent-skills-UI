@@ -238,19 +238,19 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                         "@type": "HowToStep",
                         "position": 1,
                         "name": "Install Agent Skills CLI",
-                        "text": "Install the CLI globally: npm install -g agent-skills-cli"
+                        "text": "Install the CLI globally: npm install -g agent-skills-cli (or use npx)"
                     },
                     {
                         "@type": "HowToStep",
                         "position": 2,
                         "name": "Install the skill",
-                        "text": `Run: skills install ${skill.scoped_name}`
+                        "text": `Run: npx agent-skills-cli install ${skill.scoped_name}`
                     },
                     {
                         "@type": "HowToStep",
                         "position": 3,
                         "name": "Verify installation",
-                        "text": "Check installed skills with: skills list"
+                        "text": "Check installed skills with: npx agent-skills-cli list"
                     }
                 ],
                 "totalTime": "PT1M"
@@ -403,7 +403,7 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                                 <p>After installing, this skill will be available to your AI coding assistant.</p>
                                 <p>Verify installation:</p>
                                 <code className="block bg-black/50 p-3 rounded font-mono text-xs text-zinc-300">
-                                    skills list
+                                    npx agent-skills-cli list
                                 </code>
                             </div>
                         </Card>

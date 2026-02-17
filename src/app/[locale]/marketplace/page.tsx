@@ -214,7 +214,7 @@ function MarketplaceContent() {
     };
 
     const copyCommand = (skillName: string) => {
-        navigator.clipboard.writeText(`skills install ${skillName}`);
+        navigator.clipboard.writeText(`npx agent-skills-cli install ${skillName}`);
         setCopied(skillName);
         setTimeout(() => setCopied(null), 2000);
     };

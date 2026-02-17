@@ -25,7 +25,7 @@ const faqCategories = [
             },
             {
                 question: 'How do I install my first skill?',
-                answer: 'Run `skills install @author/skill-name` to install any skill from the marketplace. For example: `skills install @anthropic/xlsx`. The CLI will auto-detect your installed AI agents and install the skill to all of them.',
+                answer: 'Run `npx agent-skills-cli install @author/skill-name` to install any skill from the marketplace. For example: `npx agent-skills-cli install @anthropic/xlsx`. The CLI will auto-detect your installed AI agents and install the skill to all of them.',
             },
             {
                 question: 'How do I search for skills?',
@@ -47,7 +47,7 @@ const faqCategories = [
             },
             {
                 question: 'How do I install to a specific agent?',
-                answer: 'Use the `-t` or `--target` flag: `skills install @author/skill -t cursor` or `skills install @author/skill -t cursor,claude` for multiple agents.',
+                answer: 'Use the `-t` or `--target` flag: `npx agent-skills-cli install @author/skill -t cursor` or `npx agent-skills-cli install @author/skill -t cursor,claude` for multiple agents.',
             },
             {
                 question: 'Does the CLI auto-detect my agents?',
@@ -55,7 +55,7 @@ const faqCategories = [
             },
             {
                 question: 'Can I install to all agents at once?',
-                answer: 'Yes, use the `--all` flag: `skills install @author/skill --all`. This installs the skill to every supported agent directory.',
+                answer: 'Yes, use the `--all` flag: `npx agent-skills-cli install @author/skill --all`. This installs the skill to every supported agent directory.',
             },
         ],
     },

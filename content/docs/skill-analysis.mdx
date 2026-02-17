@@ -1,0 +1,159 @@
+---
+title: "Skill Analysis"
+order: 8
+icon: "microscope"
+description: "Conflict detection, context budgeting, diffing, and benchmarking"
+commands: ["doctor --deep", "budget", "diff", "bench"]
+---
+
+### `doctor --deep`
+
+Deep conflict analysis across all installed skills.
+
+```bash
+skills doctor --deep
+```
+
+Extends the existing `doctor` command with a `--deep` flag that runs three conflict detection strategies:
+
+| Strategy | Description |
+|----------|-------------|
+| Keyword Contradiction | Detects conflicting instructions (e.g., "use tabs" vs "use spaces") |
+| Topic Overlap | Jaccard similarity on section headings to find duplicate coverage |
+| Rule Extraction | Extracts imperative instructions and compares across skills |
+
+**Output:**
+```
+🩺 Agent Skills Doctor
+  ✓ Installed skills: 16/16 valid
+
+🔍 Deep Conflict Analysis
+  ✓ No conflicting instructions found.
+  ✓ No topic overlaps found.
+```
+
+When conflicts exist, you'll see severity levels and estimated wasted tokens.
+
+---
+
+### `budget`
+
+Smart context budget manager — loads only the most relevant skills within a token limit.
+
+```bash
+skills budget -b <tokens> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-b, --budget <tokens>` | Token budget (required, e.g. 8000) |
+| `-f, --format <format>` | Output format: `text`, `xml`, `json` (default: text) |
+| `-m, --min-relevance <score>` | Minimum relevance score (0–100, default: 10) |
+| `-p, --project <dir>` | Project directory to analyze (default: cwd) |
+| `--list-only` | Show ranked list without selecting |
+
+**Relevance scoring (no LLM required):**
+1. File extension matching (project file types → skill language keywords)
+2. Dependency matching (package.json, requirements.txt, Cargo.toml)
+3. Keyword density (skill body vs project file/directory names)
+4. Description match against all project signals
+
+**Examples:**
+```bash
+skills budget -b 8000                    # Text output with relevance bars
+skills budget -b 4000 --format xml       # Agent-ready XML
+skills budget -b 10000 --format json     # Machine-readable
+skills budget -b 6000 --min-relevance 30 # Only high-relevance skills
+```
+
+**Output:**
+```
+📊 Context Budget Plan
+  Budget: 8000 tokens | Skills found: 21
+
+  ✅ Loading 4 skill(s):
+    █████████████░░░░░░░ skill-creator (4426 tokens, 67% relevant)
+    █████████████░░░░░░░ docx (2538 tokens, 64% relevant)
+    █████░░░░░░░░░░░░░░░ skill-installer (704 tokens, 23% relevant)
+    ██░░░░░░░░░░░░░░░░░░ test-skill (106 tokens, 10% relevant)
+
+  Summary: Used 7774 / 8000 tokens
+```
+
+---
+
+### `diff`
+
+Section-aware comparison between two skills.
+
+```bash
+skills diff <skill-a> <skill-b> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--json` | Output as JSON |
+
+Parses each SKILL.md by headings and compares:
+- **Added sections** — only in skill B
+- **Removed sections** — only in skill A
+- **Changed sections** — same heading, different content (with line delta)
+- **Token delta** — how many tokens differ
+
+**Examples:**
+```bash
+skills diff frontend-design frontend-code-review
+skills diff ./skill-a ./skill-b --json
+```
+
+**Output:**
+```
+📊 Skill Diff: frontend-design vs frontend-code-review
+  ➕ Added: 11 sections
+  ➖ Removed: 2 sections
+  ✏️  Changed: 1
+  Token delta: -358
+```
+
+---
+
+### `bench`
+
+Benchmark and compare skills by quality, size, and coverage.
+
+```bash
+skills bench [skills...] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --all` | Benchmark all installed skills |
+| `--sort <field>` | Sort by: `quality`, `tokens`, `name` (default: quality) |
+| `--json` | Output as JSON |
+| `--min-quality <n>` | Filter skills below this quality score (0–100) |
+
+**Quality scoring (0–100):**
+- Frontmatter with name (+10) and description (+10)
+- Section headings (+15/+5), code blocks (+15/+5)
+- Has examples (+10), has instructions (+10)
+- Appropriate token range (+10), no TODOs (+10)
+
+**Examples:**
+```bash
+skills bench --all                  # All skills, sorted by quality
+skills bench --all --sort tokens    # Sorted by size
+skills bench --min-quality 80       # Only high-quality skills
+```
+
+**Output:**
+```
+📈 Skill Benchmark Results
+  Skill                     Quality    Tokens   Sections   Code   Features
+  ─────────────────────────────────────────────────────────────────────────
+  add-uint-support          ██████████ 2311     24         13     📝 💡 📋
+  frontend-code-review      ██████████ 711      11         2      📝 💡 📋
+  frontend-design           ████████░░ 1069     2          0      📝 💡 📋
+
+  Summary: 17 skills | Avg quality: 90% | Total tokens: 41279
+  Legend: 📝 frontmatter  💡 examples  📋 instructions
+```

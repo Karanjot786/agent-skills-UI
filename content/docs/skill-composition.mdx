@@ -1,0 +1,204 @@
+---
+title: "Skill Composition"
+order: 9
+icon: "puzzle-piece"
+description: "Compose, split, test, and sandbox preview skills"
+commands: ["compose", "test", "split", "sandbox"]
+---
+
+### `compose`
+
+Combine multiple skills into a single "super-skill."
+
+```bash
+skills compose <skills...> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <name>` | Output skill name (default: composed-skill) |
+| `-s, --strategy <type>` | Composition strategy: `merge`, `chain`, `conditional` (default: merge) |
+| `--no-dedup` | Disable deduplication in merge mode |
+| `--save` | Auto-save to global skills directory |
+
+**Composition strategies:**
+
+| Strategy | Description |
+|----------|-------------|
+| `merge` | Combines all sections, deduplicates similar lines (default) |
+| `chain` | Sequences skills with ordered phase markers |
+| `conditional` | Wraps each skill in a conditional activation block |
+
+**Examples:**
+```bash
+# Merge two frontend skills
+skills compose frontend-design frontend-code-review -o frontend-pro
+
+# Chain skills in sequence
+skills compose setup coding-style testing -o full-workflow -s chain --save
+
+# Conditional activation
+skills compose python-pro typescript-pro -o polyglot -s conditional
+```
+
+**Output:**
+```
+✔ Composed "combined-frontend"
+  Source skills: frontend-design, frontend-code-review
+  Strategy:      merge
+  Token count:   1729
+  Deduplicated:  1 redundant lines removed
+  Saved to:      ~/.antigravity/skills/combined-frontend/SKILL.md
+```
+
+---
+
+### `test`
+
+Run quality tests and assertions against skills.
+
+```bash
+skills test [skills...] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --all` | Test all installed skills |
+| `--json` | Output results as JSON |
+| `-v, --verbose` | Show all assertions (not just failures) |
+
+**10 built-in assertions:**
+
+| Category | Assertion | Description |
+|----------|-----------|-------------|
+| Structure | SKILL.md exists | Skill file must be present |
+| Structure | Valid frontmatter | Must parse without errors |
+| Structure | Has name | Frontmatter includes `name` field |
+| Structure | Has description | Frontmatter includes `description` field |
+| Content | Has sections | At least 2 markdown headings |
+| Content | Has code examples | At least one fenced code block |
+| Content | Has "when to use" | Describes activation criteria |
+| Quality | Description < 200 chars | Concise, scannable description |
+| Quality | No TODOs/FIXMEs | No placeholder content |
+| Quality | Minimum length | Content is at least 100 characters |
+
+**Custom tests:** Create a `skill-test.yml` in your skill directory:
+```yaml
+tests:
+  - name: "Uses TypeScript examples"
+    type: contains
+    value: "typescript"
+  - name: "Mentions error handling"
+    type: contains
+    value: "error"
+```
+
+**Examples:**
+```bash
+skills test frontend-design              # Test a specific skill
+skills test --all --verbose             # Test all, show all assertions
+skills test --all --json                # Machine-readable for CI
+```
+
+**Output:**
+```
+🧪 Skill Test Results
+  ✗ frontend-design 70% (7ms)
+    ✗ Has "when to use" section
+    ✗ Has code examples
+    ✗ Description is concise
+
+  Summary: 0 passed / 1 failed / 1 total
+```
+
+> **CI Integration:** Exits with code 1 on any failure, making it ideal for CI pipelines.
+
+---
+
+### `split`
+
+Split a large skill into focused sub-skills by topic.
+
+```bash
+skills split <skill> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-m, --min-sections <n>` | Minimum sections per sub-skill (default: 2) |
+| `--save <dir>` | Save sub-skills to directory |
+| `--dry-run` | Only preview the split, do not save |
+| `--json` | Output as JSON |
+
+**Topic categories used for clustering:**
+
+setup, coding-style, testing, architecture, deployment, security, api, database, documentation, performance
+
+**Examples:**
+```bash
+skills split skill-creator --dry-run    # Preview the split
+skills split big-skill --save ./output  # Save sub-skills
+skills split monolith --min-sections 3  # Require 3+ sections per group
+```
+
+**Output:**
+```
+✂️  Skill Splitter: skill-creator
+  Original: 4426 tokens
+
+  Can be split into 8 sub-skills:
+  📦 testing (300 tokens) — About Skills, What Skills Provide, Iterate
+  📦 deployment (785 tokens) — Core Principles, Concise is Key, ...
+  📦 setup (955 tokens) — SKILL.md (required), Quick start, ...
+  📦 database (983 tokens) — Bundled Resources, Planning, ...
+  ...
+```
+
+---
+
+### `sandbox`
+
+Preview a skill's quality, conflicts, and token impact before installing.
+
+```bash
+skills sandbox <source> [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-f, --format <format>` | Output format: `text`, `json` |
+
+Accepts local paths or remote GitHub sources (`@owner/repo`). Runs three analyses:
+
+1. **Skill Info** — Name, description, token count, line count
+2. **Quality Score** — Grade (A–F) from the built-in test framework
+3. **Conflict Analysis** — Checks for overlaps with already-installed skills
+
+**Examples:**
+```bash
+skills sandbox ~/.antigravity/skills/my-skill     # Local skill
+skills sandbox @owner/repo                        # Remote skill
+skills sandbox ./my-skill                         # Relative path
+```
+
+**Output:**
+```
+🧪 Sandbox Preview: frontend-design
+
+  📋 Skill Info
+    Name:        frontend-design
+    Tokens:      1069
+    Lines:       42
+
+  🧪 Quality Score
+    Grade: C (70%)
+    Issues:
+      ✗ Has "when to use" section
+      ✗ Has code examples
+
+  ⚔️  Conflict Analysis
+    1 overlap(s) found (~842 wasted tokens)
+
+  📊 Verdict
+    This skill would consume ~1069 tokens of your context budget.
+```

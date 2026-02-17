@@ -8,13 +8,13 @@ interface PlatformInstallTabsProps {
 }
 
 const platforms = [
-    { id: 'auto', label: 'Auto-detect', command: (name: string) => `skills install ${name}` },
-    { id: 'all', label: 'All Platforms', command: (name: string) => `skills install ${name} --all` },
-    { id: 'claude', label: 'Claude', command: (name: string) => `skills install ${name} -t claude` },
-    { id: 'cursor', label: 'Cursor', command: (name: string) => `skills install ${name} -t cursor` },
-    { id: 'copilot', label: 'Copilot', command: (name: string) => `skills install ${name} -t copilot` },
-    { id: 'codex', label: 'Codex', command: (name: string) => `skills install ${name} -t codex` },
-    { id: 'antigravity', label: 'Antigravity', command: (name: string) => `skills install ${name} -t antigravity` },
+    { id: 'auto', label: 'Auto-detect', command: (name: string) => `npx agent-skills-cli install ${name}` },
+    // { id: 'all', label: 'All Platforms', command: (name: string) => `npx agent-skills-cli install ${name} --all` },
+    { id: 'claude', label: 'Claude', command: (name: string) => `npx agent-skills-cli install ${name} -a claude` },
+    { id: 'cursor', label: 'Cursor', command: (name: string) => `npx agent-skills-cli install ${name} -a cursor` },
+    { id: 'copilot', label: 'Copilot', command: (name: string) => `npx agent-skills-cli install ${name} -a copilot` },
+    { id: 'codex', label: 'Codex', command: (name: string) => `npx agent-skills-cli install ${name} -a codex` },
+    { id: 'antigravity', label: 'Antigravity', command: (name: string) => `npx agent-skills-cli install ${name} -a antigravity` },
 ];
 
 export function PlatformInstallTabs({ scopedName }: PlatformInstallTabsProps) {

@@ -1,0 +1,105 @@
+---
+title: "Watch & Sync"
+order: 10
+icon: "eye"
+description: "Watch mode, frozen installs, and automatic agent syncing"
+commands: ["watch", "frozen"]
+---
+
+### `watch`
+
+Watch for skill file changes and auto-sync across all agent directories.
+
+```bash
+skills watch [dir] [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --agent <agents...>` | Agents to sync to (default: all) |
+| `--debounce <ms>` | Debounce delay in milliseconds (default: 500) |
+
+Uses Node.js built-in `fs.watch` for file monitoring (no additional dependencies). When a `.md` file changes in the watched directory, it automatically copies the updated file to all target agent directories.
+
+**Examples:**
+```bash
+# Watch global skills directory, sync to all agents
+skills watch
+
+# Watch a custom directory
+skills watch ./my-skills
+
+# Watch and sync to specific agents only
+skills watch --agent cursor,claude
+
+# Custom debounce
+skills watch --debounce 1000
+```
+
+**Output:**
+```
+👁️  Watch Mode
+
+  Watching: /Users/you/.antigravity/skills
+  Syncing to: cursor, claude, copilot, codex, antigravity, ...
+  Press Ctrl+C to stop.
+
+  ⟳ 09:15:32 frontend-design changed
+    ✓ Synced to 5 agent(s)
+```
+
+> **Development workflow:** Edit your skill once, and watch mode keeps all 42 agent directories in sync automatically.
+
+---
+
+### `frozen`
+
+Install skills from the lockfile with pinned versions — deterministic installs like `npm ci`.
+
+```bash
+skills frozen [options]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--verify` | Only verify that installed skills match the lockfile |
+| `--strict` | Fail immediately on first mismatch |
+
+**Modes:**
+
+| Mode | Description |
+|------|-------------|
+| Default (restore) | Re-clones skills from their recorded sources with pinned versions |
+| `--verify` | Checks whether installed skills exist at their canonical paths |
+| `--strict` | Aborts on first failure (useful for CI) |
+
+**Supported source types:**
+- `github` — Clones from GitHub with optional commit checkout
+- `private-git` — Clones from private Git repos with auth
+- `local` — Verifies local source path still exists
+
+**Examples:**
+```bash
+# Restore all skills from lockfile
+skills frozen
+
+# Verify mode — check without modifying
+skills frozen --verify
+
+# Strict mode for CI pipelines
+skills frozen --verify --strict
+```
+
+**Output (verify mode):**
+```
+❄️  Frozen Install (verify mode)
+  Found 73 skill(s) in lockfile.
+
+  ✔ frontend-design ✓ verified
+  ✖ typescript-pro ✗ missing
+  ✖ react-expert ✗ missing
+
+  Summary: 1 succeeded / 72 failed / 73 total
+```
+
+> **CI/CD Integration:** Use `skills frozen --verify --strict` in your CI pipeline to ensure all team members have identical skill installations. Exits with code 1 on any mismatch.
