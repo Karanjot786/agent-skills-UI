@@ -1,14 +1,14 @@
 # Agent Skills CLI
 
-> The universal skill manager for 29 AI coding agents. Install 100,000+ skills for Cursor, Claude, Copilot, Gemini CLI, Windsurf, Cline, and more. For complete documentation, see [Full Documentation](https://agentskills.in/llms-full.txt).
+> The universal skill manager for 42+ AI coding agents. Install 100,000+ skills for Cursor, Claude, Copilot, Gemini CLI, Windsurf, Cline, and more. For complete documentation, see [Full Documentation](https://agentskills.in/llms-full.txt).
 
 ## Products
 
 - [CLI Tool](https://agentskills.in/docs): Command-line interface to install, search, and manage AI skills across all supported agents
 - [Skill Marketplace](https://agentskills.in/marketplace): Browse and search 100,000+ skills organized by category, author, and popularity
-- [npm Package](https://www.npmjs.com/package/agent-skills-cli): Install globally with `npm install -g agent-skills-cli`
+- [npm Package](https://www.npmjs.com/package/agent-skills-cli): Install globally with `npm install -g agent-skills-cli` or use directly with `npx agent-skills-cli`
 
-## Supported Agents (29 Total)
+## Supported Agents (42+ Total)
 
 ### Primary Agents
 - [Cursor](https://agentskills.in/docs#cursor): Install skills to `.cursor/skills/` directory
@@ -25,12 +25,14 @@
 
 ## Core Commands
 
-- `skills install <name>`: Install a skill from the marketplace
-- `skills search <query>`: Search 100,000+ skills by name or description
-- `skills list`: List all installed skills across detected agents
-- `skills check`: Check for available updates to installed skills
-- `skills update`: Update installed skills to latest versions
-- `skills doctor`: Diagnose and fix common installation issues
+> All commands work with both `skills` (global install) and `npx agent-skills-cli` (no install needed).
+
+- `skills install <name>` / `npx agent-skills-cli install <name>`: Install a skill from the marketplace
+- `skills search <query>` / `npx agent-skills-cli search <query>`: Search 100,000+ skills by name or description
+- `skills list` / `npx agent-skills-cli list`: List all installed skills across detected agents
+- `skills check` / `npx agent-skills-cli check`: Check for available updates to installed skills
+- `skills update` / `npx agent-skills-cli update`: Update installed skills to latest versions
+- `skills doctor` / `npx agent-skills-cli doctor`: Diagnose and fix common installation issues
 
 ## Documentation
 

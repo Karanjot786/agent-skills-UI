@@ -32,18 +32,45 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         };
     }
 
+    const siteUrl = 'https://agentskills.in';
+    const skillPath = `/marketplace/${scopedName.split('/').map(encodeURIComponent).join('/')}`;
+    const ogImageUrl = `${siteUrl}/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`;
+
+    // Generate locale alternates
+    const languages: Record<string, string> = {
+        en: `${siteUrl}${skillPath}`,
+        ja: `${siteUrl}/ja${skillPath}`,
+        'zh-CN': `${siteUrl}/zh-CN${skillPath}`,
+        'zh-TW': `${siteUrl}/zh-TW${skillPath}`,
+        vi: `${siteUrl}/vi${skillPath}`,
+        es: `${siteUrl}/es${skillPath}`,
+    };
+
     return {
         title: `${skill.name} by ${skill.author} | Agent Skills`,
-        description: skill.description || `${skill.scoped_name} - A useful skill for AI coding assistants.`,
+        description: skill.description || `${skill.scoped_name} - Install this AI coding skill for Cursor, Claude, Copilot, and 26 more agents.`,
+        alternates: {
+            canonical: `${siteUrl}${skillPath}`,
+            languages,
+        },
         openGraph: {
             title: `${skill.scoped_name} | Agent Skills`,
             description: skill.description || `Install ${skill.scoped_name} for your AI coding assistant.`,
             type: 'website',
+            url: `${siteUrl}${skillPath}`,
+            siteName: 'Agent Skills',
+            images: [{
+                url: ogImageUrl,
+                width: 1200,
+                height: 630,
+                alt: `${skill.name} - AI Skill for Cursor, Claude, Copilot`,
+            }],
         },
         twitter: {
-            card: 'summary',
+            card: 'summary_large_image',
             title: `${skill.scoped_name} | Agent Skills`,
             description: skill.description || `Install ${skill.scoped_name} for your AI coding assistant.`,
+            images: [ogImageUrl],
         },
     };
 }

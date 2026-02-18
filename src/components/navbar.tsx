@@ -97,6 +97,12 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
                     >
                         <span className="relative z-20">{t('faq')}</span>
                     </Link>
+                    {/* <Link
+                        className="relative px-4 py-2 text-zinc-400 hover:text-cyan-400 transition-colors"
+                        href="/stats"
+                    >
+                        <span className="relative z-20">Stats</span>
+                    </Link> */}
                 </nav>
 
                 <div className="flex items-center gap-4 ml-8">
@@ -184,6 +190,13 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
                             >
                                 {t('faq')}
                             </Link>
+                            {/* <Link
+                                href="/stats"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="px-4 py-3 text-lg font-medium text-zinc-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-white/5"
+                            >
+                                Stats
+                            </Link> */}
                             <div className="border-t border-white/10 pt-4 mt-4 flex flex-col space-y-3">
                                 <a
                                     href="https://github.com/Karanjot786/agent-skills-cli"

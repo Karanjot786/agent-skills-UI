@@ -4,14 +4,55 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { ChevronDown, Terminal, HelpCircle, Zap, Shield, Globe } from 'lucide-react';
 
-export const metadata: Metadata = {
-    title: 'FAQ - Frequently Asked Questions | Agent Skills CLI',
-    description: 'Common questions about Agent Skills CLI: installation, usage, supported AI agents, skill creation, and troubleshooting.',
-    openGraph: {
-        title: 'Agent Skills CLI FAQ',
-        description: 'Answers to common questions about installing and using AI skills for Cursor, Claude, Copilot, and more.',
-    },
-};
+// Metadata is now handled by generateMetadata in layout or we use dynamic metadata here
+export async function generateMetadata({
+    params
+}: {
+    params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+    const { locale } = await params;
+    const siteUrl = 'https://agentskills.in';
+
+    const titles: Record<string, string> = {
+        en: 'FAQ - Frequently Asked Questions | Agent Skills CLI',
+        ja: 'よくある質問 — Agent Skills CLI',
+        'zh-CN': '常见问题 — Agent Skills CLI',
+        'zh-TW': '常見問題 — Agent Skills CLI',
+        vi: 'Câu hỏi thường gặp — Agent Skills CLI',
+        es: 'Preguntas frecuentes — Agent Skills CLI',
+    };
+
+    const descriptions: Record<string, string> = {
+        en: 'Common questions about Agent Skills CLI: installation, usage, supported AI agents (Cursor, Claude, Copilot), skill creation, and troubleshooting.',
+        ja: 'Agent Skills CLIに関するよくある質問：インストール、使用方法、サポートされているAIエージェント、スキル作成、トラブルシューティング。',
+        'zh-CN': '关于Agent Skills CLI的常见问题：安装、使用、支持的AI代理（Cursor、Claude、Copilot）、技能创建和故障排除。',
+        'zh-TW': '關於Agent Skills CLI的常見問題：安裝、使用、支援的AI代理（Cursor、Claude、Copilot）、技能創建和故障排除。',
+        vi: 'Câu hỏi thường gặp về Agent Skills CLI: cài đặt, sử dụng, tác tử AI được hỗ trợ, tạo kỹ năng và khắc phục sự cố.',
+        es: 'Preguntas frecuentes sobre Agent Skills CLI: instalación, uso, agentes IA compatibles, creación de habilidades y solución de problemas.',
+    };
+
+    const languages: Record<string, string> = {};
+    ['en', 'ja', 'zh-CN', 'zh-TW', 'vi', 'es'].forEach(loc => {
+        const prefix = loc === 'en' ? '' : `/${loc}`;
+        languages[loc] = `${siteUrl}${prefix}/faq`;
+    });
+
+    return {
+        title: titles[locale] || titles.en,
+        description: descriptions[locale] || descriptions.en,
+        alternates: {
+            canonical: locale === 'en' ? `${siteUrl}/faq` : `${siteUrl}/${locale}/faq`,
+            languages,
+        },
+        openGraph: {
+            title: titles[locale] || titles.en,
+            description: descriptions[locale] || descriptions.en,
+            url: locale === 'en' ? `${siteUrl}/faq` : `${siteUrl}/${locale}/faq`,
+            siteName: 'Agent Skills',
+            type: 'website',
+        },
+    };
+}
 
 // FAQ data structure
 const faqCategories = [
