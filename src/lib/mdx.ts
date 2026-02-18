@@ -21,6 +21,15 @@ export interface DocSection {
     content: string;
 }
 
+export interface DocSectionMeta {
+    slug: string;
+    title: string;
+    order: number;
+    icon: string;
+    description: string;
+    commands: string[];
+}
+
 export interface TOCItem {
     id: string;
     text: string;
@@ -62,6 +71,43 @@ export function getAllDocSections(): DocSection[] {
 }
 
 /**
+ * Get metadata for all doc sections (without content, for sidebar/index).
+ */
+export function getAllDocSectionsMeta(): DocSectionMeta[] {
+    if (!fs.existsSync(CONTENT_DIR)) return [];
+
+    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.mdx'));
+
+    return files
+        .map(file => {
+            const slug = file.replace('.mdx', '');
+            const filePath = path.join(CONTENT_DIR, file);
+            const raw = fs.readFileSync(filePath, 'utf-8');
+            const { data } = matter(raw);
+
+            return {
+                slug,
+                title: data.title || slug,
+                order: data.order || 0,
+                icon: data.icon || 'terminal',
+                description: data.description || '',
+                commands: data.commands || [],
+            };
+        })
+        .sort((a, b) => a.order - b.order);
+}
+
+/**
+ * Get all doc slugs (for generateStaticParams).
+ */
+export function getAllDocSlugs(): string[] {
+    if (!fs.existsSync(CONTENT_DIR)) return [];
+    return fs.readdirSync(CONTENT_DIR)
+        .filter(f => f.endsWith('.mdx'))
+        .map(f => f.replace('.mdx', ''));
+}
+
+/**
  * Get a single doc section by slug.
  */
 export function getDocSection(slug: string): DocSection | null {
@@ -79,6 +125,19 @@ export function getDocSection(slug: string): DocSection | null {
         description: data.description || '',
         commands: data.commands || [],
         content,
+    };
+}
+
+/**
+ * Get prev/next sections for navigation.
+ */
+export function getAdjacentSections(slug: string): { prev: DocSectionMeta | null; next: DocSectionMeta | null } {
+    const allMeta = getAllDocSectionsMeta();
+    const index = allMeta.findIndex(s => s.slug === slug);
+    
+    return {
+        prev: index > 0 ? allMeta[index - 1] : null,
+        next: index < allMeta.length - 1 ? allMeta[index + 1] : null,
     };
 }
 

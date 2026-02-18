@@ -10,6 +10,8 @@ commands: []
 
 Agent Skills CLI supports installing from private and enterprise sources beyond the public marketplace. This includes private Git repositories (GitHub, GitLab, Bitbucket, self-hosted), npm packages (public and private registries), and SSH-based installations.
 
+> **Important:** Never hardcode tokens in your shell history. Use environment variables (`GH_TOKEN`, `GITLAB_TOKEN`) or `.skillsrc` config files instead.
+
 ## Private Git Repositories
 
 ### SSH URLs

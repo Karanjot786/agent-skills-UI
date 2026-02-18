@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Terminal, Globe, Zap, Box, Code2, Search, Download, Share2, Star, TrendingUp, Users, Package, ChevronRight, Sparkles, Crown, Clock } from "lucide-react";
 import { Link } from '@/i18n/navigation';
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState, useRef } from "react";
 import CountUp from 'react-countup';
@@ -266,7 +265,7 @@ export default function Home() {
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Terminal className="size-5 text-green-400" />
-                  <span className="text-3xl font-bold text-white">29</span>
+                  <span className="text-3xl font-bold text-white">42+</span>
                 </div>
                 <div className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">{t('statsBar.agentPlatforms')}</div>
               </motion.div>

@@ -1,6 +1,7 @@
 import prisma from '@/lib/db';
 import { MetadataRoute } from 'next';
 import { locales, defaultLocale, type Locale } from '@/i18n/config';
+import { getAllDocSlugs } from '@/lib/mdx';
 
 // Constants
 const BASE_URL = 'https://agentskills.in';
@@ -118,7 +119,7 @@ export default async function sitemap(props: { id: string | Promise<string> }): 
 
     // Handle Static Pages
     if (type === 'static') {
-        const routes = [
+        const baseRoutes = [
             '',
             '/docs',
             '/marketplace',
@@ -126,12 +127,17 @@ export default async function sitemap(props: { id: string | Promise<string> }): 
             '/stats'
         ];
 
+        // Add individual doc pages
+        const docSlugs = getAllDocSlugs();
+        const docRoutes = docSlugs.map(slug => `/docs/${slug}`);
+        const routes = [...baseRoutes, ...docRoutes];
+
         routes.forEach(route => {
             sitemapEntries.push({
                 url: getUrl(route, locale),
                 lastModified: new Date(),
                 changeFrequency: route === '' ? 'daily' : route === '/marketplace' ? 'daily' : 'weekly',
-                priority: route === '' ? 1.0 : route === '/marketplace' ? 0.9 : 0.7,
+                priority: route === '' ? 1.0 : route === '/marketplace' ? 0.9 : route.startsWith('/docs/') ? 0.75 : 0.7,
                 alternates: getAlternates(route)
             });
         });

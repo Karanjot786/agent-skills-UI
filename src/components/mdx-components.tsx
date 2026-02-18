@@ -2,11 +2,74 @@
 
 import React from 'react';
 import { CopyButton } from '@/components/copy-button';
+import { Info, Lightbulb, AlertTriangle, AlertCircle, Zap } from 'lucide-react';
 
 /**
  * MDX Components — Custom-styled components for rendering MDX content
  * in the docs page. Matches the existing dark theme with cyan accents.
  */
+
+// ── Callout Component ────────────────────────────────────────────────────
+
+type CalloutType = 'note' | 'tip' | 'warning' | 'important' | 'npx';
+
+const calloutConfig: Record<CalloutType, { icon: React.ReactNode; bgClass: string; borderClass: string; iconColor: string; titleColor: string; title: string }> = {
+    note: {
+        icon: <Info className="size-4" />,
+        bgClass: 'bg-blue-500/5',
+        borderClass: 'border-blue-500/30',
+        iconColor: 'text-blue-400',
+        titleColor: 'text-blue-400',
+        title: 'Note',
+    },
+    tip: {
+        icon: <Lightbulb className="size-4" />,
+        bgClass: 'bg-emerald-500/5',
+        borderClass: 'border-emerald-500/30',
+        iconColor: 'text-emerald-400',
+        titleColor: 'text-emerald-400',
+        title: 'Tip',
+    },
+    warning: {
+        icon: <AlertTriangle className="size-4" />,
+        bgClass: 'bg-amber-500/5',
+        borderClass: 'border-amber-500/30',
+        iconColor: 'text-amber-400',
+        titleColor: 'text-amber-400',
+        title: 'Warning',
+    },
+    important: {
+        icon: <AlertCircle className="size-4" />,
+        bgClass: 'bg-red-500/5',
+        borderClass: 'border-red-500/30',
+        iconColor: 'text-red-400',
+        titleColor: 'text-red-400',
+        title: 'Important',
+    },
+    npx: {
+        icon: <Zap className="size-4" />,
+        bgClass: 'bg-purple-500/5',
+        borderClass: 'border-purple-500/30',
+        iconColor: 'text-purple-400',
+        titleColor: 'text-purple-400',
+        title: 'npx — No Install Needed',
+    },
+};
+
+export function Callout({ type = 'note', title, children }: { type?: CalloutType; title?: string; children: React.ReactNode }) {
+    const config = calloutConfig[type];
+    return (
+        <div className={`my-6 rounded-xl border ${config.borderClass} ${config.bgClass} p-4`}>
+            <div className="flex items-center gap-2 mb-2">
+                <span className={config.iconColor}>{config.icon}</span>
+                <span className={`text-sm font-semibold ${config.titleColor}`}>{title || config.title}</span>
+            </div>
+            <div className="text-sm text-zinc-300 leading-relaxed [&>p]:my-1 [&>p]:text-sm">
+                {children}
+            </div>
+        </div>
+    );
+}
 
 // ── Heading with anchor link ─────────────────────────────────────────────
 
@@ -165,9 +228,51 @@ function Tr({ children, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
     );
 }
 
-// ── Blockquote ───────────────────────────────────────────────────────────
+// ── Blockquote (auto-detects callout patterns) ───────────────────────────
 
 function Blockquote({ children, ...props }: React.HTMLAttributes<HTMLQuoteElement>) {
+    // Extract text content to detect callout patterns
+    const textContent = React.Children.toArray(children)
+        .map(child => {
+            if (typeof child === 'string') return child;
+            if (React.isValidElement(child)) {
+                const childProps = child.props as { children?: React.ReactNode };
+                if (childProps.children) {
+                    const inner = React.Children.toArray(childProps.children);
+                    return inner.map(c => {
+                        if (typeof c === 'string') return c;
+                        if (React.isValidElement(c)) {
+                            const cProps = c.props as { children?: React.ReactNode };
+                            return typeof cProps.children === 'string' ? cProps.children : '';
+                        }
+                        return '';
+                    }).join('');
+                }
+            }
+            return '';
+        })
+        .join('')
+        .trim();
+
+    // Auto-detect callout type from content
+    const calloutPatterns: [RegExp, CalloutType][] = [
+        [/^\*?\*?(?:💡\s*)?tip:?\*?\*?\s*/i, 'tip'],
+        [/^\*?\*?(?:📝\s*)?note:?\*?\*?\s*/i, 'note'],
+        [/^\*?\*?(?:⚠️\s*)?warning:?\*?\*?\s*/i, 'warning'],
+        [/^\*?\*?(?:🚨\s*)?important:?\*?\*?\s*/i, 'important'],
+        [/^\*?\*?(?:⚡\s*)?npx:?\*?\*?\s*/i, 'npx'],
+    ];
+
+    for (const [pattern, type] of calloutPatterns) {
+        if (pattern.test(textContent)) {
+            return (
+                <Callout type={type}>
+                    {children}
+                </Callout>
+            );
+        }
+    }
+
     return (
         <blockquote
             className="border-l-4 border-cyan-500/40 pl-4 py-2 my-6 bg-cyan-500/5 rounded-r-lg text-zinc-300 italic"

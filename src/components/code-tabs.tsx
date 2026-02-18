@@ -51,6 +51,7 @@ export function InstallTabs() {
     return (
         <CodeTabs
             tabs={[
+                { label: 'npx', code: 'npx agent-skills-cli install @anthropic/xlsx' },
                 { label: 'npm', code: 'npm install -g agent-skills-cli' },
                 { label: 'yarn', code: 'yarn global add agent-skills-cli' },
                 { label: 'pnpm', code: 'pnpm add -g agent-skills-cli' },

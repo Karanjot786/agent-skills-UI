@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from '@/i18n/navigation';
 import { Command } from 'cmdk';
 import {
     Search, Terminal, Package, Upload, Wrench, X,
@@ -11,74 +12,74 @@ import {
 // All 52 CLI commands organized by category
 const commands = [
     // Install & Add
-    { name: 'install', alias: 'i', category: 'Install & Add', description: 'Install skills from marketplace, GitHub, URLs, or local' },
-    { name: 'add', alias: null, category: 'Install & Add', description: 'Alias for install' },
+    { name: 'install', alias: 'i', category: 'Install & Add', description: 'Install skills from marketplace, GitHub, URLs, or local', docSlug: 'install' },
+    { name: 'add', alias: null, category: 'Install & Add', description: 'Alias for install', docSlug: 'install' },
     // Search
-    { name: 'search', alias: 's', category: 'Search', description: 'Interactive skill search with FZF-style filtering' },
+    { name: 'search', alias: 's', category: 'Search', description: 'Interactive skill search with FZF-style filtering', docSlug: 'search' },
     // Export & Convert
-    { name: 'export', alias: null, category: 'Export & Convert', description: 'Export skills to agent formats' },
-    { name: 'convert', alias: 'cv', category: 'Export & Convert', description: 'Convert between agent formats' },
-    { name: 'bootstrap', alias: 'bs', category: 'Export & Convert', description: 'Auto-generate agent instruction files' },
+    { name: 'export', alias: null, category: 'Export & Convert', description: 'Export skills to agent formats', docSlug: 'export-convert' },
+    { name: 'convert', alias: 'cv', category: 'Export & Convert', description: 'Convert between agent formats', docSlug: 'export-convert' },
+    { name: 'bootstrap', alias: 'bs', category: 'Export & Convert', description: 'Auto-generate agent instruction files', docSlug: 'export-convert' },
     // Core Commands
-    { name: 'list', alias: null, category: 'Core', description: 'List all discovered skills' },
-    { name: 'show', alias: null, category: 'Core', description: 'Display detailed skill information' },
-    { name: 'validate', alias: null, category: 'Core', description: 'Validate a skill against spec' },
-    { name: 'prompt', alias: null, category: 'Core', description: 'Generate system prompt XML' },
-    { name: 'init', alias: null, category: 'Core', description: 'Create a new skill from template' },
+    { name: 'list', alias: null, category: 'Core', description: 'List all discovered skills', docSlug: 'core-commands' },
+    { name: 'show', alias: null, category: 'Core', description: 'Display detailed skill information', docSlug: 'core-commands' },
+    { name: 'validate', alias: null, category: 'Core', description: 'Validate a skill against spec', docSlug: 'core-commands' },
+    { name: 'prompt', alias: null, category: 'Core', description: 'Generate system prompt XML', docSlug: 'core-commands' },
+    { name: 'init', alias: null, category: 'Core', description: 'Create a new skill from template', docSlug: 'core-commands' },
     // Marketplace
-    { name: 'market-list', alias: 'ml', category: 'Marketplace', description: 'List marketplace skills' },
-    { name: 'market-search', alias: 'ms', category: 'Marketplace', description: 'Search marketplace by keyword' },
-    { name: 'market-install', alias: 'mi', category: 'Marketplace', description: 'Install from marketplace' },
-    { name: 'install-url', alias: 'iu', category: 'Marketplace', description: 'Install from GitHub URL' },
-    { name: 'market-uninstall', alias: 'mu', category: 'Marketplace', description: 'Uninstall marketplace skill' },
-    { name: 'market-installed', alias: 'mind', category: 'Marketplace', description: 'List installed marketplace skills' },
-    { name: 'market-sources', alias: null, category: 'Marketplace', description: 'List marketplace sources' },
-    { name: 'market-add-source', alias: null, category: 'Marketplace', description: 'Add custom marketplace source' },
-    { name: 'market-update-check', alias: 'muc', category: 'Marketplace', description: 'Check for skill updates' },
+    { name: 'market-list', alias: 'ml', category: 'Marketplace', description: 'List marketplace skills', docSlug: 'marketplace' },
+    { name: 'market-search', alias: 'ms', category: 'Marketplace', description: 'Search marketplace by keyword', docSlug: 'marketplace' },
+    { name: 'market-install', alias: 'mi', category: 'Marketplace', description: 'Install from marketplace', docSlug: 'marketplace' },
+    { name: 'install-url', alias: 'iu', category: 'Marketplace', description: 'Install from GitHub URL', docSlug: 'marketplace' },
+    { name: 'market-uninstall', alias: 'mu', category: 'Marketplace', description: 'Uninstall marketplace skill', docSlug: 'marketplace' },
+    { name: 'market-installed', alias: 'mind', category: 'Marketplace', description: 'List installed marketplace skills', docSlug: 'marketplace' },
+    { name: 'market-sources', alias: null, category: 'Marketplace', description: 'List marketplace sources', docSlug: 'marketplace' },
+    { name: 'market-add-source', alias: null, category: 'Marketplace', description: 'Add custom marketplace source', docSlug: 'marketplace' },
+    { name: 'market-update-check', alias: 'muc', category: 'Marketplace', description: 'Check for skill updates', docSlug: 'marketplace' },
     // Utilities
-    { name: 'doctor', alias: null, category: 'Utilities', description: 'Diagnose installation issues' },
-    { name: 'check', alias: null, category: 'Utilities', description: 'Check installed skills and updates' },
-    { name: 'update', alias: null, category: 'Utilities', description: 'Update installed skills' },
-    { name: 'exec', alias: null, category: 'Utilities', description: 'Execute bundled script' },
-    { name: 'run', alias: null, category: 'Utilities', description: 'Run skill script with timeout' },
-    { name: 'remove', alias: 'rm', category: 'Utilities', description: 'Remove installed skills' },
-    { name: 'assets', alias: null, category: 'Utilities', description: 'Fetch skill assets from GitHub' },
+    { name: 'doctor', alias: null, category: 'Utilities', description: 'Diagnose installation issues', docSlug: 'utilities' },
+    { name: 'check', alias: null, category: 'Utilities', description: 'Check installed skills and updates', docSlug: 'utilities' },
+    { name: 'update', alias: null, category: 'Utilities', description: 'Update installed skills', docSlug: 'utilities' },
+    { name: 'exec', alias: null, category: 'Utilities', description: 'Execute bundled script', docSlug: 'utilities' },
+    { name: 'run', alias: null, category: 'Utilities', description: 'Run skill script with timeout', docSlug: 'utilities' },
+    { name: 'remove', alias: 'rm', category: 'Utilities', description: 'Remove installed skills', docSlug: 'utilities' },
+    { name: 'assets', alias: null, category: 'Utilities', description: 'Fetch skill assets from GitHub', docSlug: 'utilities' },
     // Interactive Wizards
-    { name: 'install-wizard', alias: 'iw', category: 'Interactive', description: 'Interactive skill installation wizard' },
-    { name: 'export-interactive', alias: 'ei', category: 'Interactive', description: 'Interactive export with agent selection' },
-    { name: 'setup', alias: null, category: 'Interactive', description: 'Full interactive setup wizard' },
+    { name: 'install-wizard', alias: 'iw', category: 'Interactive', description: 'Interactive skill installation wizard', docSlug: 'interactive-wizards' },
+    { name: 'export-interactive', alias: 'ei', category: 'Interactive', description: 'Interactive export with agent selection', docSlug: 'interactive-wizards' },
+    { name: 'setup', alias: null, category: 'Interactive', description: 'Full interactive setup wizard', docSlug: 'interactive-wizards' },
     // Context & Prompt
-    { name: 'context', alias: null, category: 'Context', description: 'Generate AI context in XML/JSON/Markdown' },
-    { name: 'preview', alias: null, category: 'Context', description: 'Open skill in browser' },
-    { name: 'scripts', alias: null, category: 'Context', description: 'List skill scripts with safety analysis' },
-    { name: 'info', alias: null, category: 'Context', description: 'Show installation status and paths' },
-    { name: 'completion', alias: null, category: 'Context', description: 'Generate shell completions' },
+    { name: 'context', alias: null, category: 'Context', description: 'Generate AI context in XML/JSON/Markdown', docSlug: 'context-prompt' },
+    { name: 'preview', alias: null, category: 'Context', description: 'Open skill in browser', docSlug: 'context-prompt' },
+    { name: 'scripts', alias: null, category: 'Context', description: 'List skill scripts with safety analysis', docSlug: 'context-prompt' },
+    { name: 'info', alias: null, category: 'Context', description: 'Show installation status and paths', docSlug: 'context-prompt' },
+    { name: 'completion', alias: null, category: 'Context', description: 'Generate shell completions', docSlug: 'context-prompt' },
     // Project Analysis
-    { name: 'suggest', alias: 'sg', category: 'Analysis', description: 'Get skill suggestions for your project' },
-    { name: 'audit', alias: null, category: 'Analysis', description: 'Security audit for skills' },
-    { name: 'mine', alias: 'mn', category: 'Analysis', description: 'Extract patterns from git history' },
-    { name: 'insight', alias: 'in', category: 'Analysis', description: 'Analyze skill patterns and gaps' },
+    { name: 'suggest', alias: 'sg', category: 'Analysis', description: 'Get skill suggestions for your project', docSlug: 'project-analysis' },
+    { name: 'audit', alias: null, category: 'Analysis', description: 'Security audit for skills', docSlug: 'project-analysis' },
+    { name: 'mine', alias: 'mn', category: 'Analysis', description: 'Extract patterns from git history', docSlug: 'project-analysis' },
+    { name: 'insight', alias: 'in', category: 'Analysis', description: 'Analyze skill patterns and gaps', docSlug: 'project-analysis' },
     // Skill Creation
-    { name: 'craft', alias: null, category: 'Creation', description: 'Create skill with full directory structure' },
-    { name: 'forge', alias: 'fg', category: 'Creation', description: 'AI-generate skill from description' },
-    { name: 'capture', alias: 'cp', category: 'Creation', description: 'Capture URL/file as a skill' },
-    { name: 'submit', alias: null, category: 'Creation', description: 'Submit skill to marketplace' },
-    { name: 'submit-repo', alias: null, category: 'Creation', description: 'Submit GitHub repo for indexing' },
+    { name: 'craft', alias: null, category: 'Creation', description: 'Create skill with full directory structure', docSlug: 'skill-creation' },
+    { name: 'forge', alias: 'fg', category: 'Creation', description: 'AI-generate skill from description', docSlug: 'skill-creation' },
+    { name: 'capture', alias: 'cp', category: 'Creation', description: 'Capture URL/file as a skill', docSlug: 'skill-creation' },
+    { name: 'submit', alias: null, category: 'Creation', description: 'Submit skill to marketplace', docSlug: 'skill-creation' },
+    { name: 'submit-repo', alias: null, category: 'Creation', description: 'Submit GitHub repo for indexing', docSlug: 'skill-creation' },
     // Quality & Scoring
-    { name: 'score', alias: null, category: 'Quality', description: 'Score skill quality (0-100)' },
+    { name: 'score', alias: null, category: 'Quality', description: 'Score skill quality (0-100)', docSlug: 'quality-scoring' },
     // Team & Collaboration
-    { name: 'collab', alias: 'cl', category: 'Team', description: 'Team skill collaboration' },
-    { name: 'lockspec', alias: 'ls', category: 'Team', description: 'Generate/apply skill manifest' },
-    { name: 'grid', alias: 'gd', category: 'Team', description: 'P2P skill sharing on local network' },
+    { name: 'collab', alias: 'cl', category: 'Team', description: 'Team skill collaboration', docSlug: 'team-collaboration' },
+    { name: 'lockspec', alias: 'ls', category: 'Team', description: 'Generate/apply skill manifest', docSlug: 'team-collaboration' },
+    { name: 'grid', alias: 'gd', category: 'Team', description: 'P2P skill sharing on local network', docSlug: 'team-collaboration' },
     // Automation & Rules
-    { name: 'trigger', alias: 'tr', category: 'Automation', description: 'Auto-trigger skills on events' },
-    { name: 'rule', alias: 'rl', category: 'Automation', description: 'Manage always-on coding rules' },
-    { name: 'blueprint', alias: 'bp', category: 'Automation', description: 'Structured development plans' },
-    { name: 'ci', alias: null, category: 'Automation', description: 'Generate CI/CD workflow' },
+    { name: 'trigger', alias: 'tr', category: 'Automation', description: 'Auto-trigger skills on events', docSlug: 'automation-rules' },
+    { name: 'rule', alias: 'rl', category: 'Automation', description: 'Manage always-on coding rules', docSlug: 'automation-rules' },
+    { name: 'blueprint', alias: 'bp', category: 'Automation', description: 'Structured development plans', docSlug: 'automation-rules' },
+    { name: 'ci', alias: null, category: 'Automation', description: 'Generate CI/CD workflow', docSlug: 'automation-rules' },
     // Session Management
-    { name: 'track', alias: 'tk', category: 'Session', description: 'Save and restore session state' },
-    { name: 'recall', alias: 'rc', category: 'Session', description: 'Store/recall context across sessions' },
-    { name: 'method', alias: 'mt', category: 'Session', description: 'Apply development methodology packs' },
+    { name: 'track', alias: 'tk', category: 'Session', description: 'Save and restore session state', docSlug: 'session-management' },
+    { name: 'recall', alias: 'rc', category: 'Session', description: 'Store/recall context across sessions', docSlug: 'session-management' },
+    { name: 'method', alias: 'mt', category: 'Session', description: 'Apply development methodology packs', docSlug: 'session-management' },
 ];
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -111,6 +112,7 @@ interface CommandSearchProps {
 
 export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const router = useRouter();
 
     React.useEffect(() => {
         if (open) {
@@ -136,9 +138,16 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
 
     const handleSelect = (commandName: string) => {
         onOpenChange(false);
-        const element = document.getElementById(commandName);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Find the command to get its doc slug
+        const cmd = commands.find(c => c.name === commandName);
+        if (cmd?.docSlug) {
+            router.push(`/docs/${cmd.docSlug}#${commandName}`);
+        } else {
+            // Fallback: try scrolling within the current page
+            const element = document.getElementById(commandName);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     };
 

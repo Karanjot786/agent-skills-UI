@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { getAllDocSections } from '@/lib/mdx';
-import { DocsClient } from '@/components/docs-client';
+import { getAllDocSectionsMeta } from '@/lib/mdx';
+import { DocsOverview } from '@/components/docs-overview';
 import { locales, defaultLocale } from '@/i18n/config';
 
 const siteUrl = 'https://agentskills.in';
@@ -18,12 +18,12 @@ export async function generateMetadata({
     const { locale } = await params;
 
     const titles: Record<string, string> = {
-        en: 'CLI Documentation — Agent Skills | 52 Commands for 29 AI Agents',
-        ja: 'CLIドキュメント — Agent Skills | 29のAIエージェント用52コマンド',
-        'zh-CN': 'CLI文档 — Agent Skills | 29个AI代理的52个命令',
-        'zh-TW': 'CLI文檔 — Agent Skills | 29個AI代理的52個命令',
-        vi: 'Tài liệu CLI — Agent Skills | 52 lệnh cho 29 tác tử AI',
-        es: 'Documentación CLI — Agent Skills | 52 comandos para 29 agentes IA',
+        en: 'CLI Documentation — Agent Skills | 52 Commands for 42+ AI Agents',
+        ja: 'CLIドキュメント — Agent Skills | 42+のAIエージェント用52コマンド',
+        'zh-CN': 'CLI文档 — Agent Skills | 42+个AI代理的52个命令',
+        'zh-TW': 'CLI文檔 — Agent Skills | 42+個AI代理的52個命令',
+        vi: 'Tài liệu CLI — Agent Skills | 52 lệnh cho 42+ tác tử AI',
+        es: 'Documentación CLI — Agent Skills | 52 comandos para 42+ agentes IA',
     };
 
     const descriptions: Record<string, string> = {
@@ -64,7 +64,7 @@ export async function generateMetadata({
 }
 
 export default function DocsPage() {
-    const sections = getAllDocSections();
+    const sections = getAllDocSectionsMeta();
 
-    return <DocsClient sections={sections} />;
+    return <DocsOverview sections={sections} />;
 }
