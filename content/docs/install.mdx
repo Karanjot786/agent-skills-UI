@@ -24,7 +24,7 @@ skills add [source] [options]
 | `--all` | Install to **all 42 agents** at once |
 | `-g, --global` | Install globally (user-wide, home directory) |
 | `-s, --skill <skills...>` | Install by marketplace skill name(s) |
-| `-y, --yes` | Skip confirmation prompts |
+| `-y, --yes` | Skip all prompts (agent selection + skill selection). Installs ALL found skills. |
 | `--token <token>` | Authentication token for private Git repos |
 | `--registry <url>` | npm registry URL (for `npm:` sources) |
 
@@ -85,6 +85,40 @@ skills add anthropic/skills@xlsx
 # Full GitHub URL also works
 skills install https://github.com/anthropics/courses -a cursor
 ```
+
+#### Bulk Install from Repo (`-y` flag)
+
+Skip the skill selection prompt and install ALL skills from a repo with one command. Pair `-y` with `-a` to target specific agents.
+
+```bash
+# Install all 943 skills from ComposioHQ to claude (no prompt)
+skills install @ComposioHQ/awesome-claude-skills -a claude -y
+
+# Install all 45 skills to cursor and claude
+skills add github/awesome-copilot -a cursor,claude -y
+
+# All skills to all 42 agents, fully non-interactive
+skills install @owner/repo --all -y
+```
+
+**Output:**
+```
+📦 Installing from https://github.com/ComposioHQ/awesome-claude-skills.git
+
+✔ Cloned
+ℹ Installing all 943 skills (--yes flag)
+
+Installing skill-creator to Claude Code... ✔
+Installing mcp-builder to Claude Code... ✔
+...
+
+✨ Installed 943 skill(s)
+```
+
+> **Warning:** Some repos contain hundreds or thousands of skills. Using `-y` on a large repo will install every skill it finds. This takes time and disk space. If you only need specific skills, omit `-y` to get the interactive selection prompt, or use `--skill` to pick individual skills:
+> ```bash
+> skills install @ComposioHQ/awesome-claude-skills --skill mcp-builder,skill-creator -a claude
+> ```
 
 #### Install from Private Git Repos
 
