@@ -2,13 +2,13 @@
 title: "Search"
 order: 3
 icon: "search"
-description: "Search and install skills interactively"
+description: "Search, select, and install skills from the marketplace"
 commands: ["search"]
 ---
 
 ### `search`
 
-Search and install skills from the marketplace with interactive FZF-style filtering.
+Search and install skills from the marketplace. Supports multi-select, bulk install, and FZF-style filtering.
 
 > **Tip:** This is the fastest way to discover and install skills. Just type `skills search` and start typing to filter through 175,000+ skills.
 
@@ -19,16 +19,58 @@ skills search [query...] [options]
 
 | Option | Description |
 |--------|-------------|
+| `-a, --agent <agents...>` | Specify agents to install to (e.g. `-a claude cursor`) |
+| `-y, --yes` | Skip prompts — install ALL matching skills automatically |
+| `-g, --global` | Install globally (`~/.agent/skills`) instead of project-level |
 | `-l, --limit <n>` | Maximum results to show (default: 20) |
 | `-s, --sort <by>` | Sort by: `stars`, `recent`, `name` (default: `stars`) |
 | `-i, --interactive` | Launch interactive FZF-style search |
 | `--json` | Output as JSON for scripting (no interactive prompt) |
 
 **Examples:**
+
 ```bash
-skills search react              # Interactive search with install prompt
-skills search typescript --json  # JSON output for scripting
-skills s --interactive           # Pure FZF-style browsing
+# Interactive multi-select (spacebar to select, enter to confirm)
+skills search react
+
+# Bulk install ALL matching skills to Claude
+skills search python -a claude -y
+
+# Install to multiple agents
+skills search typescript -a cursor claude
+
+# Install globally
+skills search python -a claude -g
+
+# FZF-style browsing
+skills s --interactive
+
+# JSON output for scripting
+skills search typescript --json
+```
+
+**Interactive mode** (without `-y`):
+```
+🔍 5,272 skills found for "python"
+
+? Select skills to install (space to select, enter to confirm):
+  ◯ @Shubhamsaboo/python-expert ⭐95,429  Senior Python developer...
+  ◯ @lobehub/python ⭐12,000  Python coding assistant...
+  ◯ @ccxt/ccxt-python ⭐8,500  CCXT Python trading...
+```
+
+**Bulk mode** (with `-y`):
+```
+🔍 5,272 skills found for "python"
+
+  Auto-installing 20 skills...
+
+✔ Installed @Shubhamsaboo/python-expert (1/20)
+  → Claude Code: .claude/skills/python-expert
+✔ Installed @lobehub/python (2/20)
+  → Claude Code: .claude/skills/python
+...
+📦 Done: 20 installed, 0 failed
 ```
 
 **Output (`--json`):**
