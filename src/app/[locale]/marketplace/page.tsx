@@ -17,21 +17,21 @@ export async function generateMetadata({
     const { locale } = await params;
 
     const titles: Record<string, string> = {
-        en: "AI Skills Marketplace — Browse 100,000+ Skills for Cursor, Claude, Copilot",
-        ja: "AIスキルマーケットプレイス — Cursor、Claude、Copilot用100,000+スキルを探す",
-        "zh-CN": "AI技能市场 — 浏览100,000+个Cursor、Claude、Copilot技能",
-        "zh-TW": "AI技能市場 — 瀏覽100,000+個Cursor、Claude、Copilot技能",
-        vi: "Chợ kỹ năng AI — Duyệt 100,000+ kỹ năng cho Cursor, Claude, Copilot",
-        es: "Marketplace de habilidades IA — Explora 100,000+ skills para Cursor, Claude, Copilot",
+        en: "AI Skills Marketplace — Browse 175,000+ Skills for Cursor, Claude, Copilot",
+        ja: "AIスキルマーケットプレイス — Cursor、Claude、Copilot用175,000+スキルを探す",
+        "zh-CN": "AI技能市场 — 浏览175,000+个Cursor、Claude、Copilot技能",
+        "zh-TW": "AI技能市場 — 瀏覽175,000+個Cursor、Claude、Copilot技能",
+        vi: "Chợ kỹ năng AI — Duyệt 175,000+ kỹ năng cho Cursor, Claude, Copilot",
+        es: "Marketplace de habilidades IA — Explora 175,000+ skills para Cursor, Claude, Copilot",
     };
 
     const descriptions: Record<string, string> = {
-        en: "Discover, search, and install 100,000+ AI coding skills for 42+ agents including Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline. Free and open-source.",
-        ja: "Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf、Clineなど42以上のエージェント用の100,000+AIコーディングスキルを発見、検索、インストール。",
-        "zh-CN": "发现、搜索和安装100,000+个AI编码技能，支持Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline等42+个代理。",
-        "zh-TW": "發現、搜尋和安裝100,000+個AI編碼技能，支援Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline等42+個代理。",
-        vi: "Khám phá, tìm kiếm và cài đặt 100,000+ kỹ năng lập trình AI cho 42+ tác tử bao gồm Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf và Cline.",
-        es: "Descubre, busca e instala 100,000+ habilidades de codificación IA para 42+ agentes incluyendo Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf y Cline.",
+        en: "Discover, search, and install 175,000+ AI coding skills for 42+ agents including Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline. Free and open-source.",
+        ja: "Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf、Clineなど42以上のエージェント用の175,000+AIコーディングスキルを発見、検索、インストール。",
+        "zh-CN": "发现、搜索和安装175,000+个AI编码技能，支持Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline等42+个代理。",
+        "zh-TW": "發現、搜尋和安裝175,000+個AI編碼技能，支援Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline等42+個代理。",
+        vi: "Khám phá, tìm kiếm và cài đặt 175,000+ kỹ năng lập trình AI cho 42+ tác tử bao gồm Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf và Cline.",
+        es: "Descubre, busca e instala 175,000+ habilidades de codificación IA para 42+ agentes incluyendo Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf y Cline.",
     };
 
     const languages: Record<string, string> = {};
@@ -57,7 +57,7 @@ export async function generateMetadata({
                 url: `${siteUrl}/og-image.png`,
                 width: 1200,
                 height: 630,
-                alt: "Agent Skills Marketplace — Browse 100,000+ AI Coding Skills",
+                alt: "Agent Skills Marketplace — Browse 175,000+ AI Coding Skills",
             }],
         },
         twitter: {
@@ -80,7 +80,7 @@ const marketplaceJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "AI Skills Marketplace",
-    "description": "Browse, search, and install 100,000+ AI coding skills for 42+ agents including Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline.",
+    "description": "Browse, search, and install 175,000+ AI coding skills for 42+ agents including Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline.",
     "url": `${siteUrl}/marketplace`,
     "isPartOf": {
         "@type": "WebSite",
@@ -106,7 +106,7 @@ const marketplaceJsonLd = {
     "mainEntity": {
         "@type": "ItemList",
         "name": "AI Coding Skills",
-        "description": "100,000+ skills for AI coding agents",
+        "description": "175,000+ skills for AI coding agents",
         "numberOfItems": 100000,
         "itemListOrder": "https://schema.org/ItemListOrderDescending",
     },

@@ -235,7 +235,7 @@ function MarketplaceContent() {
                             <Search className="size-5" />
                         </div>
                         <Input
-                            placeholder="Search 55,000+ skills..."
+                            placeholder="Search 175,000+ skills..."
                             className="w-full pl-12 pr-20 h-12 bg-zinc-900/50 border-white/10 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 text-base rounded-xl transition-all"
                             value={query}
                             onChange={(e) => handleSearchChange(e.target.value)}

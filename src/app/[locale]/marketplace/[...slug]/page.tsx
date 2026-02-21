@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     const skill = await prisma.skills.findFirst({
         where: { scoped_name: scopedName },
-        select: { name: true, description: true, author: true, scoped_name: true },
+        select: { name: true, description: true, author: true, scoped_name: true, content: true },
     });
 
     if (!skill) {
@@ -46,9 +46,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         es: `${siteUrl}/es${skillPath}`,
     };
 
+    // Noindex thin pages (< 100 words of unique content)
+    const contentWordCount = skill.content?.split(/\s+/).filter(Boolean).length || 0;
+    const shouldIndex = contentWordCount >= 100;
+
     return {
-        title: `${skill.name} by ${skill.author} | Agent Skills`,
-        description: skill.description || `${skill.scoped_name} - Install this AI coding skill for Cursor, Claude, Copilot, and 26 more agents.`,
+        title: `${skill.name} by ${skill.author}`,
+        description: skill.description || `${skill.scoped_name} - Install this AI coding skill for Cursor, Claude, Copilot, and 39+ more agents.`,
+        robots: shouldIndex
+            ? { index: true, follow: true }
+            : { index: false, follow: true },
         alternates: {
             canonical: `${siteUrl}${skillPath}`,
             languages,

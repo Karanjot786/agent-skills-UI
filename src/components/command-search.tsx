@@ -168,7 +168,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                         <Search className="size-4 text-zinc-500 mr-3" />
                         <Command.Input
                             ref={inputRef}
-                            placeholder="Search 52 commands..."
+                            placeholder="Search 62 commands..."
                             className="flex-1 h-14 bg-transparent text-white placeholder:text-zinc-500 focus:outline-none"
                         />
                         <button
@@ -231,7 +231,7 @@ export function CommandSearch({ open, onOpenChange }: CommandSearchProps) {
                                 close
                             </span>
                         </div>
-                        <span className="text-zinc-600">52 commands</span>
+                        <span className="text-zinc-600">62 commands</span>
                     </div>
                 </Command>
             </div>

@@ -49,12 +49,12 @@ export async function generateMetadata({
     };
 
     const descriptions: Record<string, string> = {
-        en: "Install 100,000+ skills for 42+ AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
-        ja: "Cursor、Claude、Copilot、Gemini CLI、Windsurf、Clineを含む42以上のAIエージェント用の100,000+スキルをインストール。",
-        "zh-CN": "为包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在内的42+个AI代理安装100,000+技能。",
-        "zh-TW": "為包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在內的42+個AI代理安裝100,000+技能。",
-        vi: "Cài đặt 100,000+ kỹ năng cho 42+ tác tử AI bao gồm Cursor, Claude, Copilot, Gemini CLI, Windsurf và Cline.",
-        es: "Instala 100,000+ habilidades para 42+ agentes de IA incluyendo Cursor, Claude, Copilot, Gemini CLI, Windsurf y Cline."
+        en: "Install 175,000+ skills for 42+ AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
+        ja: "Cursor、Claude、Copilot、Gemini CLI、Windsurf、Clineを含む42以上のAIエージェント用の175,000+スキルをインストール。",
+        "zh-CN": "为包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在内的42+个AI代理安装175,000+技能。",
+        "zh-TW": "為包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在內的42+個AI代理安裝175,000+技能。",
+        vi: "Cài đặt 175,000+ kỹ năng cho 42+ tác tử AI bao gồm Cursor, Claude, Copilot, Gemini CLI, Windsurf và Cline.",
+        es: "Instala 175,000+ habilidades para 42+ agentes de IA incluyendo Cursor, Claude, Copilot, Gemini CLI, Windsurf y Cline."
     };
 
     return {
@@ -163,7 +163,7 @@ const jsonLd = {
             "@id": `${siteUrl}/#organization`,
             name: "Agent Skills",
             url: siteUrl,
-            logo: { "@type": "ImageObject", url: `${siteUrl}/logo.png` },
+            logo: { "@type": "ImageObject", url: `${siteUrl}/icon-512.png` },
             sameAs: [
                 "https://github.com/Karanjot786/agent-skills-cli",
                 "https://www.npmjs.com/package/agent-skills-cli",
@@ -177,7 +177,7 @@ const jsonLd = {
             applicationCategory: "DeveloperApplication",
             operatingSystem: "macOS, Windows, Linux",
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-                softwareVersion: "1.0.8",
+            softwareVersion: "1.1.5",
             downloadUrl: "https://www.npmjs.com/package/agent-skills-cli",
             author: {
                 "@type": "Person",

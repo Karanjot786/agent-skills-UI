@@ -21,7 +21,7 @@ export function Footer() {
                             <span>Agent Skills</span>
                         </Link>
                         <p className="text-sm text-zinc-500 leading-relaxed">
-                            The universal skill manager for 42+ AI coding agents. Install 100,000+ skills with one command.
+                            The universal skill manager for 42+ AI coding agents. Install 175,000+ skills with one command.
                         </p>
                     </div>
 
