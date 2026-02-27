@@ -38,7 +38,7 @@ skills install npm:@company/skills --registry https://npm.company.com
 # Install to specific platforms
 skills install @anthropic/pdf -a claude,cursor
 
-# Install to ALL 42 platforms at once
+# Install to ALL 45 platforms at once
 skills install @lobehub/typescript --all
 
 # Install globally (home directory)
@@ -62,13 +62,22 @@ skills update --all
 # Search & install interactively
 skills search typescript
 
+# Glob matching: install skills by pattern
+skills install -s 'python-*' -a claude --dry-run
+
+# Branch targeting
+skills install owner/repo#dev -a cursor
+
+# Update and prune stale skills
+skills update --all --prune
+
 # Export to AI agents
 skills export -t cursor,claude,copilot
 ```
 
 ## Platform Support
 
-All **42 agents** are supported. Each agent uses its own directory:
+All **45 agents** are supported. Each agent uses its own directory:
 
 | Agent | Directory |
 |-------|-----------| 
@@ -114,6 +123,9 @@ All **42 agents** are supported. Each agent uses its own directory:
 | Sourcegraph Cody | `.sourcegraph/skills` |
 | Void AI | `.void/skills` |
 | Zed | `.zed/skills` |
+| Lingma | `.lingma/skills` |
+| Deep Agents | `.deepagents/skills` |
+| Ruler | `.ruler/skills` |
 
 ## Environment & Configuration
 

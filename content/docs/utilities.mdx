@@ -72,12 +72,33 @@ skills update [skill-names...] [options]
 | `-a, --all` | Update all installed skills |
 | `-g, --global` | Only update globally installed skills |
 | `-y, --yes` | Skip confirmation prompts |
+| `--prune` | Remove skills whose source path no longer exists |
 
 **Examples:**
 ```bash
 skills update xlsx pdf      # Update specific skills
 skills update --all --yes   # Update everything, no prompts
+skills update --all --prune # Update and remove stale skills
+skills update -g --prune    # Prune only globally installed skills
 ```
+
+**Prune output:**
+```
+✨ Updated 14 skill(s)
+⚠ 2 skill(s) failed to update
+
+🧹 Found 3 stale skill(s) (in lock but missing from disk):
+  - skill-creator (github)
+  - old-automation (github)
+  - removed-tool (gitlab)
+  ✔ Removed skill-creator from lock file
+  ✔ Removed old-automation from lock file
+  ✔ Removed removed-tool from lock file
+
+🧹 Pruned 3 stale skill(s) from lock file
+```
+
+> **Note:** `--prune` scans all lock file entries and checks if their directories still exist on disk. Skills that were deleted or never properly installed (lock entry exists but no files on disk) are removed from the lock file. This is instant and works offline.
 
 ---
 

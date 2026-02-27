@@ -21,12 +21,13 @@ skills add [source] [options]
 | Option | Description |
 |--------|-------------|
 | `-a, --agent <agents...>` | Install to specific agents (e.g. `cursor,claude`) |
-| `--all` | Install to **all 42 agents** at once |
+| `--all` | Install to **all 45 agents** at once |
 | `-g, --global` | Install globally (user-wide, home directory) |
-| `-s, --skill <skills...>` | Install by marketplace skill name(s) |
+| `-s, --skill <skills...>` | Install by marketplace skill name(s) — supports glob patterns |
 | `-y, --yes` | Skip all prompts (agent selection + skill selection). Installs ALL found skills. |
 | `--token <token>` | Authentication token for private Git repos |
 | `--registry <url>` | npm registry URL (for `npm:` sources) |
+| `--dry-run` | Preview matched skills without installing |
 
 #### Install from Marketplace (`@scope/name`)
 
@@ -39,7 +40,7 @@ skills install @facebook/verify
 # Install to specific agents
 skills install @facebook/verify -a cursor,claude
 
-# Install to ALL 42 agents
+# Install to ALL 45 agents
 skills install @facebook/verify --all
 
 # Install globally
@@ -63,7 +64,7 @@ Installing to: cursor, claude, copilot, ..., zed
 ✔ Installed to .cursor/skills/verify
 ✔ Installed to .claude/skills/verify
 ✔ Installed to .github/skills/verify
-... (42 agents)
+... (45 agents)
 
 ✨ Successfully installed: verify
    Scoped name: @facebook/verify
@@ -97,7 +98,7 @@ skills install @ComposioHQ/awesome-claude-skills -a claude -y
 # Install all 45 skills to cursor and claude
 skills add github/awesome-copilot -a cursor,claude -y
 
-# All skills to all 42 agents, fully non-interactive
+# All skills to all 45 agents, fully non-interactive
 skills install @owner/repo --all -y
 ```
 
@@ -175,6 +176,50 @@ skills install npm:@company/skills --registry https://npm.company.com
 ```bash
 skills install -s verify -a cursor
 skills install -s xlsx,pdf -a cursor,claude
+```
+
+#### Glob/Wildcard Matching (`--skill` + patterns)
+
+Use `*` and `?` in skill names to match patterns. Works with both marketplace search and git-cloned repos.
+
+```bash
+# Marketplace glob: install all python-related skills
+skills install -s 'python-*' -a claude
+
+# Preview without installing
+skills install -s 'python-*' -a claude --dry-run
+
+# Glob within a cloned repo
+skills install owner/repo --skill 'core-*' -a cursor
+skills install owner/repo --skill 'test-?' --dry-run
+
+# Multiple patterns
+skills install -s 'react-*' 'vue-*' -a claude
+```
+
+**Output (dry-run):**
+```
+✔ Found 60 skill(s) matching "python-*"
+  @Shubhamsaboo/python-expert
+  @wshobson/python-packaging
+  @wshobson/python-performance-optimization
+  ...
+```
+
+#### Branch Targeting (`#branch` suffix)
+
+Append `#branch` to SSH or shorthand URLs to target a specific branch.
+
+```bash
+# Shorthand with branch
+skills install owner/repo#dev -a claude
+skills install owner/repo#v2 -a cursor -y
+
+# SSH with branch
+skills install git@github.com:owner/repo.git#feature -a claude
+
+# HTTP uses /tree/branch instead (existing behavior)
+skills install https://github.com/owner/repo/tree/dev -a cursor
 ```
 
 #### Install from Local Directory

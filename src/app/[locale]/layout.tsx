@@ -177,7 +177,7 @@ const jsonLd = {
             applicationCategory: "DeveloperApplication",
             operatingSystem: "macOS, Windows, Linux",
             offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-            softwareVersion: "1.1.6",
+            softwareVersion: "1.1.7",
             downloadUrl: "https://www.npmjs.com/package/agent-skills-cli",
             author: {
                 "@type": "Person",
