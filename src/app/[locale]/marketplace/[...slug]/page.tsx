@@ -284,8 +284,10 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                 },
                 "aggregateRating": skill.stars > 0 ? {
                     "@type": "AggregateRating",
-                    "ratingValue": "5",
-                    "ratingCount": String(skill.stars)
+                    "ratingValue": Math.min(5, 3 + skill.stars / 100).toFixed(1),
+                    "ratingCount": String(skill.stars),
+                    "bestRating": "5",
+                    "worstRating": "1"
                 } : undefined
             },
             {
