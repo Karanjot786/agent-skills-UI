@@ -223,6 +223,34 @@ export default function Home() {
           </div>
         </section>
 
+        {/* How It Works — 3-step workflow to answer "what do I do with this?" before visitors bounce */}
+        <section className="py-16 border-b border-white/5">
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-10">
+              <h2 className="text-2xl font-bold text-white mb-2">Get started in 3 steps</h2>
+              <p className="text-zinc-500 text-sm">From zero to AI-powered in under a minute</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {[
+                { step: '1', title: 'Install the CLI', code: 'npm install -g agent-skills-cli', desc: 'One command. Works with Node 18+.' },
+                { step: '2', title: 'Browse 175k+ skills', code: 'skills search python', desc: 'Find skills for any topic, any agent.' },
+                { step: '3', title: 'Sync to your agent', code: 'skills install @anthropics/xlsx', desc: 'Cursor, Claude, Copilot — all at once.' },
+              ].map(({ step, title, code, desc }) => (
+                <div key={step} className="relative bg-zinc-900/60 border border-white/8 rounded-xl p-5 group hover:border-cyan-500/30 transition-colors">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold flex items-center justify-center shrink-0">{step}</span>
+                    <span className="text-sm font-semibold text-white">{title}</span>
+                  </div>
+                  <div className="bg-black/50 rounded-lg px-3 py-2 mb-3 font-mono text-xs text-green-400 overflow-x-auto">
+                    <span className="text-zinc-600 mr-1">$</span>{code}
+                  </div>
+                  <p className="text-xs text-zinc-500">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Stats Bar */}
         <section className="border-y border-white/5 bg-zinc-900/30 py-10">
           <div className="container mx-auto px-6">
