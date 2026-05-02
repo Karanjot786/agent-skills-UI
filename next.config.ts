@@ -39,6 +39,28 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=86400' },
         ],
       },
+      // Skill detail pages — CDN caches for 24h, serves stale for 7 days while revalidating
+      {
+        source: '/:locale/marketplace/:path+',
+        headers: [
+          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=86400, stale-while-revalidate=604800' },
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      },
+      // Marketplace listing — 1hr CDN cache
+      {
+        source: '/:locale/marketplace',
+        headers: [
+          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      // Home page — 1hr CDN cache
+      {
+        source: '/:locale',
+        headers: [
+          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
     ];
   },
 };

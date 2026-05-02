@@ -14,6 +14,9 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import type { Metadata } from 'next';
 
+// 24-hour ISR — skills rarely change; CDN serves stale for 7 days (see next.config.ts headers)
+export const revalidate = 86400;
+
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -51,8 +54,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const shouldIndex = contentWordCount >= 100;
 
     return {
-        title: `${skill.name} by ${skill.author}`,
-        description: skill.description || `${skill.scoped_name} - Install this AI coding skill for Cursor, Claude, Copilot, and 39+ more agents.`,
+        title: `${skill.name} — AI Agent Skill for Cursor, Claude & Copilot | agentskills.in`,
+        description: skill.description?.slice(0, 155) || `Install the ${skill.name} skill for Cursor, Claude Code, GitHub Copilot and 40+ AI agents.`,
         robots: shouldIndex
             ? { index: true, follow: true }
             : { index: false, follow: true },
