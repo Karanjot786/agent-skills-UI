@@ -17,6 +17,28 @@ import type { Metadata } from 'next';
 // 24-hour ISR — skills rarely change; CDN serves stale for 7 days (see next.config.ts headers)
 export const revalidate = 86400;
 
+// Allow on-demand ISR for skills not pre-rendered at build time
+export const dynamicParams = true;
+
+// Pre-render top 100 skills × 6 locales at build time to eliminate SSR DB queries
+export async function generateStaticParams() {
+    const locales = ['en', 'zh-CN', 'ja', 'vi', 'es', 'zh-TW'];
+
+    const topSkills = await prisma.skills.findMany({
+        select: { scoped_name: true },
+        orderBy: { stars: 'desc' },
+        take: 100,
+        where: { scoped_name: { not: null } },
+    });
+
+    return topSkills.flatMap((skill) => {
+        const scopedName = skill.scoped_name!;
+        // '@owner/skill-name' → ['@owner', 'skill-name']
+        const slug = scopedName.split('/');
+        return locales.map((locale) => ({ locale, slug }));
+    });
+}
+
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
     const { slug } = await params;
