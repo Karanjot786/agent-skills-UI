@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { codeToHtml } from 'shiki';
 import { CopyButton } from '@/components/copy-button';
 
 interface CodeBlockProps {
@@ -17,6 +16,7 @@ export function CodeBlock({ code, language = 'bash', showLineNumbers = false }: 
     useEffect(() => {
         async function highlight() {
             try {
+                const { codeToHtml } = await import('shiki');
                 const highlighted = await codeToHtml(code, {
                     lang: language,
                     theme: 'github-dark-default',
