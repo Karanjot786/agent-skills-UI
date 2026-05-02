@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import prisma from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit';
+import { revalidateStats } from '@/lib/revalidate';
 
 // =============================================================
 //  GitHub API helper — fetch repo metadata server-side
@@ -167,6 +168,7 @@ export async function POST(request: Request) {
         // Refresh global stats cache
         try {
             await refreshStats();
+            revalidateStats(); // purge unstable_cache so next request gets fresh data
         } catch { /* non-critical */ }
 
         return NextResponse.json({

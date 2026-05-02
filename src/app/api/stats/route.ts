@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { unstable_cache } from 'next/cache';
 import prisma from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
+import { CACHE_TAGS } from '@/lib/revalidate';
 
-// Cache response for 1 hour
+// Time-based fallback — on-demand revalidation via revalidateTag(CACHE_TAGS.stats) takes priority
 export const revalidate = 3600;
 
 interface TopAuthor {
@@ -37,56 +39,34 @@ export async function GET(request: Request) {
     }
 
     try {
-        // Start all queries in parallel for speed
-        const [cachedStats, trending, recent, categoryCounts] = await Promise.all([
-            // Get cached stats from skill_stats table (fast - just 1 row)
-            prisma.skill_stats.findUnique({
-                where: { id: 'global' },
-            }),
+        const getStatsData = unstable_cache(
+            async () => {
+                const [cachedStats, trending, recent, categoryCounts] = await Promise.all([
+                    prisma.skill_stats.findUnique({ where: { id: 'global' } }),
+                    prisma.skills.findMany({
+                        select: { id: true, name: true, description: true, author: true, stars: true, scoped_name: true, author_avatar: true },
+                        orderBy: { stars: 'desc' },
+                        take: 6,
+                    }),
+                    prisma.skills.findMany({
+                        select: { id: true, name: true, description: true, author: true, stars: true, scoped_name: true, author_avatar: true },
+                        orderBy: { updated_at: 'desc' },
+                        take: 6,
+                    }),
+                    prisma.skills.groupBy({ by: ['category'], _count: { id: true } }),
+                ]);
+                return { cachedStats, trending, recent, categoryCounts };
+            },
+            ['stats-data'],
+            { tags: [CACHE_TAGS.stats], revalidate: 3600 }
+        );
 
-            // Get trending skills by stars
-            prisma.skills.findMany({
-                select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    author: true,
-                    stars: true,
-                    scoped_name: true,
-                    author_avatar: true,
-                },
-                orderBy: { stars: 'desc' },
-                take: 6,
-            }),
+        const { cachedStats, trending, recent, categoryCounts } = await getStatsData();
 
-            // Get recent skills
-            prisma.skills.findMany({
-                select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    author: true,
-                    stars: true,
-                    scoped_name: true,
-                    author_avatar: true,
-                },
-                orderBy: { updated_at: 'desc' },
-                take: 6,
-            }),
-
-            // Get category counts
-            prisma.skills.groupBy({
-                by: ['category'],
-                _count: { id: true },
-            }),
-        ]);
-
-        // Use cached stats or fallback values
         const totalSkills = cachedStats?.total_skills ?? 50000;
         const uniqueAuthors = cachedStats?.unique_authors ?? 5000;
         const topAuthors = (cachedStats?.top_authors as unknown as TopAuthor[]) ?? [];
 
-        // Transform category counts to a map
         const categoryMap: Record<string, number> = {};
         for (const cat of categoryCounts) {
             if (cat.category) {
@@ -95,11 +75,7 @@ export async function GET(request: Request) {
         }
 
         return NextResponse.json({
-            stats: {
-                totalSkills,
-                uniqueAuthors,
-                totalStars: 0,
-            },
+            stats: { totalSkills, uniqueAuthors, totalStars: 0 },
             categoryCounts: categoryMap,
             trending: trending.map((s: SkillPreview) => ({
                 id: s.id,
