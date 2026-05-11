@@ -199,7 +199,7 @@ function generateSkillId(githubUrl: string): string {
     return createHash('sha256').update(githubUrl).digest('hex').slice(0, 16);
 }
 
-function extractSkillName(path: string): string {
+function extractSkillName(path: string, repoFullName?: string): string {
     const parts = path.split('/');
     const skillsIndex = parts.findIndex(p => p === 'skills');
 
@@ -208,9 +208,9 @@ function extractSkillName(path: string): string {
         if (skillFolder.toLowerCase().includes('skill') && skillFolder.endsWith('.md')) {
             const baseName = skillFolder.replace(/\.skill\.md$/i, '').replace(/\.md$/i, '').replace(/^skill$/i, '');
             if (baseName && baseName.toLowerCase() !== 'skill') return baseName;
-            return 'unknown';
+        } else {
+            return skillFolder;
         }
-        return skillFolder;
     }
 
     const fileIndex = parts.findIndex(p => p.toLowerCase().includes('skill') && p.endsWith('.md'));
@@ -218,6 +218,12 @@ function extractSkillName(path: string): string {
         const parentFolder = parts[fileIndex - 1];
         if (!parentFolder.startsWith('.')) return parentFolder;
     }
+
+    // Root SKILL.md (e.g. path = "SKILL.md"): fall back to repo name
+    if (repoFullName) {
+        return repoFullName.split('/')[1] || 'unknown';
+    }
+
     return 'unknown';
 }
 
@@ -295,7 +301,7 @@ async function indexRepoSkills(
     // Process each SKILL.md
     for (const path of skillPaths) {
         try {
-            const skillName = extractSkillName(path);
+            const skillName = extractSkillName(path, repoFullName);
 
             // Fetch raw SKILL.md content (raw.githubusercontent.com has no rate limit)
             const rawUrl = `https://raw.githubusercontent.com/${repoFullName}/${branch}/${path}`;

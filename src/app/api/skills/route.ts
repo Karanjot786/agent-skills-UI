@@ -35,6 +35,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
+    const exactName = searchParams.get('name') || '';
     const limit = parseInt(searchParams.get('limit') || '30');
     const sortBy = searchParams.get('sortBy') || 'stars';
     const category = searchParams.get('category');
@@ -47,14 +48,19 @@ export async function GET(request: Request) {
         // Build where clause
         const where: {
             OR?: { name?: object; description?: object; author?: object }[];
+            AND?: object[];
+            name?: object;
             category?: string;
             author?: string;
             stars?: object;
             content?: object;
         } = {};
 
-        // Search filter
-        if (search && search.trim()) {
+        // Exact name lookup (bypasses fuzzy search — used by CLI install)
+        if (exactName && exactName.trim()) {
+            where.name = { equals: exactName.trim(), mode: 'insensitive' };
+        } else if (search && search.trim()) {
+            // Fuzzy search filter
             where.OR = [
                 { name: { contains: search, mode: 'insensitive' } },
                 { description: { contains: search, mode: 'insensitive' } },
