@@ -1,81 +1,75 @@
 # https://www.robotstxt.org/robotstxt.html
 
-# Allow all crawlers by default
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /_next/
+Crawl-delay: 2
 
-# Sitemaps
-Sitemap: https://agentskills.in/sitemap-index.xml
-
-# ===========================================
-# AI / LLM Crawler Permissions
-# ===========================================
-
-# OpenAI GPT crawlers
-User-agent: GPTBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-# Anthropic Claude crawlers
-User-agent: Claude-Web
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-# Google AI crawlers
-User-agent: Google-Extended
-Allow: /
-
-# Common Crawl (used by many AI models)
-User-agent: CCBot
-Allow: /
-
-# Perplexity AI
-User-agent: PerplexityBot
-Allow: /
-
-# Cohere AI
-User-agent: cohere-ai
-Allow: /
-
-# Meta AI
-User-agent: FacebookBot
-Allow: /
-
-# Microsoft/Bing AI
-User-agent: Bingbot
-Allow: /
-
-# You.com AI
-User-agent: YouBot
-Allow: /
-
-# Brave Search AI
-User-agent: BraveBot
-Allow: /
-
-# Apple Bot (Siri/Spotlight)
-User-agent: Applebot
-Allow: /
-
-# Gemini / Google AI Studio
-User-agent: GoogleOther
-Allow: /
+# Sitemap
+Sitemap: https://www.agentskills.in/sitemap-index.xml
 
 # ===========================================
-# Crawl Delay (be respectful)
+# Search Engines — moderate crawl rate
 # ===========================================
-User-agent: *
+
+User-agent: Googlebot
 Crawl-delay: 1
 
+User-agent: Bingbot
+Crawl-delay: 2
+
+User-agent: Applebot
+Crawl-delay: 2
+
 # ===========================================
-# Additional Resources for AI
+# AI / LLM Crawlers — slow them down
+# They don't need fresh data; index llms.txt instead
 # ===========================================
-# AI-specific content manifests:
-# - /llms.txt - Summary for LLMs
-# - /llms-full.txt - Complete documentation
+
+User-agent: GPTBot
+Crawl-delay: 10
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /marketplace
+
+User-agent: ChatGPT-User
+Crawl-delay: 10
+
+User-agent: Claude-Web
+Crawl-delay: 10
+Allow: /llms.txt
+Allow: /llms-full.txt
+
+User-agent: anthropic-ai
+Crawl-delay: 10
+
+User-agent: Google-Extended
+Crawl-delay: 5
+
+User-agent: CCBot
+Crawl-delay: 10
+
+User-agent: PerplexityBot
+Crawl-delay: 5
+
+User-agent: cohere-ai
+Crawl-delay: 10
+
+User-agent: YouBot
+Crawl-delay: 10
+
+User-agent: BraveBot
+Crawl-delay: 5
+
+User-agent: GoogleOther
+Crawl-delay: 5
+
+User-agent: FacebookBot
+Crawl-delay: 10
+
+# ===========================================
+# AI content manifests (preferred for LLMs)
+# ===========================================
+# /llms.txt        — summary for LLMs
+# /llms-full.txt   — complete documentation

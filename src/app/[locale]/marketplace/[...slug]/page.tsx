@@ -8,14 +8,16 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
 import prisma from '@/lib/db';
+import { unstable_cache } from 'next/cache';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import type { Metadata } from 'next';
 
-// 24-hour ISR — skills rarely change; CDN serves stale for 7 days (see next.config.ts headers)
-export const revalidate = 86400;
+// Permanent ISR — pages never expire via time; only invalidated via revalidateTag('skill')
+// Eliminates background ISR writes caused by 24hr time-based revalidation
+export const revalidate = false;
 
 // Allow on-demand ISR for skills not pre-rendered at build time
 export const dynamicParams = true;
@@ -134,7 +136,7 @@ interface Skill {
     folder_url?: string;
 }
 
-async function getSkill(scopedName: string): Promise<Skill | null> {
+async function getSkillFromDB(scopedName: string): Promise<Skill | null> {
     try {
         // First try exact match on scoped_name
         let data = await prisma.skills.findFirst({
@@ -186,6 +188,13 @@ async function getSkill(scopedName: string): Promise<Skill | null> {
         return null;
     }
 }
+
+// Cache skill DB lookups permanently — only invalidated via revalidateTag('skill')
+const getSkill = unstable_cache(
+    getSkillFromDB,
+    ['skill-detail'],
+    { tags: ['skill'], revalidate: false }
+);
 
 async function getRelatedSkills(skill: Skill): Promise<Skill[]> {
     // Get other skills by same author

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import prisma from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit';
-import { revalidateStats } from '@/lib/revalidate';
+import { revalidateStats, revalidateSkills } from '@/lib/revalidate';
 
 // =============================================================
 //  GitHub API helper — fetch repo metadata server-side
@@ -165,10 +165,11 @@ export async function POST(request: Request) {
             data: { skills_count: indexResult.indexed },
         });
 
-        // Refresh global stats cache
+        // Refresh global stats cache + invalidate skill detail pages
         try {
             await refreshStats();
-            revalidateStats(); // purge unstable_cache so next request gets fresh data
+            revalidateStats();  // purge stats unstable_cache
+            revalidateSkills(); // purge skill detail page cache for re-indexed skills
         } catch { /* non-critical */ }
 
         return NextResponse.json({
