@@ -2,11 +2,11 @@ import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/config';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Bots that hammer skill detail pages and drive ISR/function costs
-// Googlebot and friends crawl 175k+ unique URLs → 31K function invocations/day
-const RATE_LIMITED_BOT_PATTERN = /Googlebot|bingbot|Baiduspider|YandexBot|DotBot|SemrushBot|AhrefsBot|MJ12bot|PetalBot|DataForSeoBot|BrightEdge|Screaming|serpstatbot|seokicks|linkdexbot/i;
+// Commercial SEO audit tools — pure cost, drive zero real user traffic
+// Do NOT include Googlebot/Bingbot/Applebot — they drive organic search traffic
+const RATE_LIMITED_BOT_PATTERN = /SemrushBot|AhrefsBot|MJ12bot|DotBot|DataForSeoBot|BrightEdge|Screaming|serpstatbot|seokicks|linkdexbot|PetalBot|BaiduspiderBot|YandexBot/i;
 
-// AI crawlers — serve llms.txt instead of full pages
+// AI crawlers — serve llms.txt instead of full pages (no user traffic value)
 const AI_BOT_PATTERN = /GPTBot|Claude-Web|anthropic-ai|CCBot|PerplexityBot|cohere-ai|YouBot|BraveBot|GoogleOther|Google-Extended/i;
 
 const intlMiddleware = createMiddleware({
