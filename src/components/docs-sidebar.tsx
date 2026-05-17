@@ -431,7 +431,7 @@ export function DocsSidebar({ onSearchOpen, activeSlug, allSections }: DocsSideb
                         Marketplace
                     </Link>
                     <span>•</span>
-                    <span className="text-zinc-600">v1.1.4</span>
+                    <span className="text-zinc-600">v1.1.9</span>
                 </div>
             </div>
         </>
