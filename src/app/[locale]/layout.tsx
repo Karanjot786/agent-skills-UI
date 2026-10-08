@@ -73,15 +73,9 @@ export async function generateMetadata({
         publisher: "Agent Skills",
         metadataBase: new URL(siteUrl),
         alternates: {
-            canonical: "/",
-            languages: {
-                en: "/",
-                ja: "/ja",
-                "zh-CN": "/zh-CN",
-                "zh-TW": "/zh-TW",
-                vi: "/vi",
-                es: "/es"
-            }
+            // Applies to the home page only — every other page sets its own alternates.
+            canonical: locale === 'en' ? '/' : `/${locale}`,
+            languages: { en: '/', ja: '/ja', 'zh-CN': '/zh-CN', 'zh-TW': '/zh-TW', vi: '/vi', es: '/es', 'x-default': '/' },
         },
         openGraph: {
             title: titles[locale] || titles.en,
@@ -239,14 +233,6 @@ export default async function LocaleLayout({
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
                 />
                 <link rel="manifest" href="/manifest.json" />
-                {/* hreflang tags for SEO */}
-                <link rel="alternate" hrefLang="en" href={siteUrl} />
-                <link rel="alternate" hrefLang="ja" href={`${siteUrl}/ja`} />
-                <link rel="alternate" hrefLang="zh-CN" href={`${siteUrl}/zh-CN`} />
-                <link rel="alternate" hrefLang="zh-TW" href={`${siteUrl}/zh-TW`} />
-                <link rel="alternate" hrefLang="vi" href={`${siteUrl}/vi`} />
-                <link rel="alternate" hrefLang="es" href={`${siteUrl}/es`} />
-                <link rel="alternate" hrefLang="x-default" href={siteUrl} />
             </head>
             <body
                 className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans bg-black text-white`}
