@@ -5,14 +5,6 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  async rewrites() {
-    return [
-      {
-        source: '/sitemap/:locale/:type/:value/:chunk.xml',
-        destination: '/sitemap/:locale---:type---:value---:chunk.xml',
-      },
-    ];
-  },
   async headers() {
     return [
       {
