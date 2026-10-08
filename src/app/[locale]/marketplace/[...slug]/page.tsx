@@ -7,8 +7,8 @@ import { CopyButton } from "@/components/copy-button";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
-import prisma from '@/lib/db';
-import { unstable_cache } from 'next/cache';
+import { notFound } from 'next/navigation';
+import { getSkillBySlug, getSkillContent, getRelatedSkills, type SkillRow } from '@/lib/skills';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -22,35 +22,13 @@ export const revalidate = false;
 // Allow on-demand ISR for skills not pre-rendered at build time
 export const dynamicParams = true;
 
-// Pre-render top 100 skills × 6 locales at build time to eliminate SSR DB queries
-export async function generateStaticParams() {
-    const locales = ['en', 'zh-CN', 'ja', 'vi', 'es', 'zh-TW'];
-
-    const topSkills = await prisma.skills.findMany({
-        select: { scoped_name: true },
-        orderBy: { stars: 'desc' },
-        take: 100,
-        where: { scoped_name: { not: null } },
-    });
-
-    return topSkills.flatMap((skill) => {
-        const scopedName = skill.scoped_name!;
-        // '@owner/skill-name' → ['@owner', 'skill-name']
-        const slug = scopedName.split('/');
-        return locales.map((locale) => ({ locale, slug }));
-    });
-}
-
 // Generate dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
     const { slug } = await params;
     // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
     const scopedName = slug.map(s => decodeURIComponent(s)).join('/');
 
-    const skill = await prisma.skills.findFirst({
-        where: { scoped_name: scopedName },
-        select: { name: true, description: true, author: true, scoped_name: true, content: true },
-    });
+    const skill = await getSkillBySlug(scopedName);
 
     if (!skill) {
         return {
@@ -63,29 +41,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const skillPath = `/marketplace/${scopedName.split('/').map(encodeURIComponent).join('/')}`;
     const ogImageUrl = `${siteUrl}/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`;
 
-    // Generate locale alternates
-    const languages: Record<string, string> = {
-        en: `${siteUrl}${skillPath}`,
-        ja: `${siteUrl}/ja${skillPath}`,
-        'zh-CN': `${siteUrl}/zh-CN${skillPath}`,
-        'zh-TW': `${siteUrl}/zh-TW${skillPath}`,
-        vi: `${siteUrl}/vi${skillPath}`,
-        es: `${siteUrl}/es${skillPath}`,
-    };
-
-    // Noindex thin pages (< 100 words of unique content)
-    const contentWordCount = skill.content?.split(/\s+/).filter(Boolean).length || 0;
-    const shouldIndex = contentWordCount >= 100;
-
     return {
         title: `${skill.name} — AI Agent Skill for Cursor, Claude & Copilot | agentskills.in`,
         description: skill.description?.slice(0, 155) || `Install the ${skill.name} skill for Cursor, Claude Code, GitHub Copilot and 40+ AI agents.`,
-        robots: shouldIndex
-            ? { index: true, follow: true }
-            : { index: false, follow: true },
+        robots: skill.indexable ? { index: true, follow: true } : { index: false, follow: true },
         alternates: {
+            // Skill content is English-only: every locale variant canonicalises to the English URL,
+            // so no hreflang set here (hreflang on non-canonical URLs is ignored/invalid).
             canonical: `${siteUrl}${skillPath}`,
-            languages,
         },
         openGraph: {
             title: `${skill.scoped_name} | Agent Skills`,
@@ -136,117 +99,36 @@ interface Skill {
     folder_url?: string;
 }
 
-async function getSkillFromDB(scopedName: string): Promise<Skill | null> {
-    try {
-        // First try exact match on scoped_name
-        let data = await prisma.skills.findFirst({
-            where: { scoped_name: scopedName },
-        });
-
-        if (!data) {
-            // Try contains for partial match
-            data = await prisma.skills.findFirst({
-                where: { scoped_name: { contains: scopedName, mode: 'insensitive' } },
-                orderBy: { stars: 'desc' },
-            });
-        }
-
-        if (!data) {
-            // Fallback: try match on name only (last segment)
-            const name = scopedName.split('/').pop();
-            if (name) {
-                data = await prisma.skills.findFirst({
-                    where: { name },
-                    orderBy: { stars: 'desc' },
-                });
-            }
-        }
-
-        if (!data) return null;
-
-        // Transform Prisma result to match Skill interface
-        return {
-            id: data.id,
-            name: data.name,
-            description: data.description || '',
-            author: data.author,
-            stars: data.stars,
-            forks: data.forks,
-            github_url: data.github_url,
-            raw_url: data.raw_url || '',
-            repo_full_name: data.repo_full_name || '',
-            path: data.path || '',
-            branch: data.branch,
-            author_avatar: data.author_avatar || '',
-            updated_at: data.updated_at?.toISOString() || '',
-            scoped_name: data.scoped_name || '',
-            content: data.content || undefined,
-            folder_url: data.folder_url || undefined,
-        };
-    } catch (error) {
-        console.error('Error fetching skill:', error);
-        return null;
-    }
-}
-
-// Cache skill DB lookups permanently — only invalidated via revalidateTag('skill')
-const getSkill = unstable_cache(
-    getSkillFromDB,
-    ['skill-detail'],
-    { tags: ['skill'], revalidate: false }
-);
-
-async function getRelatedSkills(skill: Skill): Promise<Skill[]> {
-    // Get other skills by same author
-    const data = await prisma.skills.findMany({
-        where: {
-            author: skill.author,
-            id: { not: skill.id },
-        },
-        orderBy: { stars: 'desc' },
-        take: 4,
-    });
-
-    return data.map((s: typeof data[number]) => ({
-        id: s.id,
-        name: s.name,
-        description: s.description || '',
-        author: s.author,
-        stars: s.stars,
-        forks: s.forks,
-        github_url: s.github_url,
-        raw_url: s.raw_url || '',
-        repo_full_name: s.repo_full_name || '',
-        path: s.path || '',
-        branch: s.branch,
-        author_avatar: s.author_avatar || '',
-        updated_at: s.updated_at?.toISOString() || '',
-        scoped_name: s.scoped_name || '',
-        content: s.content || undefined,
-        folder_url: s.folder_url || undefined,
-    }));
+function toSkill(row: SkillRow, content: string | null): Skill {
+    return {
+        id: row.id,
+        name: row.name,
+        description: row.description || '',
+        author: row.author,
+        stars: row.stars,
+        forks: row.forks,
+        github_url: row.github_url,
+        raw_url: row.raw_url || '',
+        repo_full_name: row.repo_full_name || '',
+        path: row.path || '',
+        branch: row.branch,
+        author_avatar: row.author_avatar || '',
+        updated_at: row.updated_at || '',
+        scoped_name: row.scoped_name || '',
+        content: content || undefined,
+        folder_url: row.folder_url || undefined,
+    };
 }
 
 export default async function SkillPage({ params }: { params: Promise<{ slug: string[] }> }) {
     const { slug } = await params;
     // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
     const scopedName = slug.map(s => decodeURIComponent(s)).join('/');
-    const skill = await getSkill(scopedName);
+    const row = await getSkillBySlug(scopedName);
+    if (!row) notFound(); // real 404: stops junk URLs from being rendered + cached with 200
+    const skill = toSkill(row, await getSkillContent(scopedName));
 
-    if (!skill) {
-        return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
-                <Package className="size-16 text-zinc-600 mb-6" />
-                <h1 className="text-2xl font-bold mb-4">Skill Not Found</h1>
-                <p className="text-zinc-400 mb-8">Could not find skill &quot;{scopedName}&quot;</p>
-                <Button asChild>
-                    <Link href="/marketplace">Browse All Skills</Link>
-                </Button>
-            </div>
-        );
-    }
-
-    const relatedSkills = await getRelatedSkills(skill);
+    const relatedSkills = (await getRelatedSkills(row.author, row.id)).map((r) => toSkill(r, null));
 
     // JSON-LD Structured Data for SEO
     const jsonLd = {
