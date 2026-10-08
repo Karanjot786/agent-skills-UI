@@ -55,7 +55,7 @@ export default function Home() {
 
   useEffect(() => {
     fetch('/api/stats')
-      .then(res => res.json<any>())
+      .then(res => res.json<{ stats?: Stats; trending?: Skill[]; recent?: Skill[]; topAuthors?: Author[]; categoryCounts?: Record<string, number> }>())
       .then(data => {
         if (data.stats) setStats(data.stats);
         if (data.trending) setTrending(data.trending);

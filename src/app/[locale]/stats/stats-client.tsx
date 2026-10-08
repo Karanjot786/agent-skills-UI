@@ -26,7 +26,7 @@ export default function StatsClient() {
 
     useEffect(() => {
         fetch('/api/stats')
-            .then(res => res.json<any>())
+            .then(res => res.json<{ totalSkills?: number; uniqueAuthors?: number; totalCategories?: number; recentSkills?: number }>())
             .then(data => {
                 if (data.totalSkills) {
                     setStats({
