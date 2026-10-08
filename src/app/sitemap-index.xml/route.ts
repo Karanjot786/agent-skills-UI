@@ -5,7 +5,7 @@ import { locales } from '@/i18n/config';
 const CHUNK_SIZE = 5000;
 
 export async function GET() {
-    const baseUrl = 'https://agentskills.in';
+    const baseUrl = 'https://www.agentskills.in';
     const lastMod = new Date().toISOString();
 
     try {

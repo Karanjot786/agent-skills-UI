@@ -11,7 +11,7 @@ export async function generateMetadata({
     params: Promise<{ locale: string }>
 }): Promise<Metadata> {
     const { locale } = await params;
-    const siteUrl = 'https://agentskills.in';
+    const siteUrl = 'https://www.agentskills.in';
 
     const titles: Record<string, string> = {
         en: 'FAQ - Frequently Asked Questions | Agent Skills CLI',

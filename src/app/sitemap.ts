@@ -4,7 +4,7 @@ import { locales, defaultLocale, type Locale } from '@/i18n/config';
 import { getAllDocSlugs } from '@/lib/mdx';
 
 // Constants
-const BASE_URL = 'https://agentskills.in';
+const BASE_URL = 'https://www.agentskills.in';
 const CHUNK_SIZE = 5000;
 
 // Helper to generate localized paths

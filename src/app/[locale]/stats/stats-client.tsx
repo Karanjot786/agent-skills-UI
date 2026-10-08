@@ -49,7 +49,7 @@ export default function StatsClient() {
         "creator": {
             "@type": "Organization",
             "name": "Agent Skills",
-            "url": "https://agentskills.in"
+            "url": "https://www.agentskills.in"
         },
         "dateModified": new Date().toISOString().split('T')[0],
         "keywords": ["AI skills", "AI agents", "Cursor", "Claude", "Copilot", "skill manager"],

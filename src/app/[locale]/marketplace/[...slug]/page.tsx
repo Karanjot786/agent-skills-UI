@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         };
     }
 
-    const siteUrl = 'https://agentskills.in';
+    const siteUrl = 'https://www.agentskills.in';
     const skillPath = `/marketplace/${scopedName.split('/').map(encodeURIComponent).join('/')}`;
     const ogImageUrl = `${siteUrl}/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`;
 
@@ -259,19 +259,19 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                         "@type": "ListItem",
                         "position": 1,
                         "name": "Home",
-                        "item": "https://agentskills.in"
+                        "item": "https://www.agentskills.in"
                     },
                     {
                         "@type": "ListItem",
                         "position": 2,
                         "name": "Marketplace",
-                        "item": "https://agentskills.in/marketplace"
+                        "item": "https://www.agentskills.in/marketplace"
                     },
                     {
                         "@type": "ListItem",
                         "position": 3,
                         "name": skill.name,
-                        "item": `https://agentskills.in/marketplace/${encodeURIComponent(skill.scoped_name)}`
+                        "item": `https://www.agentskills.in/marketplace/${encodeURIComponent(skill.scoped_name)}`
                     }
                 ]
             },

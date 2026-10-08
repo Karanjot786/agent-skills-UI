@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { locales, defaultLocale } from '@/i18n/config';
 import StatsClient from './stats-client';
 
-const siteUrl = 'https://agentskills.in';
+const siteUrl = 'https://www.agentskills.in';
 
 const getLocalizedUrl = (path: string, locale: string) => {
     if (locale === defaultLocale) return `${siteUrl}${path}`;

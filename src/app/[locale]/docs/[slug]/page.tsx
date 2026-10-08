@@ -4,7 +4,7 @@ import { getDocSection, getAllDocSlugs, getAdjacentSections, getAllDocSectionsMe
 import { DocPageClient } from '@/components/doc-page-client';
 import { locales, defaultLocale } from '@/i18n/config';
 
-const siteUrl = 'https://agentskills.in';
+const siteUrl = 'https://www.agentskills.in';
 
 const getLocalizedUrl = (path: string, locale: string) => {
     if (locale === defaultLocale) return `${siteUrl}${path}`;

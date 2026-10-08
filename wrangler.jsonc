@@ -1,0 +1,38 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"main": ".open-next/worker.js",
+	"name": "agentskills",
+	"compatibility_date": "2026-06-17",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	// ISR page cache (your `export const revalidate = false` pages).
+	// Create: npx wrangler r2 bucket create agentskills-inc-cache
+	"r2_buckets": [
+		{
+			"binding": "NEXT_INC_CACHE_R2_BUCKET",
+			"bucket_name": "agentskills-inc-cache",
+			"remote": true
+		}
+	],
+	// Tag cache for revalidateTag()/revalidateSkills()/revalidateStats().
+	"d1_databases": [
+		{
+			"binding": "NEXT_TAG_CACHE_D1",
+			"database_name": "agentskills-tag-cache",
+			"database_id": "73f2097b-3ad3-4d0b-8abe-2a34a11d82af",
+			"remote": true
+		}
+	],
+	// Prisma -> AWS RDS Postgres, pooled through Hyperdrive.
+	"hyperdrive": [
+		{
+			"binding": "HYPERDRIVE",
+			"id": "7941708e376a4aeda922685f601be549"
+		}
+	]
+}

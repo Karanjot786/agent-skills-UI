@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
     subsets: ["latin"],
 });
 
-const siteUrl = "https://agentskills.in";
+const siteUrl = "https://www.agentskills.in";
 
 export const viewport: Viewport = {
     themeColor: [
@@ -189,8 +189,8 @@ const jsonLd = {
             publisher: {
                 "@type": "Organization",
                 name: "Agent Skills",
-                url: "https://agentskills.in",
-                logo: { "@type": "ImageObject", url: "https://agentskills.in/icon-512.png" },
+                url: "https://www.agentskills.in",
+                logo: { "@type": "ImageObject", url: "https://www.agentskills.in/icon-512.png" },
             },
         },
     ],

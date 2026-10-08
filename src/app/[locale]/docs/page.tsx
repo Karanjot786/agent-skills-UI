@@ -3,7 +3,7 @@ import { getAllDocSectionsMeta } from '@/lib/mdx';
 import { DocsOverview } from '@/components/docs-overview';
 import { locales, defaultLocale } from '@/i18n/config';
 
-const siteUrl = 'https://agentskills.in';
+const siteUrl = 'https://www.agentskills.in';
 
 const getLocalizedUrl = (path: string, locale: string) => {
     if (locale === defaultLocale) return `${siteUrl}${path}`;
