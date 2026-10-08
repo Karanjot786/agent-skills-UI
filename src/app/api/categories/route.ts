@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { getDb } from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
 // Cache for 24 hours (categories rarely change)
-export const revalidate = 86400;
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     // Rate limiting
@@ -21,18 +21,12 @@ export async function GET(request: Request) {
     }
 
     try {
-        const categories = await prisma.categories.findMany({
-            select: {
-                id: true,
-                name: true,
-                icon: true,
-                skill_count: true,
-                sort_order: true,
-            },
-            orderBy: { sort_order: 'asc' },
+        const { results: categories } = await getDb()
+            .prepare('SELECT id, name, icon, skill_count, sort_order FROM categories ORDER BY sort_order')
+            .all();
+        return NextResponse.json({ categories }, {
+            headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' },
         });
-
-        return NextResponse.json({ categories });
     } catch (error) {
         console.error('API error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

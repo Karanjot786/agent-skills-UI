@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { unstable_cache } from 'next/cache';
-import prisma from '@/lib/db';
+import { getDb } from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
-import { CACHE_TAGS } from '@/lib/revalidate';
 
-// Time-based fallback — on-demand revalidation via revalidateTag(CACHE_TAGS.stats) takes priority
-export const revalidate = 3600;
+// Never prerender at build (no DB at build time); edge caches the JSON for an hour.
+export const dynamic = 'force-dynamic';
 
 interface TopAuthor {
     name: string;
@@ -39,38 +37,27 @@ export async function GET(request: Request) {
     }
 
     try {
-        const getStatsData = unstable_cache(
-            async () => {
-                const [cachedStats, trending, recent, categoryCounts] = await Promise.all([
-                    prisma.skill_stats.findUnique({ where: { id: 'global' } }),
-                    prisma.skills.findMany({
-                        select: { id: true, name: true, description: true, author: true, stars: true, scoped_name: true, author_avatar: true },
-                        orderBy: { stars: 'desc' },
-                        take: 6,
-                    }),
-                    prisma.skills.findMany({
-                        select: { id: true, name: true, description: true, author: true, stars: true, scoped_name: true, author_avatar: true },
-                        orderBy: { updated_at: 'desc' },
-                        take: 6,
-                    }),
-                    prisma.skills.groupBy({ by: ['category'], _count: { id: true } }),
-                ]);
-                return { cachedStats, trending, recent, categoryCounts };
-            },
-            ['stats-data'],
-            { tags: [CACHE_TAGS.stats], revalidate: 3600 }
-        );
-
-        const { cachedStats, trending, recent, categoryCounts } = await getStatsData();
+        const db = getDb();
+        const PREVIEW = 'id, name, description, author, stars, scoped_name, author_avatar';
+        const [statsR, trendingR, recentR, catsR] = await db.batch([
+            db.prepare(`SELECT total_skills, unique_authors, top_authors FROM skill_stats WHERE id = 'global'`),
+            db.prepare(`SELECT ${PREVIEW} FROM skills ORDER BY stars DESC LIMIT 6`),
+            db.prepare(`SELECT ${PREVIEW} FROM skills ORDER BY updated_at DESC LIMIT 6`),
+            db.prepare(`SELECT category, count(*) AS n FROM skills WHERE category IS NOT NULL GROUP BY category`),
+        ]);
+        const cachedStats = statsR.results[0] as { total_skills: number; unique_authors: number; top_authors: string } | undefined;
+        const trending = trendingR.results as unknown as SkillPreview[];
+        const recent = recentR.results as unknown as SkillPreview[];
+        const categoryCounts = catsR.results as unknown as { category: string; n: number }[];
 
         const totalSkills = cachedStats?.total_skills ?? 50000;
         const uniqueAuthors = cachedStats?.unique_authors ?? 5000;
-        const topAuthors = (cachedStats?.top_authors as unknown as TopAuthor[]) ?? [];
+        const topAuthors: TopAuthor[] = cachedStats ? JSON.parse(cachedStats.top_authors) : [];
 
         const categoryMap: Record<string, number> = {};
         for (const cat of categoryCounts) {
             if (cat.category) {
-                categoryMap[cat.category.toLowerCase()] = cat._count.id;
+                categoryMap[cat.category.toLowerCase()] = cat.n;
             }
         }
 
@@ -96,7 +83,7 @@ export async function GET(request: Request) {
                 authorAvatar: s.author_avatar,
             })),
             topAuthors,
-        });
+        }, { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } });
     } catch (error) {
         console.error('Stats API error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

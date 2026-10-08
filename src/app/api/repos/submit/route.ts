@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createHash } from 'crypto';
-import prisma from '@/lib/db';
+import { getDb } from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit';
-import { revalidateStats, revalidateSkills } from '@/lib/revalidate';
 
 // =============================================================
 //  GitHub API helper — fetch repo metadata server-side
@@ -33,7 +32,7 @@ async function fetchRepoMetadata(fullName: string): Promise<RepoMetadata> {
         throw new Error(`GitHub API error: ${res.status} — repo "${fullName}" not found`);
     }
 
-    const data = await res.json();
+    const data = await res.json() as any;
     return {
         full_name: data.full_name,
         html_url: data.html_url,
@@ -87,7 +86,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const body = await request.json();
+        const body = await request.json() as { full_name?: string };
         let { full_name } = body;
 
         if (!full_name) {
@@ -102,9 +101,8 @@ export async function POST(request: Request) {
         }
 
         // Check for duplicate
-        const existing = await prisma.repo_submissions.findUnique({
-            where: { full_name },
-        });
+        const db = getDb();
+        const existing = await db.prepare('SELECT status FROM repo_submissions WHERE full_name = ?').bind(full_name).first<{ status: string }>();
 
         if (existing) {
             return NextResponse.json(
@@ -135,20 +133,12 @@ export async function POST(request: Request) {
         }
 
         // ─── Save the submission ───
-        const submission = await prisma.repo_submissions.create({
-            data: {
-                full_name: metadata.full_name,
-                html_url: metadata.html_url,
-                description: metadata.description?.slice(0, 500) || null,
-                stars: metadata.stars,
-                language: metadata.language,
-                license: metadata.license,
-                default_branch: metadata.default_branch,
-                skills_count: skillPaths.length,
-                skill_paths: skillPaths.slice(0, 200),
-                status: 'approved',
-            },
-        });
+        const submissionId = crypto.randomUUID();
+        await db.prepare(`INSERT INTO repo_submissions (id, full_name, html_url, description, stars, language, license, default_branch, skills_count, skill_paths, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')`)
+            .bind(submissionId, metadata.full_name, metadata.html_url, metadata.description?.slice(0, 500) || null, metadata.stars,
+                metadata.language, metadata.license, metadata.default_branch, skillPaths.length, JSON.stringify(skillPaths.slice(0, 200)))
+            .run();
 
         // ─── Index all skills NOW ───
         const indexResult = await indexRepoSkills(
@@ -160,21 +150,14 @@ export async function POST(request: Request) {
         );
 
         // Update with actual indexed count
-        await prisma.repo_submissions.update({
-            where: { id: submission.id },
-            data: { skills_count: indexResult.indexed },
-        });
+        await db.prepare('UPDATE repo_submissions SET skills_count = ? WHERE id = ?').bind(indexResult.indexed, submissionId).run();
 
-        // Refresh global stats cache + invalidate skill detail pages
-        try {
-            await refreshStats();
-            revalidateStats();  // purge stats unstable_cache
-            revalidateSkills(); // purge skill detail page cache for re-indexed skills
-        } catch { /* non-critical */ }
+        // Refresh global stats cache
+        try { await refreshStats(); } catch { /* non-critical */ }
 
         return NextResponse.json({
             success: true,
-            id: submission.id,
+            id: submissionId,
             repo: metadata.full_name,
             description: metadata.description,
             stars: metadata.stars,
@@ -282,6 +265,8 @@ async function indexRepoSkills(
     const [owner] = repoFullName.split('/');
     let indexed = 0;
     let errors = 0;
+    const db = getDb();
+    const stmts: D1PreparedStatement[] = [];
 
     // If no skill paths provided, scan the repo
     if (skillPaths.length === 0) {
@@ -320,41 +305,15 @@ async function indexRepoSkills(
 
             // Upsert into skills table
             const skillId = generateSkillId(githubUrl);
-            await prisma.skills.upsert({
-                where: { github_url: githubUrl },
-                create: {
-                    id: skillId,
-                    name: skillName,
-                    author: owner,
-                    description: parsed.name !== skillName
-                        ? `${parsed.name}: ${parsed.description}`
-                        : parsed.description,
-                    author_avatar: `https://github.com/${owner}.png`,
-                    github_url: githubUrl,
-                    raw_url: rawUrl,
-                    repo_full_name: repoFullName,
-                    stars,
-                    forks,
-                    path,
-                    branch,
-                    has_marketplace: false,
-                    content: content.slice(0, 10000), // Store content for search
-                    folder_url: `https://github.com/${repoFullName}/tree/${branch}/${folderPath}`,
-                    updated_at: new Date(),
-                },
-                update: {
-                    name: skillName,
-                    description: parsed.name !== skillName
-                        ? `${parsed.name}: ${parsed.description}`
-                        : parsed.description,
-                    author_avatar: `https://github.com/${owner}.png`,
-                    raw_url: rawUrl,
-                    stars,
-                    forks,
-                    content: content.slice(0, 10000),
-                    updated_at: new Date(),
-                },
-            });
+            const description = parsed.name !== skillName ? `${parsed.name}: ${parsed.description}` : parsed.description;
+            stmts.push(db.prepare(`INSERT INTO skills (id, name, author, scoped_name, description, author_avatar, github_url, raw_url, repo_full_name, stars, forks, path, branch, content, folder_url, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(github_url) DO UPDATE SET name = excluded.name, scoped_name = excluded.scoped_name, description = excluded.description,
+                    author_avatar = excluded.author_avatar, raw_url = excluded.raw_url, stars = excluded.stars, forks = excluded.forks,
+                    content = excluded.content, updated_at = excluded.updated_at`)
+                .bind(skillId, skillName, owner, `@${owner}/${skillName}`, description, `https://github.com/${owner}.png`, githubUrl, rawUrl,
+                    repoFullName, stars, forks, path, branch, content.slice(0, 10000), `https://github.com/${repoFullName}/tree/${branch}/${folderPath}`,
+                    new Date().toISOString()));
 
             indexed++;
         } catch (err) {
@@ -362,6 +321,7 @@ async function indexRepoSkills(
         }
     }
 
+    if (stmts.length) await db.batch(stmts); // ≤200 paths -> ≤200 statements, under the 1,000/invocation limit
     return { indexed, errors };
 }
 
@@ -369,44 +329,17 @@ async function indexRepoSkills(
  * Refresh the global skill_stats cache
  */
 async function refreshStats() {
-    const [totalSkills, authorsData] = await Promise.all([
-        prisma.skills.count(),
-        prisma.$queryRaw<Array<{ name: string; skillCount: bigint; avatar: string | null }>>`
-            SELECT author as name, COUNT(*) as "skillCount", MAX(author_avatar) as avatar
-            FROM skills
-            GROUP BY author
-            ORDER BY COUNT(*) DESC
-            LIMIT 10
-        `,
+    const db = getDb();
+    const [totals, top] = await db.batch([
+        db.prepare('SELECT count(*) AS total, count(DISTINCT author) AS authors FROM skills'),
+        db.prepare('SELECT author AS name, count(*) AS skillCount, max(author_avatar) AS avatar FROM skills GROUP BY author ORDER BY count(*) DESC LIMIT 10'),
     ]);
-
-    const uniqueAuthors = await prisma.skills.groupBy({
-        by: ['author'],
-        _count: true,
-    }).then(r => r.length);
-
-    const topAuthors = authorsData.map(a => ({
-        name: a.name,
-        skillCount: Number(a.skillCount),
-        avatar: a.avatar || '',
-    }));
-
-    await prisma.skill_stats.upsert({
-        where: { id: 'global' },
-        create: {
-            id: 'global',
-            total_skills: totalSkills,
-            unique_authors: uniqueAuthors,
-            top_authors: topAuthors,
-            updated_at: new Date(),
-        },
-        update: {
-            total_skills: totalSkills,
-            unique_authors: uniqueAuthors,
-            top_authors: topAuthors,
-            updated_at: new Date(),
-        },
-    });
+    const t = totals.results[0] as { total: number; authors: number };
+    const topAuthors = (top.results as { name: string; skillCount: number; avatar: string | null }[]).map((a) => ({ ...a, avatar: a.avatar || '' }));
+    await db.prepare(`INSERT INTO skill_stats (id, total_skills, unique_authors, top_authors, updated_at) VALUES ('global', ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET total_skills = excluded.total_skills, unique_authors = excluded.unique_authors,
+            top_authors = excluded.top_authors, updated_at = excluded.updated_at`)
+        .bind(t.total, t.authors, JSON.stringify(topAuthors), new Date().toISOString()).run();
 }
 
 // =============================================================
@@ -417,22 +350,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const fullName = searchParams.get('repo');
 
+    const db = getDb();
     if (fullName) {
-        const submission = await prisma.repo_submissions.findUnique({
-            where: { full_name: fullName },
-            select: { full_name: true, status: true, skills_count: true, submitted_at: true },
-        });
+        const submission = await db.prepare('SELECT full_name, status, skills_count, submitted_at FROM repo_submissions WHERE full_name = ?').bind(fullName).first();
         if (!submission) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         return NextResponse.json(submission);
     }
-
-    // List recent approved
-    const repos = await prisma.repo_submissions.findMany({
-        where: { status: 'approved' },
-        orderBy: { submitted_at: 'desc' },
-        take: 20,
-        select: { full_name: true, description: true, stars: true, skills_count: true, html_url: true, submitted_at: true },
-    });
-
+    const { results: repos } = await db.prepare(`SELECT full_name, description, stars, skills_count, html_url, submitted_at
+        FROM repo_submissions WHERE status = 'approved' ORDER BY submitted_at DESC LIMIT 20`).all();
     return NextResponse.json({ repos });
 }
