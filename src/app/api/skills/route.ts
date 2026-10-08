@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
+import { getDb } from '@/lib/db';
+import { parseSkillsQuery, buildSkillsSql } from '@/lib/skills-sql';
 import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
 interface Skill {
@@ -34,96 +35,23 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search') || '';
-    const exactName = searchParams.get('name') || '';
-    const limit = parseInt(searchParams.get('limit') || '30');
-    const sortBy = searchParams.get('sortBy') || 'stars';
-    const category = searchParams.get('category');
-    const author = searchParams.get('author');
-    const offset = parseInt(searchParams.get('offset') || '0');
-    const minStars = parseInt(searchParams.get('minStars') || '0');
-    const hasContent = searchParams.get('hasContent') === 'true';
+    const q = parseSkillsQuery(searchParams);
+    const { search, limit, offset, sortBy } = q;
 
     try {
-        // Build where clause
-        const where: {
-            OR?: { name?: object; description?: object; author?: object }[];
-            AND?: object[];
-            name?: object;
-            category?: string;
-            author?: string;
-            stars?: object;
-            content?: object;
-        } = {};
-
-        // Exact name lookup (bypasses fuzzy search — used by CLI install)
-        if (exactName && exactName.trim()) {
-            where.name = { equals: exactName.trim(), mode: 'insensitive' };
-        } else if (search && search.trim()) {
-            // Fuzzy search filter
-            where.OR = [
-                { name: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } },
-                { author: { contains: search, mode: 'insensitive' } },
-            ];
-        }
-
-        // Category filter
-        if (category && category !== 'all') {
-            where.category = category;
-        }
-
-        // Author filter
-        if (author) {
-            where.author = author;
-        }
-
-        // Minimum stars filter
-        if (minStars > 0) {
-            where.stars = { gte: minStars };
-        }
-
-        // Has content filter
-        if (hasContent) {
-            where.content = { not: null };
-        }
-
-        // Build orderBy
-        let orderBy: { stars?: 'desc' | 'asc'; updated_at?: 'desc' | 'asc'; name?: 'asc' | 'desc' } = { stars: 'desc' };
-        if (sortBy === 'recent') {
-            orderBy = { updated_at: 'desc' };
-        } else if (sortBy === 'name') {
-            orderBy = { name: 'asc' };
-        }
-
-        // Execute queries in parallel
-        const [data, total] = await Promise.all([
-            prisma.skills.findMany({
-                where,
-                orderBy,
-                skip: offset,
-                take: limit,
-                select: {
-                    id: true,
-                    name: true,
-                    description: true,
-                    author: true,
-                    stars: true,
-                    forks: true,
-                    github_url: true,
-                    scoped_name: true,
-                    author_avatar: true,
-                    repo_full_name: true,
-                    path: true,
-                    category: true,
-                    content: true,
-                },
-            }),
-            prisma.skills.count({ where }),
+        const db = getDb();
+        const { sql, countSql, binds } = buildSkillsSql(q);
+        const [page, count] = await db.batch([
+            db.prepare(sql).bind(...binds, limit, offset),
+            db.prepare(countSql).bind(...binds),
         ]);
+        const total = (count.results[0] as { total: number } | undefined)?.total ?? 0;
 
-        // Transform to response format
-        let skills: Skill[] = data.map((skill: typeof data[number]) => ({
+        type Row = { id: string; name: string; description: string | null; author: string; stars: number; forks: number;
+            github_url: string; scoped_name: string | null; author_avatar: string | null; repo_full_name: string | null;
+            path: string | null; category: string | null; has_content: number };
+
+        let skills: Skill[] = (page.results as Row[]).map((skill) => ({
             id: skill.id,
             name: skill.name,
             description: skill.description,
@@ -136,7 +64,7 @@ export async function GET(request: Request) {
             repoFullName: skill.repo_full_name,
             path: skill.path,
             category: skill.category,
-            hasContent: !!skill.content,
+            hasContent: !!skill.has_content,
         }));
 
         // If searching, re-sort to prioritize name matches
