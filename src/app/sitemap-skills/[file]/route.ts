@@ -10,7 +10,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ file: s
     // ponytail: OFFSET over the covering (indexable, scoped_name) index; fine for ~4 files fetched rarely. Keyset if files grow past ~20.
     const { results } = await getDb()
         .prepare(`SELECT DISTINCT scoped_name FROM skills
-            WHERE indexable = 1 AND scoped_name IS NOT NULL ORDER BY scoped_name LIMIT ? OFFSET ?`)
+            WHERE indexable = 1 AND scoped_name IS NOT NULL AND instr(scoped_name, '.') = 0 AND instr(scoped_name, '//') = 0 ORDER BY scoped_name LIMIT ? OFFSET ?`)
         .bind(SKILLS_PER_SITEMAP, Number(m[1]) * SKILLS_PER_SITEMAP)
         .all<{ scoped_name: string }>();
     if (!results.length) return new Response('Not found', { status: 404 });

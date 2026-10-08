@@ -6,7 +6,7 @@ const BASE = 'https://www.agentskills.in';
 
 export async function GET() {
     const row = await getDb()
-        .prepare('SELECT count(*) AS n FROM (SELECT DISTINCT scoped_name FROM skills WHERE indexable = 1 AND scoped_name IS NOT NULL)')
+        .prepare("SELECT count(*) AS n FROM (SELECT DISTINCT scoped_name FROM skills WHERE indexable = 1 AND scoped_name IS NOT NULL AND instr(scoped_name, '.') = 0 AND instr(scoped_name, '//') = 0)")
         .first<{ n: number }>();
     const files = [`${BASE}/sitemap.xml`,
         ...Array.from({ length: Math.ceil((row?.n ?? 0) / SKILLS_PER_SITEMAP) }, (_, i) => `${BASE}/sitemap-skills/${i}.xml`)];

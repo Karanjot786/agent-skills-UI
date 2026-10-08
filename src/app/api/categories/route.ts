@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
-// Cache for 24 hours (categories rarely change)
+// Cache-Control set for future edge caching (Workers responses aren't CDN-cached yet)
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {

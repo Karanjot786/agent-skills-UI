@@ -15,8 +15,8 @@ const RELATED_COLS = 'id, name, description, author, stars, forks, github_url, r
 // Fallback on bare name (old behaviour) but no more full-table "contains" scan.
 export const getSkillBySlug = cache(async (scopedName: string): Promise<SkillRow | null> => {
     const db = getDb();
-    return (await db.prepare(`SELECT ${COLS} FROM skills WHERE scoped_name = ? ORDER BY stars DESC LIMIT 1`).bind(scopedName).first<SkillRow>())
-        ?? (await db.prepare(`SELECT ${COLS} FROM skills WHERE name = ? COLLATE NOCASE ORDER BY stars DESC LIMIT 1`).bind(scopedName.split('/').pop() ?? '').first<SkillRow>());
+    return (await db.prepare(`SELECT ${COLS} FROM skills WHERE scoped_name = ? ORDER BY stars DESC, indexable DESC LIMIT 1`).bind(scopedName).first<SkillRow>())
+        ?? (await db.prepare(`SELECT ${COLS} FROM skills WHERE name = ? COLLATE NOCASE ORDER BY (lower('@' || author) = lower(?)) DESC, stars DESC, indexable DESC LIMIT 1`).bind(scopedName.split('/').pop() ?? '', scopedName.split('/')[0]).first<SkillRow>());
 });
 
 // ponytail: GitHub raw only for the ~7.7K rows without stored content (GitHub rate-limits raw since 2025-05).

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { rateLimit, getClientIp, rateLimitHeaders, RATE_LIMITS } from '@/lib/rate-limit';
 
-// Never prerender at build (no DB at build time); edge caches the JSON for an hour.
+// Never prerender at build (no DB at build time); Cache-Control set for future edge caching (Workers responses aren't CDN-cached yet).
 export const dynamic = 'force-dynamic';
 
 interface TopAuthor {

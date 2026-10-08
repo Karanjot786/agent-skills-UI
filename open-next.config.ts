@@ -4,5 +4,5 @@ import d1NextTagCache from "@opennextjs/cloudflare/overrides/tag-cache/d1-next-t
 
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache, // revalidate=false pages -> R2 (NEXT_INC_CACHE_R2_BUCKET)
-  tagCache: d1NextTagCache,              // revalidateTag/revalidateSkills/revalidateStats -> D1 (NEXT_TAG_CACHE_D1)
+  tagCache: d1NextTagCache,              // revalidateTag -> D1 (NEXT_TAG_CACHE_D1)
 });

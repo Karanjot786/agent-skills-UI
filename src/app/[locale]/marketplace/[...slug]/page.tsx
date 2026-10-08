@@ -15,20 +15,22 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import type { Metadata } from 'next';
 
-// Permanent ISR — pages never expire via time; only invalidated via revalidateTag('skill')
-// Eliminates background ISR writes caused by 24hr time-based revalidation
+// Permanent ISR — no time-based revalidation; pages stay cached until the R2 entry expires (30-day lifecycle) or the next deploy.
 export const revalidate = false;
 
 // Allow on-demand ISR for skills not pre-rendered at build time
 export const dynamicParams = true;
 
 // Generate dynamic metadata for SEO
+const safeDecode = (s: string) => { try { return decodeURIComponent(s); } catch { return null; } };
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
     const { slug } = await params;
     // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
-    const scopedName = slug.map(s => decodeURIComponent(s)).join('/');
+    const parts = slug.map(safeDecode);
+    const scopedName = parts.join('/');
 
-    const skill = await getSkillBySlug(scopedName);
+    const skill = parts.includes(null) ? null : await getSkillBySlug(scopedName);
 
     if (!skill) {
         return {
@@ -38,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 
     const siteUrl = 'https://www.agentskills.in';
-    const skillPath = `/marketplace/${scopedName.split('/').map(encodeURIComponent).join('/')}`;
+    const skillPath = `/marketplace/${(skill.scoped_name ?? scopedName).split('/').map(encodeURIComponent).join('/')}`;
     const ogImageUrl = `${siteUrl}/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`;
 
     return {
@@ -123,7 +125,9 @@ function toSkill(row: SkillRow, content: string | null): Skill {
 export default async function SkillPage({ params }: { params: Promise<{ slug: string[] }> }) {
     const { slug } = await params;
     // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
-    const scopedName = slug.map(s => decodeURIComponent(s)).join('/');
+    const parts = slug.map(safeDecode);
+    if (parts.includes(null)) notFound();
+    const scopedName = parts.join('/');
     const row = await getSkillBySlug(scopedName);
     if (!row) notFound(); // real 404: stops junk URLs from being rendered + cached with 200
     const skill = toSkill(row, await getSkillContent(scopedName));
@@ -153,7 +157,7 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                         "@type": "ListItem",
                         "position": 3,
                         "name": skill.name,
-                        "item": `https://www.agentskills.in/marketplace/${encodeURIComponent(skill.scoped_name)}`
+                        "item": `https://www.agentskills.in/marketplace/${(skill.scoped_name || scopedName).split('/').map(encodeURIComponent).join('/')}`
                     }
                 ]
             },

@@ -293,7 +293,7 @@ async function indexRepoSkills(
     }
 
     // Process each SKILL.md
-    for (const path of skillPaths) {
+    for (const path of skillPaths.slice(0, 200)) {
         try {
             const skillName = extractSkillName(path, repoFullName);
 
@@ -339,7 +339,7 @@ async function refreshStats() {
     const db = getDb();
     const [totals, top] = await db.batch([
         db.prepare('SELECT count(*) AS total, count(DISTINCT author) AS authors FROM skills'),
-        db.prepare('SELECT author AS name, count(*) AS skillCount, max(author_avatar) AS avatar FROM skills GROUP BY author ORDER BY count(*) DESC LIMIT 10'),
+        db.prepare("SELECT author AS name, count(*) AS skillCount, 'https://github.com/' || author || '.png' AS avatar FROM skills GROUP BY author ORDER BY count(*) DESC LIMIT 10"),
     ]);
     const t = totals.results[0] as { total: number; authors: number };
     const topAuthors = (top.results as { name: string; skillCount: number; avatar: string | null }[]).map((a) => ({ ...a, avatar: a.avatar || '' }));

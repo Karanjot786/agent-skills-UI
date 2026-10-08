@@ -19,7 +19,7 @@
 			"remote": true
 		}
 	],
-	// Tag cache for revalidateTag()/revalidateSkills()/revalidateStats().
+	// Tag cache for revalidateTag().
 	"d1_databases": [
 		{
 			"binding": "NEXT_TAG_CACHE_D1",
