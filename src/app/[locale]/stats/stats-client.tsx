@@ -26,7 +26,7 @@ export default function StatsClient() {
 
     useEffect(() => {
         fetch('/api/stats')
-            .then(res => res.json())
+            .then(res => res.json<any>())
             .then(data => {
                 if (data.totalSkills) {
                     setStats({

@@ -16,7 +16,7 @@ export function NavGitHubStars() {
                 Accept: "application/vnd.github+json",
             },
         })
-            .then(res => res.ok ? res.json() : null)
+            .then(res => res.ok ? res.json<any>() : null)
             .then(data => {
                 if (data?.stargazers_count) {
                     setStargazersCount(data.stargazers_count);

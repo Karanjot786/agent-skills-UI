@@ -33,12 +33,5 @@
 			"database_id": "4da4d47e-fe0e-4567-a471-73900834a7a7",
 			"migrations_dir": "migrations"
 		}
-	],
-	// Prisma -> AWS RDS Postgres, pooled through Hyperdrive.
-	"hyperdrive": [
-		{
-			"binding": "HYPERDRIVE",
-			"id": "7941708e376a4aeda922685f601be549"
-		}
 	]
 }

@@ -126,7 +126,7 @@ function MarketplaceContent() {
     // Fetch categories on mount
     useEffect(() => {
         fetch('/api/categories')
-            .then(res => res.json())
+            .then(res => res.json<any>())
             .then(data => setCategories(data.categories || []))
             .catch(console.error);
     }, []);
@@ -173,7 +173,7 @@ function MarketplaceContent() {
                     ...(author && { author }),
                 });
                 const res = await fetch(`/api/skills?${params}`);
-                const data = await res.json();
+                const data = await res.json<any>();
                 setSkills(data.skills || []);
                 setTotal(data.total || 0);
             } catch (error) {
@@ -199,7 +199,7 @@ function MarketplaceContent() {
                 ...(author && { author }),
             });
             const res = await fetch(`/api/skills?${params}`);
-            const data = await res.json();
+            const data = await res.json<any>();
             setSkills(prev => [...prev, ...(data.skills || [])]);
             setPage(prev => prev + 1);
         } catch (error) {

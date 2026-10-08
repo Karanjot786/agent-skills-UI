@@ -73,7 +73,7 @@ export function SubmitRepoForm({ translations: translationsProp }: SubmitRepoFor
             });
 
             if (response.ok) {
-                const result = await response.json();
+                const result = await response.json<any>();
                 setResultInfo({ name: result.repo || fullName, skills: result.indexed || 0 });
                 setState('success');
             } else {

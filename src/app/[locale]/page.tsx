@@ -55,7 +55,7 @@ export default function Home() {
 
   useEffect(() => {
     fetch('/api/stats')
-      .then(res => res.json())
+      .then(res => res.json<any>())
       .then(data => {
         if (data.stats) setStats(data.stats);
         if (data.trending) setTrending(data.trending);
