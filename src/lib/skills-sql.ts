@@ -13,8 +13,8 @@ const int = (v: string | null, d: number) => { const n = Number.parseInt(v ?? ''
 export function parseSkillsQuery(sp: URLSearchParams): SkillsQuery {
     const sortBy = sp.get('sortBy');
     return {
-        search: (sp.get('search') ?? '').trim().slice(0, 200),
-        name: (sp.get('name') ?? '').trim(),
+        search: (sp.get('search') ?? '').replace(/\0/g, '').trim().slice(0, 200),
+        name: (sp.get('name') ?? '').replace(/\0/g, '').trim(),
         category: sp.get('category'),
         author: sp.get('author'),
         minStars: Math.max(0, int(sp.get('minStars'), 0)),

@@ -24,6 +24,11 @@ test('1-2 char search falls back to name LIKE', () => {
   assert.deepEqual(s.binds, ['%ai%']);
 });
 
+test('NUL bytes are stripped from search and name', () => {
+  assert.deepEqual(buildSkillsSql(q('search=ab%00c')).binds, ['"abc"']);
+  assert.equal(q('name=Fo%00o').name, 'Foo');
+});
+
 test('FTS operators in input stay literal', () => {
   assert.deepEqual(buildSkillsSql(q('search=a* NEAR -b')).binds, ['"a* NEAR -b"']);
 });
