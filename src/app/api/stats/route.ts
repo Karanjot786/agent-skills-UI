@@ -46,9 +46,9 @@ export async function GET(request: Request) {
             db.prepare(`SELECT category, count(*) AS n FROM skills WHERE category IS NOT NULL GROUP BY category`),
         ]);
         const cachedStats = statsR.results[0] as { total_skills: number; unique_authors: number; top_authors: string } | undefined;
-        const trending = trendingR.results as unknown as SkillPreview[];
-        const recent = recentR.results as unknown as SkillPreview[];
-        const categoryCounts = catsR.results as unknown as { category: string; n: number }[];
+        const trending = trendingR.results as SkillPreview[];
+        const recent = recentR.results as SkillPreview[];
+        const categoryCounts = catsR.results as { category: string; n: number }[];
 
         const totalSkills = cachedStats?.total_skills ?? 50000;
         const uniqueAuthors = cachedStats?.unique_authors ?? 5000;

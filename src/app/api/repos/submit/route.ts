@@ -18,6 +18,17 @@ interface RepoMetadata {
     default_branch: string;
 }
 
+interface GhRepo {
+    full_name: string;
+    html_url: string;
+    description?: string | null;
+    stargazers_count?: number;
+    forks_count?: number;
+    language?: string | null;
+    license?: { spdx_id?: string; name?: string } | null;
+    default_branch?: string;
+}
+
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 async function fetchRepoMetadata(fullName: string): Promise<RepoMetadata> {
@@ -32,7 +43,7 @@ async function fetchRepoMetadata(fullName: string): Promise<RepoMetadata> {
         throw new Error(`GitHub API error: ${res.status} — repo "${fullName}" not found`);
     }
 
-    const data = await res.json() as any;
+    const data = await res.json() as GhRepo;
     return {
         full_name: data.full_name,
         html_url: data.html_url,
@@ -132,14 +143,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // ─── Save the submission ───
-        const submissionId = crypto.randomUUID();
-        await db.prepare(`INSERT INTO repo_submissions (id, full_name, html_url, description, stars, language, license, default_branch, skills_count, skill_paths, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')`)
-            .bind(submissionId, metadata.full_name, metadata.html_url, metadata.description?.slice(0, 500) || null, metadata.stars,
-                metadata.language, metadata.license, metadata.default_branch, skillPaths.length, JSON.stringify(skillPaths.slice(0, 200)))
-            .run();
-
         // ─── Index all skills NOW ───
         const indexResult = await indexRepoSkills(
             metadata.full_name,
@@ -149,8 +152,13 @@ export async function POST(request: Request) {
             metadata.forks,
         );
 
-        // Update with actual indexed count
-        await db.prepare('UPDATE repo_submissions SET skills_count = ? WHERE id = ?').bind(indexResult.indexed, submissionId).run();
+        // ─── Save the submission (after indexing, so a failed batch leaves no row) ───
+        const submissionId = crypto.randomUUID();
+        await db.prepare(`INSERT INTO repo_submissions (id, full_name, html_url, description, stars, language, license, default_branch, skills_count, skill_paths, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved')`)
+            .bind(submissionId, metadata.full_name, metadata.html_url, metadata.description?.slice(0, 500) || null, metadata.stars,
+                metadata.language, metadata.license, metadata.default_branch, indexResult.indexed, JSON.stringify(skillPaths.slice(0, 200)))
+            .run();
 
         // Refresh global stats cache
         try { await refreshStats(); } catch { /* non-critical */ }
@@ -315,13 +323,12 @@ async function indexRepoSkills(
                     repoFullName, stars, forks, path, branch, content.slice(0, 10000), `https://github.com/${repoFullName}/tree/${branch}/${folderPath}`,
                     new Date().toISOString()));
 
-            indexed++;
         } catch (err) {
             errors++;
         }
     }
 
-    if (stmts.length) await db.batch(stmts); // ≤200 paths -> ≤200 statements, under the 1,000/invocation limit
+    if (stmts.length) { await db.batch(stmts); indexed = stmts.length; } // ≤200 paths -> ≤200 statements, under the 1,000/invocation limit
     return { indexed, errors };
 }
 
