@@ -58,3 +58,7 @@ const nextConfig: NextConfig = {
 };
 
 export default withNextIntl(nextConfig);
+
+// Lets `next dev` reach Cloudflare bindings (D1, R2) via getCloudflareContext(); no-op in production builds.
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();
