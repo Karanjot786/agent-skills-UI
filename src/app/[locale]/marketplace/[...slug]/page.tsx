@@ -20,6 +20,11 @@ export const revalidate = false;
 
 // Allow on-demand ISR for skills not pre-rendered at build time
 export const dynamicParams = true;
+// Empty list = build nothing (no DB at build time) but render each skill once on first visit,
+// then serve it from the R2 ISR cache. Without this export Next renders the route dynamically.
+export async function generateStaticParams() {
+    return [];
+}
 
 // Generate dynamic metadata for SEO
 const safeDecode = (s: string) => { try { return decodeURIComponent(s); } catch { return null; } };
