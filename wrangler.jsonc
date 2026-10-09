@@ -3,6 +3,7 @@
 	"main": ".open-next/worker.js",
 	"name": "agentskills",
 	"compatibility_date": "2026-06-17",
+	"cache": { "enabled": true },
 	"compatibility_flags": [
 		"nodejs_compat"
 	],

@@ -13,7 +13,8 @@ const intlMiddleware = createMiddleware({
     locales,
     defaultLocale,
     localePrefix: 'as-needed',
-    localeDetection: true,
+    localeDetection: false,
+    localeCookie: false,
 });
 
 export default function middleware(request: NextRequest) {
@@ -28,7 +29,7 @@ export default function middleware(request: NextRequest) {
         if (AI_BOT_PATTERN.test(ua)) {
             return NextResponse.redirect(new URL('/llms.txt', request.url), {
                 status: 301,
-                headers: { 'Cache-Control': 'public, max-age=86400' },
+                headers: { 'Cache-Control': 'private, no-store' },
             });
         }
 
@@ -38,11 +39,14 @@ export default function middleware(request: NextRequest) {
             const response = new NextResponse(null, { status: 429 });
             response.headers.set('Retry-After', '3600');
             response.headers.set('X-Robots-Tag', 'noarchive');
+            response.headers.set('Cache-Control', 'private, no-store');
             return response;
         }
     }
 
-    return intlMiddleware(request);
+    const res = intlMiddleware(request);
+    if (res.status >= 300 && res.status < 400) res.headers.set('Cache-Control', 'private, no-store');
+    return res;
 }
 
 export const config = {

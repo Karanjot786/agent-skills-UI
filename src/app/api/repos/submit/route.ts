@@ -29,6 +29,8 @@ interface GhRepo {
     default_branch?: string;
 }
 
+const NO_STORE = { 'Cache-Control': 'private, no-store' };
+
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 async function fetchRepoMetadata(fullName: string): Promise<RepoMetadata> {
@@ -92,7 +94,7 @@ export async function POST(request: Request) {
     if (!rateLimitResult.success) {
         return NextResponse.json(
             { error: 'Too many submissions. Please try again later.' },
-            { status: 429, headers: rateLimitHeaders(rateLimitResult) }
+            { status: 429, headers: { ...rateLimitHeaders(rateLimitResult), ...NO_STORE } }
         );
     }
 
@@ -101,14 +103,14 @@ export async function POST(request: Request) {
         let { full_name } = body;
 
         if (!full_name) {
-            return NextResponse.json({ error: 'Missing required field: full_name' }, { status: 400 });
+            return NextResponse.json({ error: 'Missing required field: full_name' }, { status: 400, headers: NO_STORE });
         }
 
         full_name = String(full_name).trim();
 
         // Validate format: owner/repo
         if (!/^[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+$/.test(full_name)) {
-            return NextResponse.json({ error: 'Invalid format. Expected: owner/repo' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid format. Expected: owner/repo' }, { status: 400, headers: NO_STORE });
         }
 
         // Check for duplicate
@@ -118,7 +120,7 @@ export async function POST(request: Request) {
         if (existing) {
             return NextResponse.json(
                 { error: 'This repository has already been submitted', status: existing.status },
-                { status: 409 }
+                { status: 409, headers: NO_STORE }
             );
         }
 
@@ -129,7 +131,7 @@ export async function POST(request: Request) {
         } catch (err: any) {
             return NextResponse.json(
                 { error: `Could not fetch repository: ${err.message}` },
-                { status: 404 }
+                { status: 404, headers: NO_STORE }
             );
         }
 
@@ -139,7 +141,7 @@ export async function POST(request: Request) {
         if (skillPaths.length === 0) {
             return NextResponse.json(
                 { error: 'No SKILL.md files found in this repository' },
-                { status: 422 }
+                { status: 422, headers: NO_STORE }
             );
         }
 
@@ -175,11 +177,11 @@ export async function POST(request: Request) {
             message: `Indexed ${indexResult.indexed} skills from ${metadata.full_name}`,
             indexed: indexResult.indexed,
             errors: indexResult.errors,
-        }, { status: 201 });
+        }, { status: 201, headers: NO_STORE });
 
     } catch (error) {
         console.error('Repo submission error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500, headers: NO_STORE });
     }
 }
 
@@ -360,10 +362,10 @@ export async function GET(request: Request) {
     const db = getDb();
     if (fullName) {
         const submission = await db.prepare('SELECT full_name, status, skills_count, submitted_at FROM repo_submissions WHERE full_name = ?').bind(fullName).first();
-        if (!submission) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-        return NextResponse.json(submission);
+        if (!submission) return NextResponse.json({ error: 'Not found' }, { status: 404, headers: NO_STORE });
+        return NextResponse.json(submission, { headers: NO_STORE });
     }
     const { results: repos } = await db.prepare(`SELECT full_name, description, stars, skills_count, html_url, submitted_at
         FROM repo_submissions WHERE status = 'approved' ORDER BY submitted_at DESC LIMIT 20`).all();
-    return NextResponse.json({ repos });
+    return NextResponse.json({ repos }, { headers: NO_STORE });
 }
