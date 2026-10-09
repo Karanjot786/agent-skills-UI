@@ -26,7 +26,7 @@ export function parseSkillsQuery(sp: URLSearchParams): SkillsQuery {
 }
 
 const COLS = 's.id, s.name, s.description, s.author, s.stars, s.forks, s.github_url, s.scoped_name, s.author_avatar, s.repo_full_name, s.path, s.category, (s.content IS NOT NULL) AS has_content';
-const ORDER = { stars: 's.stars DESC', recent: 's.updated_at DESC', name: 's.name ASC' } as const;
+const ORDER = { stars: 's.stars DESC', recent: 's.updated_at DESC', name: 's.name COLLATE NOCASE ASC' } as const;
 
 export function buildSkillsSql(q: SkillsQuery) {
     const where: string[] = [];

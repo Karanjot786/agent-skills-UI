@@ -52,3 +52,7 @@ test('category=all is ignored; never selects content', () => {
   assert.deepEqual(s.binds, []);
   assert.doesNotMatch(s.sql, /s\.content,/); // only `(s.content IS NOT NULL) AS has_content` is allowed
 });
+
+test('name sort is case-insensitive so it can use idx_skills_name_nc', () => {
+  assert.match(buildSkillsSql(q('sortBy=name')).sql, /ORDER BY s\.name COLLATE NOCASE ASC/);
+});
