@@ -331,7 +331,7 @@ export default function Home({ children }: { children?: React.ReactNode }) {
 
         {children}
         {/* Submit Your Skills Repo */}
-        <section className="py-24 relative overflow-hidden">
+        <section id="submit" className="py-24 relative overflow-hidden scroll-mt-20">
           {/* Animated grid background */}
           <div className="absolute inset-0 hero-grid opacity-50" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
