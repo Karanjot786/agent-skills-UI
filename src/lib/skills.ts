@@ -5,11 +5,11 @@ export interface SkillRow {
     id: string; name: string; description: string | null; author: string; stars: number; forks: number;
     github_url: string; raw_url: string | null; repo_full_name: string | null; path: string | null; branch: string;
     author_avatar: string | null; updated_at: string | null; scoped_name: string | null; content: string | null;
-    folder_url: string | null; indexable: number;
+    folder_url: string | null; indexable: number; seq: number; category: string | null;
 }
 
-const COLS = 'id, name, description, author, stars, forks, github_url, raw_url, repo_full_name, path, branch, author_avatar, updated_at, scoped_name, content, folder_url, indexable';
-const RELATED_COLS = 'id, name, description, author, stars, forks, github_url, raw_url, repo_full_name, path, branch, author_avatar, updated_at, scoped_name, NULL AS content, folder_url, indexable';
+const COLS = 'id, name, description, author, stars, forks, github_url, raw_url, repo_full_name, path, branch, author_avatar, updated_at, scoped_name, content, folder_url, indexable, seq, category';
+const RELATED_COLS = 'id, name, description, author, stars, forks, github_url, raw_url, repo_full_name, path, branch, author_avatar, updated_at, scoped_name, NULL AS content, folder_url, indexable, seq, category';
 
 // 29,579 scoped_names are duplicated: always take the highest-starred row.
 // Fallback on bare name (old behaviour) but no more full-table "contains" scan.
@@ -39,3 +39,6 @@ export async function getRelatedSkills(author: string, excludeId: string): Promi
         .bind(author, excludeId).all<SkillRow>();
     return results;
 }
+
+export const getSkillSummary = cache(async (seq: number): Promise<string | null> =>
+    (await getDb().prepare('SELECT summary FROM skill_summaries WHERE skill_seq = ?').bind(seq).first<{ summary: string }>())?.summary ?? null);

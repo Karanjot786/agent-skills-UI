@@ -9,7 +9,9 @@ import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
 import { notFound, permanentRedirect } from 'next/navigation';
 import { defaultLocale } from '@/i18n/config';
-import { getSkillBySlug, getSkillContent, getRelatedSkills, type SkillRow } from '@/lib/skills';
+import { getSkillBySlug, getSkillContent, getRelatedSkills, getSkillSummary, type SkillRow } from '@/lib/skills';
+import { getCategory, getRelatedByCategory } from '@/lib/lists';
+import { SkillList } from '@/components/listing';
 import { buildAlternates, ogLocale, skillTitle, skillDescription, slugAction } from '@/lib/seo';
 import { SITE_URL, absoluteUrl, skillPath } from '@/lib/site';
 import ReactMarkdown from 'react-markdown';
@@ -130,6 +132,11 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
     const truncated = (skill.content?.length ?? 0) > BODY_MAX;
 
     const relatedSkills = (await getRelatedSkills(row.author, row.id)).map((r) => toSkill(r, null));
+    const [summary, category, byCategory] = await Promise.all([
+        getSkillSummary(row.seq),
+        row.category ? getCategory(row.category) : null,
+        row.category ? getRelatedByCategory(row.category, row.seq) : [],
+    ]);
 
     const skillUrl = absoluteUrl(skillPath(skill.scoped_name || scopedName));
     const jsonLd = {
@@ -177,7 +184,7 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                             <div className="flex-1">
                                 <div className="flex items-center gap-4 mb-4">
                                     {/* Author avatar with gradient ring */}
-                                    <Link href={`/marketplace?author=${skill.author}`} className="avatar-ring p-[2px] rounded-full hover:scale-105 transition-transform">
+                                    <Link href={`/authors/${skill.author}`} className="avatar-ring p-[2px] rounded-full hover:scale-105 transition-transform">
                                         <img
                                             src={skill.author_avatar || `https://github.com/${skill.author}.png`}
                                             alt={skill.author}
@@ -193,7 +200,7 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                                 {/* Stats row */}
                                 <div className="flex flex-wrap items-center gap-3 text-sm">
                                     <Link
-                                        href={`/marketplace?author=${skill.author}`}
+                                        href={`/authors/${skill.author}`}
                                         className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800/50 rounded-full text-zinc-300 hover:text-cyan-400 hover:bg-zinc-800 transition-colors"
                                     >
                                         <User className="size-3.5" />
@@ -210,9 +217,16 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                                     {skill.updated_at && (
                                         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800/50 rounded-full text-zinc-400">
                                             <Clock className="size-3.5" />
-                                            <span>Updated {new Date(skill.updated_at).toLocaleDateString()}</span>
+                                            <span>Updated <time dateTime={skill.updated_at}>{skill.updated_at.slice(0, 10)}</time></span>
                                         </div>
                                     )}
+                                    {category && (
+                                        <Link href={`/categories/${category.id}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800/50 rounded-full text-zinc-300 hover:text-cyan-400 transition-colors">
+                                            <Package aria-hidden="true" className="size-3.5" />
+                                            <span>{category.name}</span>
+                                        </Link>
+                                    )}
+                                    {/* scan-badge: F adds <ScanBadge itemType="skill" itemRef={row.id} /> here */}
                                 </div>
                             </div>
                             {skill.github_url && (
@@ -232,6 +246,13 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                 </div>
 
                 <div className="container mx-auto px-6 py-12 max-w-5xl">
+
+                    {summary && (
+                        <section className="mb-10" aria-labelledby="what-it-does">
+                            <h2 id="what-it-does" className="text-xl font-bold text-cyan-50 mb-3">What is {skill.name} and when should you use it?</h2>
+                            <p className="text-zinc-200 leading-relaxed max-w-3xl">{summary}</p>
+                        </section>
+                    )}
 
                     {/* Install Section */}
                     <Card className="bg-gradient-to-br from-zinc-900/80 to-zinc-900/40 border-cyan-500/30 mb-10 overflow-hidden">
@@ -476,7 +497,7 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                                     More by {skill.author}
                                 </h2>
                                 <Button variant="ghost" size="sm" className="text-cyan-400" asChild>
-                                    <Link href={`/marketplace?author=${skill.author}`}>
+                                    <Link href={`/authors/${skill.author}`}>
                                         View all
                                     </Link>
                                 </Button>
@@ -486,7 +507,7 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                                 {relatedSkills.map((related) => (
                                     <Link
                                         key={related.id}
-                                        href={`/marketplace/${related.scoped_name || related.name}`}
+                                        href={skillPath(related.scoped_name || related.name)}
                                         className="block p-4 rounded-xl bg-zinc-900/30 border border-white/5 hover:border-cyan-500/30 transition-all"
                                     >
                                         <div className="flex justify-between items-start mb-2">
@@ -503,6 +524,12 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                                 ))}
                             </div>
                         </div>
+                    )}
+                    {byCategory.length > 0 && category && (
+                        <section className="mt-16">
+                            <h2 className="text-xl font-bold mb-6">More {category.name} skills</h2>
+                            <SkillList skills={byCategory} />
+                        </section>
                     )}
                 </div>
             </main>
