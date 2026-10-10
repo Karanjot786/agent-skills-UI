@@ -21,12 +21,12 @@ export async function generateMetadata({
     };
 
     const descriptions: Record<string, string> = {
-        en: 'Complete reference for the Agent Skills CLI. Install, search, update, and manage 175,000+ AI coding skills across Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline.',
-        ja: 'Agent Skills CLIの完全リファレンス。Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf、Cline用の175,000+AIコーディングスキルをインストール、検索、管理。',
-        'zh-CN': 'Agent Skills CLI完整参考。安装、搜索、更新和管理Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline的175,000+AI编码技能。',
-        'zh-TW': 'Agent Skills CLI完整參考。安裝、搜尋、更新和管理Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline的175,000+AI編碼技能。',
-        vi: 'Tham chiếu đầy đủ cho Agent Skills CLI. Cài đặt, tìm kiếm, cập nhật và quản lý 175,000+ kỹ năng lập trình AI cho Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf và Cline.',
-        es: 'Referencia completa para Agent Skills CLI. Instala, busca, actualiza y gestiona 175,000+ habilidades de codificación IA para Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf y Cline.',
+        en: 'Complete reference for the Agent Skills CLI. Install, search, update, and manage 220,000+ AI coding skills across Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline.',
+        ja: 'Agent Skills CLIの完全リファレンス。Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf、Cline用の220,000+AIコーディングスキルをインストール、検索、管理。',
+        'zh-CN': 'Agent Skills CLI完整参考。安装、搜索、更新和管理Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline的220,000+AI编码技能。',
+        'zh-TW': 'Agent Skills CLI完整參考。安裝、搜尋、更新和管理Cursor、Claude Code、GitHub Copilot、Gemini CLI、Windsurf和Cline的220,000+AI編碼技能。',
+        vi: 'Tham chiếu đầy đủ cho Agent Skills CLI. Cài đặt, tìm kiếm, cập nhật và quản lý 220,000+ kỹ năng lập trình AI cho Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf và Cline.',
+        es: 'Referencia completa para Agent Skills CLI. Instala, busca, actualiza y gestiona 220,000+ habilidades de codificación IA para Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf y Cline.',
     };
 
     const alt = buildAlternates('/docs', ['en'], locale);

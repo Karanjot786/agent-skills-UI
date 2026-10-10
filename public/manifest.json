@@ -1,7 +1,7 @@
 {
     "name": "Agent Skills CLI - The Universal Skill Manager for AI Coding Agents",
     "short_name": "Agent Skills",
-    "description": "Install 100,000+ skills for 29 AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
+    "description": "Install 220,000+ skills for 42+ AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",

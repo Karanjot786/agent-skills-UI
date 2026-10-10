@@ -78,7 +78,7 @@ const faqCategories = [
         questions: [
             {
                 question: 'What AI agents are supported?',
-                answer: 'Agent Skills CLI supports 29 AI coding agents including: Cursor, Claude Code, GitHub Copilot, OpenAI Codex, Gemini CLI, Windsurf, Cline, Antigravity, OpenCode, Amp, Continue, Trae, Qwen Code, and 16 more.',
+                answer: 'Agent Skills CLI supports 42+ AI coding agents including: Cursor, Claude Code, GitHub Copilot, OpenAI Codex, Gemini CLI, Windsurf, Cline, Antigravity, OpenCode, Amp, Continue, Trae, Qwen Code, and 16 more.',
             },
             {
                 question: 'How do I install to a specific agent?',

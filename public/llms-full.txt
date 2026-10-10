@@ -26,7 +26,7 @@ Repository: https://github.com/Karanjot786/agent-skills-cli
 
 ## 1. Introduction
 
-Agent Skills CLI is a command-line interface tool designed to help developers install, manage, and synchronize AI coding skills across multiple platforms. With access to over 100,000 skills from the Agent Skills marketplace, developers can enhance their AI coding assistants with specialized capabilities.
+Agent Skills CLI is a command-line interface tool designed to help developers install, manage, and synchronize AI coding skills across multiple platforms. With access to over 220,000 skills from the Agent Skills marketplace, developers can enhance their AI coding assistants with specialized capabilities.
 
 ### What are Skills?
 
@@ -400,9 +400,9 @@ Skills are stored in platform-specific directories:
 
 ## Contact & Support
 
-- Website: https://agentskills.in
-- Documentation: https://agentskills.in/docs
-- Marketplace: https://agentskills.in/marketplace
+- Website: https://www.agentskills.in
+- Documentation: https://www.agentskills.in/docs
+- Marketplace: https://www.agentskills.in/marketplace
 - GitHub Issues: https://github.com/Karanjot786/agent-skills-cli/issues
 - Author: Karanjot Singh (@Karanjot786)
 

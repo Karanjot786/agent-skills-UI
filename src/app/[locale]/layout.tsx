@@ -51,12 +51,12 @@ export async function generateMetadata({
     };
 
     const descriptions: Record<string, string> = {
-        en: "Install 175,000+ skills for 42+ AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
-        ja: "Cursor、Claude、Copilot、Gemini CLI、Windsurf、Clineを含む42以上のAIエージェント用の175,000+スキルをインストール。",
-        "zh-CN": "为包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在内的42+个AI代理安装175,000+技能。",
-        "zh-TW": "為包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在內的42+個AI代理安裝175,000+技能。",
-        vi: "Cài đặt 175,000+ kỹ năng cho 42+ tác tử AI bao gồm Cursor, Claude, Copilot, Gemini CLI, Windsurf và Cline.",
-        es: "Instala 175,000+ habilidades para 42+ agentes de IA incluyendo Cursor, Claude, Copilot, Gemini CLI, Windsurf y Cline."
+        en: "Install 220,000+ skills for 42+ AI agents including Cursor, Claude, Copilot, Gemini CLI, Windsurf, and Cline. The #1 CLI for AI Agent workflows.",
+        ja: "Cursor、Claude、Copilot、Gemini CLI、Windsurf、Clineを含む42以上のAIエージェント用の220,000+スキルをインストール。",
+        "zh-CN": "为包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在内的42+个AI代理安装220,000+技能。",
+        "zh-TW": "為包括Cursor、Claude、Copilot、Gemini CLI、Windsurf和Cline在內的42+個AI代理安裝220,000+技能。",
+        vi: "Cài đặt 220,000+ kỹ năng cho 42+ tác tử AI bao gồm Cursor, Claude, Copilot, Gemini CLI, Windsurf và Cline.",
+        es: "Instala 220,000+ habilidades para 42+ agentes de IA incluyendo Cursor, Claude, Copilot, Gemini CLI, Windsurf y Cline."
     };
 
     return {

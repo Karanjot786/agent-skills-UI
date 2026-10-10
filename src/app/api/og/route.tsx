@@ -123,7 +123,7 @@ export async function GET(request: Request) {
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ color: '#22d3ee', fontSize: '28px', fontWeight: 'bold' }}>175,000+</span>
+                        <span style={{ color: '#22d3ee', fontSize: '28px', fontWeight: 'bold' }}>220,000+</span>
                         <span style={{ color: '#71717a', fontSize: '20px' }}>Skills</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

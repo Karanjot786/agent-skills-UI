@@ -266,7 +266,7 @@ export function DocsOverview({ sections }: DocsOverviewProps) {
                                 <QuickStartCard
                                     step={2}
                                     title="Search Skills"
-                                    description="Browse 175,000+ skills from the marketplace"
+                                    description="Browse 220,000+ skills from the marketplace"
                                     command="skills search typescript"
                                     icon={Search}
                                 />
@@ -366,7 +366,7 @@ export function DocsOverview({ sections }: DocsOverviewProps) {
                     {/* Footer CTA */}
                     <section className="mt-16 p-8 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl text-center">
                         <h3 className="text-2xl font-bold mb-3">Ready to get started?</h3>
-                        <p className="text-zinc-400 mb-4">Browse 175,000+ skills in our marketplace or install your first skill right now.</p>
+                        <p className="text-zinc-400 mb-4">Browse 220,000+ skills in our marketplace or install your first skill right now.</p>
                         <div className="mb-6 flex justify-center">
                             <QuickCopyCommand command="npx agent-skills-cli search react" />
                         </div>
