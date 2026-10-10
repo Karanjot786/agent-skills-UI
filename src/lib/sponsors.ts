@@ -18,3 +18,6 @@ export const SPONSOR_SQL =
    WHERE placement = ? AND status = 'active' AND starts_at <= ? AND ends_at > ?
      AND (locale = '*' OR locale = ?)
    ORDER BY starts_at ASC, id ASC LIMIT 3`;
+
+// Spec §9: first 5 sponsors get 30% off, rounded to whole dollars.
+export const foundingPrice = (usd: number) => Math.round(usd * 0.7);

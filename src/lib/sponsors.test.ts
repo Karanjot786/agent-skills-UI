@@ -16,3 +16,9 @@ test('safeHttpsUrl only allows https', () => {
   assert.equal(safeHttpsUrl('javascript:alert(1)'), null);
   assert.equal(safeHttpsUrl('nope'), null);
 });
+test('founding discount is 30% rounded to whole dollars', async () => {
+  const { foundingPrice } = await import('./sponsors.ts');
+  assert.equal(foundingPrice(149), 104);
+  assert.equal(foundingPrice(299), 209);
+  assert.equal(foundingPrice(499), 349);
+});
