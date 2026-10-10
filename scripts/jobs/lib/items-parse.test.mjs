@@ -224,3 +224,80 @@ test('tools.json: unique ids, every tool has lowercase aliases', () => {
   assert.equal(new Set(tools.map((t) => t.id)).size, tools.length);
   for (const t of tools) assert.ok(t.aliases.length && t.aliases.every((a) => a === a.toLowerCase()), t.id);
 });
+
+import { agentSlug, findTargets, parseAgentFile, packageJsonToMcp, dripPlan, CODE_PLAN, removeMissingSql, repoScanSql, optOutSql } from './items-parse.mjs';
+
+const AGENT_MD = `---
+name: code-reviewer
+description: Reviews code for quality and best practices. Use after any change.
+tools: Read, Glob, Grep
+model: sonnet
+---
+You are a senior reviewer. Check correctness first.`;
+
+test('agentSlug strips only the leading .claude/agents/ and .md', () => {
+  assert.equal(agentSlug('Acme/Kit', '.claude/agents/code-reviewer.md'), 'acme--kit--code-reviewer');
+  assert.equal(agentSlug('acme/kit', 'agents/code-reviewer.md'), 'acme--kit--agents--code-reviewer');
+  assert.equal(agentSlug('acme/kit', 'plugins/x/agents/rev.md'), 'acme--kit--plugins--x--agents--rev');
+});
+
+test('findTargets picks agents, root marketplace, server.json, opt-out file', () => {
+  const t = findTargets(['.claude/agents/a.md', '.claude/agents/README.md', 'agents/b.md', '.github/agents/c.agent.md',
+    'node_modules/x/agents/d.md', 'docs/e.md', 'sub/.claude-plugin/marketplace.json', '.claude-plugin/marketplace.json',
+    'server.json', 'pkgs/srv/server.json', 'package.json', '.agentskills-ignore']);
+  assert.deepEqual(t.agents, ['.claude/agents/a.md', 'agents/b.md']);
+  assert.equal(t.marketplace, '.claude-plugin/marketplace.json');
+  assert.deepEqual(t.serverJson, ['server.json']);
+  assert.equal(t.packageJson, true);
+  assert.equal(t.ignore, true);
+  assert.equal(findTargets(['x.md']).ignore, false);
+});
+
+test('parseAgentFile reads frontmatter, keeps body as readme, rejects invalid files', () => {
+  const r = parseAgentFile(AGENT_MD, { repo: 'acme/kit', path: '.claude/agents/code-reviewer.md' });
+  assert.equal(r.slug, 'acme--kit--code-reviewer');
+  assert.equal(r.name, 'code-reviewer');
+  assert.equal(r.source_url, 'https://github.com/acme/kit/blob/HEAD/.claude/agents/code-reviewer.md');
+  assert.deepEqual(r.install_json, { type: 'agent', file: 'code-reviewer.md', path: '.claude/agents/code-reviewer.md',
+    rawUrl: 'https://raw.githubusercontent.com/acme/kit/HEAD/.claude/agents/code-reviewer.md', tools: ['Read', 'Glob', 'Grep'], model: 'sonnet' });
+  assert.equal(r.readme, 'You are a senior reviewer. Check correctness first.');
+  assert.equal(r.content_hash.length, 32);
+  assert.deepEqual(parseAgentFile(AGENT_MD.replace('tools: Read, Glob, Grep', 'tools: [Read, Bash]'), { repo: 'a/b', path: 'agents/x.md' }).install_json.tools, ['Read', 'Bash']);
+  assert.equal(parseAgentFile('# just markdown', { repo: 'a/b', path: 'agents/x.md' }), null);
+  assert.equal(parseAgentFile('---\nname: x\n---\nbody', { repo: 'a/b', path: 'agents/x.md' }), null);
+  assert.equal(parseAgentFile('---\nname: [\n---', { repo: 'a/b', path: 'agents/x.md' }), null);
+});
+
+test('packageJsonToMcp only for public bin packages tagged mcp', () => {
+  const ok = packageJsonToMcp(JSON.stringify({ name: '@acme/mcp-db', description: 'DB tools', bin: { 'mcp-db': 'x.js' }, keywords: ['MCP', 'db'] }), 'acme/db');
+  assert.equal(ok.slug, 'npm--acme-mcp-db');
+  assert.deepEqual(ok.install_json, { type: 'mcp', transport: 'stdio', command: 'npx', args: ['-y', '@acme/mcp-db'] });
+  assert.equal(packageJsonToMcp(JSON.stringify({ name: 'x', keywords: ['mcp'] }), 'a/b'), null); // no bin
+  assert.equal(packageJsonToMcp(JSON.stringify({ name: 'x', bin: 'x', private: true, keywords: ['mcp'] }), 'a/b'), null);
+  assert.equal(packageJsonToMcp('{bad', 'a/b'), null);
+});
+
+test('dripPlan: daily topic queries + rotating code-search slices within budget', () => {
+  const { queries, nextCursor } = dripPlan(CODE_PLAN.length - 1, 6, '2026-10-09T02:00:00Z');
+  assert.equal(queries.length, 6);
+  assert.equal(queries[0].q, 'topic:mcp-server pushed:2026-10-07..2026-10-09');
+  assert.equal(queries[0].hint, 'mcp');
+  assert.equal(queries[3], CODE_PLAN.at(-1));
+  assert.equal(queries[4], CODE_PLAN[0]); // wraps
+  assert.equal(nextCursor, 2);
+  assert.ok(CODE_PLAN.every((c) => c.kind === 'code' && c.page >= 1 && c.page <= 10 && /size:/.test(c.q)));
+});
+
+test('repo state SQL: opt-out removes items; missing files get removed; scan row upserts (slim repo_scan)', () => {
+  const db = freshDb();
+  const a = parseAgentFile(AGENT_MD, { repo: 'acme/tools', path: '.claude/agents/code-reviewer.md' });
+  const b = parseAgentFile(AGENT_MD.replace('code-reviewer', 'other'), { repo: 'acme/tools', path: '.claude/agents/other.md' });
+  for (const r of [a, b]) db.exec(upsertItemSql({ ...r, stars: 0, status: 'active' }));
+  db.exec(removeMissingSql('acme/tools', 'agent', [a.source_url]));
+  assert.deepEqual(db.prepare('SELECT slug, status FROM items ORDER BY slug').all().map((r) => `${r.slug}:${r.status}`),
+    ['acme--tools--code-reviewer:active', 'acme--tools--other:removed']);
+  const m = { headSha: 'abc', pushedAt: '2026-10-01', createdAt: '2020-01-01', stars: 5, license: 'MIT', isFork: false };
+  for (const s of optOutSql('acme/tools', m, '2026-10-09')) db.exec(s);
+  assert.equal(db.prepare(`SELECT count(*) AS n FROM items WHERE status = 'active'`).get().n, 0);
+  assert.deepEqual({ ...db.prepare(`SELECT head_sha, created_at, stars FROM repo_scan WHERE repo_full_name = 'acme/tools'`).get() }, { head_sha: 'abc', created_at: '2020-01-01', stars: 5 });
+});

@@ -1,5 +1,6 @@
 // Pure parsers/mappers/SQL builders for catalog ingestion (spec §7.1-7.3). No network, no wrangler.
 import { createHash } from 'node:crypto';
+import matter from 'gray-matter';
 import { sqlValue } from './d1.mjs';
 
 export const MAX_STATEMENT_BYTES = 100_000;   // D1 per-statement cap
@@ -179,3 +180,97 @@ FROM skills_fts JOIN skills s ON s.seq = skills_fts.rowid
 WHERE skills_fts MATCH ${sqlValue(`{name description}: "${a}"`)}
 AND (' ' || lower(s.name || ' ' || coalesce(s.description, '')) || ' ') GLOB ${sqlValue(`*[^a-z0-9]${a}[^a-z0-9]*`)};`));
 }
+// ---- subagents / tree targets (spec §7.2 steps 2-4, 7) ----
+export const MAX_AGENTS_PER_REPO = 200;
+const AGENT_RE = /(?:^|\/)(?:\.claude\/agents|agents)\/(?:[^/]+\/)*[^/]+\.md$/i;
+const NOT_AGENT = /(?:^|\/)(?:readme|claude|agents|changelog|license|contributing|index)\.md$|\.agent\.md$|(?:^|\/)node_modules\//i;
+const SERVER_JSON_RE = /^(?:[^/]+\/)?server\.json$/;
+
+export const agentSlug = (repo, path) => slugify(...repo.split('/'), ...path.replace(/^\.claude\/agents\//, '').replace(/\.md$/i, '').split('/'));
+
+export function findTargets(paths) {
+  const set = new Set(paths);
+  return {
+    ignore: set.has('.agentskills-ignore'),
+    agents: paths.filter((p) => AGENT_RE.test(p) && !NOT_AGENT.test(p)).slice(0, MAX_AGENTS_PER_REPO),
+    marketplace: set.has('.claude-plugin/marketplace.json') ? '.claude-plugin/marketplace.json' : null,
+    serverJson: paths.filter((p) => SERVER_JSON_RE.test(p)).slice(0, 5),
+    packageJson: set.has('package.json'),
+    paths: set,
+  };
+}
+
+export function parseAgentFile(text, { repo, path }) {
+  let fm;
+  try { fm = matter(text); } catch { return null; }
+  const { name, description, tools, model } = fm.data ?? {};
+  if (typeof name !== 'string' || typeof description !== 'string' || !name.trim() || !description.trim()) return null;
+  const toolList = Array.isArray(tools) ? tools.map(String)
+    : typeof tools === 'string' ? tools.split(',').map((t) => t.trim()).filter(Boolean) : [];
+  const owner = repo.split('/')[0];
+  const install = { type: 'agent', file: path.split('/').pop(), path, rawUrl: `https://raw.githubusercontent.com/${repo}/HEAD/${path}` };
+  if (toolList.length) install.tools = toolList;
+  if (typeof model === 'string' && model) install.model = model;
+  return {
+    type: 'agent', slug: agentSlug(repo, path), name: name.trim().slice(0, 200), author: owner,
+    description: description.replace(/\s+/g, ' ').trim().slice(0, 1000), repo_full_name: repo,
+    source_url: `https://github.com/${repo}/blob/HEAD/${path}`, path, branch: null, stars: 0, license: null,
+    homepage: `https://github.com/${repo}`, author_avatar: `https://github.com/${owner}.png`, category: null, tags: null,
+    install_json: install, readme: fm.content.trim() || null, content_hash: contentHash(text), status: 'active',
+    pushed_at: null, updated_at: null,
+  };
+}
+
+export function packageJsonToMcp(text, repo) {
+  let p;
+  try { p = JSON.parse(text); } catch { return null; }
+  const kw = Array.isArray(p?.keywords) ? p.keywords.map((k) => String(k).toLowerCase()) : [];
+  if (!p || p.private || typeof p.name !== 'string' || !p.bin || !kw.some((k) => ['mcp', 'mcp-server', 'modelcontextprotocol'].includes(k))) return null;
+  const owner = repo.split('/')[0];
+  return {
+    type: 'mcp', slug: slugify('npm', p.name.replace(/^@/, '')), name: p.name, author: owner,
+    description: typeof p.description === 'string' ? p.description : null, repo_full_name: repo,
+    source_url: `https://www.npmjs.com/package/${p.name}`, path: null, branch: null, stars: 0, license: null,
+    homepage: typeof p.homepage === 'string' ? p.homepage : `https://github.com/${repo}`, author_avatar: `https://github.com/${owner}.png`,
+    category: null, tags: kw.slice(0, 20), install_json: { type: 'mcp', transport: 'stdio', command: 'npx', args: ['-y', p.name] },
+    readme: null, content_hash: null, status: 'active', pushed_at: null, updated_at: null,
+  };
+}
+
+// Code search needs a search term besides qualifiers; size: slices get past the 1,000-result cap per query.
+const CODE_QUERIES = [
+  { q: 'plugins filename:marketplace.json path:.claude-plugin', hint: null },
+  { q: 'description path:.claude/agents extension:md', hint: null },
+  { q: 'modelcontextprotocol filename:server.json', hint: 'mcp' },
+];
+const SIZES = ['size:<1000', 'size:1000..2999', 'size:3000..7999', 'size:>=8000'];
+export const CODE_PLAN = CODE_QUERIES.flatMap(({ q, hint }) => SIZES.flatMap((s) =>
+  Array.from({ length: 10 }, (_, i) => ({ kind: 'code', q: `${q} ${s}`, page: i + 1, hint }))));
+
+export function dripPlan(cursor, budget, today) {
+  const day = (n) => new Date(Date.parse(today) - n * 86_400_000).toISOString().slice(0, 10);
+  const daily = [
+    { kind: 'repositories', q: `topic:mcp-server pushed:${day(2)}..${day(0)}`, page: 1, hint: 'mcp' },
+    { kind: 'repositories', q: `topic:claude-code-subagents pushed:>=${day(7)}`, page: 1, hint: null },
+    { kind: 'repositories', q: `topic:claude-code-plugin pushed:>=${day(7)}`, page: 1, hint: null },
+  ];
+  const start = ((cursor % CODE_PLAN.length) + CODE_PLAN.length) % CODE_PLAN.length;
+  const n = Math.min(Math.max(0, budget - daily.length), CODE_PLAN.length);
+  const code = Array.from({ length: n }, (_, i) => CODE_PLAN[(start + i) % CODE_PLAN.length]);
+  return { queries: [...daily, ...code], nextCursor: (start + n) % CODE_PLAN.length };
+}
+
+export function removeMissingSql(repo, type, keepSourceUrls) {
+  const notIn = keepSourceUrls.length ? ` AND source_url NOT IN (${keepSourceUrls.map(sqlValue).join(', ')})` : '';
+  return `UPDATE items SET status = 'removed' WHERE repo_full_name = ${sqlValue(repo)} AND type = ${sqlValue(type)} AND status = 'active'${notIn};`;
+}
+// ponytail: fork status comes from live GraphQL, opt-out is re-derived from the tree, license lives on items.
+export function repoScanSql(repo, m, now) {
+  const v = [repo, m?.headSha ?? null, m?.createdAt ?? null, m?.stars ?? null, now].map(sqlValue).join(', ');
+  return `INSERT INTO repo_scan (repo_full_name, head_sha, created_at, stars, scanned_at) VALUES (${v}) ON CONFLICT(repo_full_name) DO UPDATE SET head_sha = excluded.head_sha, created_at = excluded.created_at, stars = excluded.stars, scanned_at = excluded.scanned_at;`;
+}
+const removeRepoSql = (repo) => `UPDATE items SET status = 'removed' WHERE repo_full_name = ${sqlValue(repo)} AND status = 'active';`;
+export const optOutSql = (repo, m, now) => [removeRepoSql(repo), repoScanSql(repo, m, now)];
+export const goneSql = (repo, now) => [removeRepoSql(repo),
+  `UPDATE repo_scan SET head_sha = '-', scanned_at = ${sqlValue(now)} WHERE repo_full_name = ${sqlValue(repo)};`];
+export const starsSql = (repo, stars) => `UPDATE items SET stars = ${Number(stars) || 0} WHERE repo_full_name = ${sqlValue(repo)};`;
