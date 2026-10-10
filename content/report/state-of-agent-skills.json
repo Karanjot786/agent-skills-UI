@@ -1,0 +1,8 @@
+{
+  "generatedAt": null,
+  "totals": { "skills": 0, "indexable": 0, "repos": 0, "authors": 0 },
+  "scan": { "scannedSkills": 0, "scannedShare": "n/a", "avgTokens": 0 },
+  "duplicates": { "skillsInDuplicateGroups": 0, "groups": 0, "share": "n/a" },
+  "findings": { "highOrCriticalSkills": 0, "highOrCriticalShare": "n/a", "confirmedSkills": 0, "bySeverityStatus": [], "topRules": [] },
+  "categories": []
+}
