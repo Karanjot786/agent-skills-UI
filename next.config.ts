@@ -17,42 +17,16 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
-      {
-        source: '/llms.txt',
-        headers: [
-          { key: 'Content-Type', value: 'text/plain; charset=utf-8' },
-          { key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=86400' },
-        ],
-      },
-      {
-        source: '/llms-full.txt',
-        headers: [
-          { key: 'Content-Type', value: 'text/plain; charset=utf-8' },
-          { key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=86400' },
-        ],
-      },
-      // Skill detail pages — CDN caches for 24h, serves stale for 7 days while revalidating
+      // Skill/item pages: CDN 24h, stale 7d while revalidating. Plain Cache-Control: Cloudflare ignores Vercel-CDN-Cache-Control.
       {
         source: '/:locale/marketplace/:path+',
-        headers: [
-          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=86400, stale-while-revalidate=604800' },
-          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
-        ],
+        headers: [{ key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' }],
       },
-      // Marketplace listing — 1hr CDN cache
-      {
-        source: '/:locale/marketplace',
-        headers: [
-          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=3600, stale-while-revalidate=86400' },
-        ],
-      },
-      // Home page — 1hr CDN cache
-      {
-        source: '/:locale',
-        headers: [
-          { key: 'Vercel-CDN-Cache-Control', value: 's-maxage=3600, stale-while-revalidate=86400' },
-        ],
-      },
+      // Marketplace listing and home — 1h CDN cache
+      ...['/:locale/marketplace', '/:locale'].map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: 'public, s-maxage=3600, stale-while-revalidate=86400' }],
+      })),
     ];
   },
 };
