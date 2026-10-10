@@ -1,0 +1,19 @@
+{
+  "doNotTranslate": ["SKILL.md", "MCP", "Model Context Protocol", "Claude Code", "Claude", "Cursor", "GitHub Copilot", "Codex", "Gemini CLI", "Windsurf", "Cline", "Antigravity", "agent-skills-cli", "agentskills.in", "npx", "npm", "GitHub", "Anthropic", "OpenAI", "YAML"],
+  "terms": {
+    "ja": { "skill": "スキル", "agent": "エージェント", "marketplace": "マーケットプレイス" },
+    "zh-CN": { "skill": "技能", "agent": "代理", "marketplace": "市场" },
+    "vi": { "skill": "kỹ năng", "agent": "tác tử", "marketplace": "chợ" },
+    "de": { "skill": "Skill", "agent": "Agent", "marketplace": "Marktplatz" },
+    "pt-BR": { "skill": "skill", "agent": "agente", "marketplace": "marketplace" },
+    "es": { "skill": "habilidad", "agent": "agente", "marketplace": "marketplace" }
+  },
+  "register": {
+    "ja": "polite desu/masu form; katakana for loanwords; no spaces around inline English terms.",
+    "zh-CN": "neutral technical Simplified Chinese; mainland terminology.",
+    "vi": "neutral technical Vietnamese; address the reader as 'bạn'; keep tone marks exact.",
+    "de": "formal 'Sie' form; technical register; compound nouns allowed.",
+    "pt-BR": "Brazilian Portuguese; address the reader as 'você'; Brazilian spelling.",
+    "es": "neutral Latin American Spanish; address the reader as 'tú'."
+  }
+}
