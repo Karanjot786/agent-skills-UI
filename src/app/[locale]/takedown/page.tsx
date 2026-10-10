@@ -15,7 +15,7 @@ export default function Takedown() {
       <h2>Remove a listing or opt out</h2>
       <p>If you own a repository we index and want it removed, or want only the title and link shown (no excerpt or full text), choose one:</p>
       <ul>
-        <li>Add a file named <code>.agentskills-optout</code> to the repo root. We check it on every refresh.</li>
+        <li>Add a file named <code>.agentskills-ignore</code> to the repo root. We check it on every refresh.</li>
         <li>Or email legal@agentskills.in from an address that can be linked to the repo owner, with the repo URL.</li>
       </ul>
       <p>We act within 3 business days and keep the item off the index afterwards.</p>
