@@ -36,7 +36,8 @@ jobs:
         run: node scripts/jobs/ingest-mcp.mjs --remote ${{ github.event.inputs.full == 'true' && '--full' || '' }}
       - name: ingest-trees
         run: node scripts/jobs/ingest-trees.mjs --remote
-      # Section F inserts `scan` here (before best-lists).
+      - name: Scan skills and items
+        run: node scripts/jobs/scan.mjs --remote
       - name: best-lists
         run: node scripts/jobs/best-lists.mjs --remote --apply
       - name: refresh-derived (after)
