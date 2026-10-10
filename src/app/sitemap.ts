@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { getAllDocSlugs } from '@/lib/mdx';
 import { locales, defaultLocale } from '@/i18n/config';
+import { absoluteUrl } from '@/lib/site';
 
-const BASE = 'https://www.agentskills.in';
-const url = (path: string, loc: string) => `${BASE}${loc === defaultLocale ? '' : `/${loc}`}${path}`;
+const url = (path: string, loc: string) => absoluteUrl(`${loc === defaultLocale ? '' : `/${loc}`}${path}`);
 
 // Translated UI pages only: every locale + full hreflang set incl. x-default. Skills live in /sitemap-skills/*.
 export default function sitemap(): MetadataRoute.Sitemap {

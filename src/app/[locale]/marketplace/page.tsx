@@ -1,13 +1,8 @@
 import type { Metadata } from 'next';
-import { locales, defaultLocale, type Locale } from '@/i18n/config';
+import { locales } from '@/i18n/config';
+import { buildAlternates, ogLocale } from '@/lib/seo';
+import { SITE_URL as siteUrl } from '@/lib/site';
 import MarketplaceClient from './marketplace-client';
-
-const siteUrl = 'https://www.agentskills.in';
-
-const getLocalizedUrl = (path: string, locale: string) => {
-    if (locale === defaultLocale) return `${siteUrl}${path}`;
-    return `${siteUrl}/${locale}${path}`;
-};
 
 export async function generateMetadata({
     params
@@ -34,25 +29,19 @@ export async function generateMetadata({
         es: "Descubre, busca e instala 175,000+ habilidades de codificación IA para 42+ agentes incluyendo Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf y Cline.",
     };
 
-    const languages: Record<string, string> = {};
-    locales.forEach(loc => {
-        languages[loc] = getLocalizedUrl('/marketplace', loc);
-    });
+    const alt = buildAlternates('/marketplace', locales, locale);
 
     return {
         title: titles[locale] || titles.en,
         description: descriptions[locale] || descriptions.en,
-        alternates: {
-            canonical: getLocalizedUrl('/marketplace', locale),
-            languages,
-        },
+        alternates: alt,
         openGraph: {
             title: titles[locale] || titles.en,
             description: descriptions[locale] || descriptions.en,
-            url: getLocalizedUrl('/marketplace', locale),
+            url: alt.canonical,
             siteName: "Agent Skills",
             type: "website",
-            locale: locale === "en" ? "en_US" : locale,
+            locale: ogLocale(locale),
             images: [{
                 url: `${siteUrl}/og-image.png`,
                 width: 1200,

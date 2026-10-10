@@ -1,14 +1,8 @@
 import type { Metadata } from 'next';
 import { getAllDocSectionsMeta } from '@/lib/mdx';
 import { DocsOverview } from '@/components/docs-overview';
-import { locales, defaultLocale } from '@/i18n/config';
-
-const siteUrl = 'https://www.agentskills.in';
-
-const getLocalizedUrl = (path: string, locale: string) => {
-    if (locale === defaultLocale) return `${siteUrl}${path}`;
-    return `${siteUrl}/${locale}${path}`;
-};
+import { buildAlternates, ogLocale } from '@/lib/seo';
+import { SITE_URL as siteUrl } from '@/lib/site';
 
 export async function generateMetadata({
     params
@@ -35,22 +29,17 @@ export async function generateMetadata({
         es: 'Referencia completa para Agent Skills CLI. Instala, busca, actualiza y gestiona 175,000+ habilidades de codificación IA para Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf y Cline.',
     };
 
-    const languages: Record<string, string> = {};
-    locales.forEach(loc => {
-        languages[loc] = getLocalizedUrl('/docs', loc);
-    });
+    const alt = buildAlternates('/docs', ['en'], locale);
 
     return {
         title: titles[locale] || titles.en,
         description: descriptions[locale] || descriptions.en,
-        alternates: {
-            canonical: getLocalizedUrl('/docs', locale),
-            languages,
-        },
+        alternates: alt,
         openGraph: {
             title: titles[locale] || titles.en,
             description: descriptions[locale] || descriptions.en,
-            url: getLocalizedUrl('/docs', locale),
+            url: alt.canonical,
+            locale: ogLocale(locale),
             siteName: 'Agent Skills',
             type: 'website',
             images: [{

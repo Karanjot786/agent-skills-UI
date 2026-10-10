@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { buildAlternates, ogLocale } from '@/lib/seo';
 import { Link } from '@/i18n/navigation';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -11,7 +12,6 @@ export async function generateMetadata({
     params: Promise<{ locale: string }>
 }): Promise<Metadata> {
     const { locale } = await params;
-    const siteUrl = 'https://www.agentskills.in';
 
     const titles: Record<string, string> = {
         en: 'FAQ - Frequently Asked Questions | Agent Skills CLI',
@@ -31,23 +31,17 @@ export async function generateMetadata({
         es: 'Preguntas frecuentes sobre Agent Skills CLI: instalación, uso, agentes IA compatibles, creación de habilidades y solución de problemas.',
     };
 
-    const languages: Record<string, string> = {};
-    ['en', 'ja', 'zh-CN', 'zh-TW', 'vi', 'es'].forEach(loc => {
-        const prefix = loc === 'en' ? '' : `/${loc}`;
-        languages[loc] = `${siteUrl}${prefix}/faq`;
-    });
+    const alt = buildAlternates('/faq', ['en'], locale); // English-only until WS3
 
     return {
         title: titles[locale] || titles.en,
         description: descriptions[locale] || descriptions.en,
-        alternates: {
-            canonical: locale === 'en' ? `${siteUrl}/faq` : `${siteUrl}/${locale}/faq`,
-            languages,
-        },
+        alternates: alt,
         openGraph: {
             title: titles[locale] || titles.en,
             description: descriptions[locale] || descriptions.en,
-            url: locale === 'en' ? `${siteUrl}/faq` : `${siteUrl}/${locale}/faq`,
+            url: alt.canonical,
+            locale: ogLocale(locale),
             siteName: 'Agent Skills',
             type: 'website',
         },

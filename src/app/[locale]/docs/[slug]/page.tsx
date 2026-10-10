@@ -2,14 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getDocSection, getAllDocSlugs, getAdjacentSections, getAllDocSectionsMeta } from '@/lib/mdx';
 import { DocPageClient } from '@/components/doc-page-client';
-import { locales, defaultLocale } from '@/i18n/config';
-
-const siteUrl = 'https://www.agentskills.in';
-
-const getLocalizedUrl = (path: string, locale: string) => {
-    if (locale === defaultLocale) return `${siteUrl}${path}`;
-    return `${siteUrl}/${locale}${path}`;
-};
+import { buildAlternates, ogLocale } from '@/lib/seo';
+import { SITE_URL as siteUrl } from '@/lib/site';
 
 export async function generateStaticParams() {
     const slugs = getAllDocSlugs();
@@ -32,22 +26,17 @@ export async function generateMetadata({
     const description = section.description || `Documentation for ${section.title} in the Agent Skills CLI.`;
     const docPath = `/docs/${slug}`;
 
-    const languages: Record<string, string> = {};
-    locales.forEach(loc => {
-        languages[loc] = getLocalizedUrl(docPath, loc);
-    });
+    const alt = buildAlternates(docPath, ['en'], locale);
 
     return {
         title,
         description,
-        alternates: {
-            canonical: getLocalizedUrl(docPath, locale),
-            languages,
-        },
+        alternates: alt,
         openGraph: {
             title,
             description,
-            url: getLocalizedUrl(docPath, locale),
+            url: alt.canonical,
+            locale: ogLocale(locale),
             siteName: 'Agent Skills',
             type: 'article',
             images: [{

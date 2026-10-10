@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
+import { SITE_URL } from '@/lib/site';
+import { buildAlternates, ogLocale } from '@/lib/seo';
 import "../globals.css";
 
 const inter = Inter({
@@ -16,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
     subsets: ["latin"],
 });
 
-const siteUrl = "https://www.agentskills.in";
+const siteUrl = SITE_URL;
 
 export const viewport: Viewport = {
     themeColor: [
@@ -37,6 +39,7 @@ export async function generateMetadata({
     params: Promise<{ locale: string }>
 }): Promise<Metadata> {
     const { locale } = await params;
+    const home = buildAlternates('', locales, locale);
 
     const titles: Record<string, string> = {
         en: "Agent Skills CLI - The Universal Skill Manager for AI Agents",
@@ -71,18 +74,14 @@ export async function generateMetadata({
         creator: "Karanjot Singh",
         publisher: "Agent Skills",
         metadataBase: new URL(siteUrl),
-        alternates: {
-            // Applies to the home page only — every other page sets its own alternates.
-            canonical: locale === 'en' ? '/' : `/${locale}`,
-            languages: { en: '/', ja: '/ja', 'zh-CN': '/zh-CN', 'zh-TW': '/zh-TW', vi: '/vi', es: '/es', 'x-default': '/' },
-        },
+        alternates: home,
         openGraph: {
             title: titles[locale] || titles.en,
             description: descriptions[locale] || descriptions.en,
-            url: siteUrl,
+            url: home.canonical,
             siteName: "Agent Skills",
             type: "website",
-            locale: locale === "en" ? "en_US" : locale,
+            locale: ogLocale(locale),
             images: [
                 {
                     url: `${siteUrl}/og-image.png`,
@@ -182,8 +181,8 @@ const jsonLd = {
             publisher: {
                 "@type": "Organization",
                 name: "Agent Skills",
-                url: "https://www.agentskills.in",
-                logo: { "@type": "ImageObject", url: "https://www.agentskills.in/icon-512.png" },
+                url: siteUrl,
+                logo: { "@type": "ImageObject", url: `${siteUrl}/icon-512.png` },
             },
         },
     ],

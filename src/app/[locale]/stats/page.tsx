@@ -1,13 +1,7 @@
 import type { Metadata } from 'next';
-import { locales, defaultLocale } from '@/i18n/config';
+import { buildAlternates, ogLocale } from '@/lib/seo';
+import { SITE_URL as siteUrl } from '@/lib/site';
 import StatsClient from './stats-client';
-
-const siteUrl = 'https://www.agentskills.in';
-
-const getLocalizedUrl = (path: string, locale: string) => {
-    if (locale === defaultLocale) return `${siteUrl}${path}`;
-    return `${siteUrl}/${locale}${path}`;
-};
 
 export async function generateMetadata({
     params
@@ -34,22 +28,17 @@ export async function generateMetadata({
         es: "Estadísticas en tiempo real del ecosistema Agent Skills CLI. 175,000+ habilidades, 5,000+ contribuidores, 29 agentes IA.",
     };
 
-    const languages: Record<string, string> = {};
-    locales.forEach(loc => {
-        languages[loc] = getLocalizedUrl('/stats', loc);
-    });
+    const alt = buildAlternates('/stats', ['en'], locale);
 
     return {
         title: titles[locale] || titles.en,
         description: descriptions[locale] || descriptions.en,
-        alternates: {
-            canonical: getLocalizedUrl('/stats', locale),
-            languages,
-        },
+        alternates: alt,
         openGraph: {
             title: titles[locale] || titles.en,
             description: descriptions[locale] || descriptions.en,
-            url: getLocalizedUrl('/stats', locale),
+            url: alt.canonical,
+            locale: ogLocale(locale),
             siteName: "Agent Skills",
             type: "website",
             images: [{
