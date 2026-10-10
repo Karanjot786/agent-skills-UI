@@ -17,7 +17,6 @@ export async function generateMetadata({
         en: 'FAQ - Frequently Asked Questions | Agent Skills CLI',
         ja: 'よくある質問 — Agent Skills CLI',
         'zh-CN': '常见问题 — Agent Skills CLI',
-        'zh-TW': '常見問題 — Agent Skills CLI',
         vi: 'Câu hỏi thường gặp — Agent Skills CLI',
         es: 'Preguntas frecuentes — Agent Skills CLI',
     };
@@ -26,7 +25,6 @@ export async function generateMetadata({
         en: 'Common questions about Agent Skills CLI: installation, usage, supported AI agents (Cursor, Claude, Copilot), skill creation, and troubleshooting.',
         ja: 'Agent Skills CLIに関するよくある質問：インストール、使用方法、サポートされているAIエージェント、スキル作成、トラブルシューティング。',
         'zh-CN': '关于Agent Skills CLI的常见问题：安装、使用、支持的AI代理（Cursor、Claude、Copilot）、技能创建和故障排除。',
-        'zh-TW': '關於Agent Skills CLI的常見問題：安裝、使用、支援的AI代理（Cursor、Claude、Copilot）、技能創建和故障排除。',
         vi: 'Câu hỏi thường gặp về Agent Skills CLI: cài đặt, sử dụng, tác tử AI được hỗ trợ, tạo kỹ năng và khắc phục sự cố.',
         es: 'Preguntas frecuentes sobre Agent Skills CLI: instalación, uso, agentes IA compatibles, creación de habilidades y solución de problemas.',
     };

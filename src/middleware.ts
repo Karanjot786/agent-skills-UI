@@ -19,6 +19,14 @@ export default function middleware(request: NextRequest) {
     const ua = request.headers.get('user-agent') || '';
     const { pathname } = request.nextUrl;
 
+    // zh-TW was retired for zh-CN: permanent 301, path and query kept.
+    if (/^\/zh-TW(\/|$)/.test(pathname)) {
+        return NextResponse.redirect(new URL(pathname.replace('/zh-TW', '/zh-CN') + request.nextUrl.search, request.url), {
+            status: 301,
+            headers: { 'Cache-Control': 'private, no-store' },
+        });
+    }
+
     // Only apply bot logic to skill detail pages (the 31K invocation route)
     const isSkillPage = /\/marketplace\/.+/.test(pathname);
 

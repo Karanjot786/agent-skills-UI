@@ -18,7 +18,7 @@ export function buildAlternates(path: string, availableLocales: readonly string[
 }
 
 const OG: Record<string, string> = {
-    en: 'en_US', ja: 'ja_JP', 'zh-CN': 'zh_CN', 'zh-TW': 'zh_TW', vi: 'vi_VN', es: 'es_ES', de: 'de_DE', 'pt-BR': 'pt_BR',
+    en: 'en_US', ja: 'ja_JP', 'zh-CN': 'zh_CN', vi: 'vi_VN', es: 'es_ES', de: 'de_DE', 'pt-BR': 'pt_BR',
 };
 export const ogLocale = (locale: string) => OG[locale] ?? 'en_US';
 
