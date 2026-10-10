@@ -12,10 +12,10 @@ export async function GET(request: Request) {
   if (!repo) return NextResponse.json({ error: 'repo must look like owner/name' }, { status: 400, headers: { 'Cache-Control': 'no-store' } });
   const db = getDb();
   try {
-    const [lo, hi] = repoUrlRange(repo.owner, repo.repo);
+    const [root, lo, hi] = repoUrlRange(repo.owner, repo.repo);
     const { results: skills } = await db.prepare(
-      'SELECT id, name, path, github_url, stars FROM skills WHERE github_url >= ? AND github_url < ? ORDER BY stars DESC LIMIT 50'
-    ).bind(lo, hi).all<{ id: string; name: string; path: string | null; github_url: string; stars: number }>();
+      'SELECT id, name, path, github_url, stars FROM skills WHERE (github_url = ? OR (github_url >= ? AND github_url < ?)) ORDER BY stars DESC LIMIT 50'
+    ).bind(root, lo, hi).all<{ id: string; name: string; path: string | null; github_url: string; stars: number }>();
 
     let counts: ReturnType<typeof summarizeFindings> = {};
     let scannedIds = new Set<string>();

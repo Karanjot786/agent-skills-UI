@@ -11,9 +11,11 @@ export function parseRepo(raw: string | null): { owner: string; repo: string } |
   return { owner, repo };
 }
 
-// '0' is the character after '/', so [lo, hi) covers every URL under the repo and uses the UNIQUE(github_url) index.
-export function repoUrlRange(owner: string, repo: string): [string, string] {
-  return [`https://github.com/${owner}/${repo}/`, `https://github.com/${owner}/${repo}0`];
+// Root match for a SKILL.md at the repo root; '0' is the character after '/', so [lo, hi) covers every URL
+// under the repo. Both use the UNIQUE(github_url) index.
+export function repoUrlRange(owner: string, repo: string): [string, string, string] {
+  const root = `https://github.com/${owner}/${repo}`;
+  return [root, `${root}/`, `${root}0`];
 }
 
 export interface FindingAgg { item_ref: string; severity: string; n: number; scanned_at: string }

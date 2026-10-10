@@ -11,8 +11,14 @@ test('parseRepo rejects junk', () => {
   for (const r of [null, '', 'a', 'a/b/c d', "a/b'; DROP", '../etc/passwd', 'a/' + 'x'.repeat(101)])
     assert.equal(parseRepo(r as string | null), null);
 });
-test('repoUrlRange brackets the repo prefix on the unique index', () => {
-  assert.deepEqual(repoUrlRange('a', 'b'), ['https://github.com/a/b/', 'https://github.com/a/b0']);
+test('repoUrlRange gives the repo root plus the bracketed prefix on the unique index', () => {
+  const [root, lo, hi] = repoUrlRange('a', 'b');
+  assert.deepEqual([root, lo, hi], ['https://github.com/a/b', 'https://github.com/a/b/', 'https://github.com/a/b0']);
+  const hit = (u: string) => u === root || (u >= lo && u < hi);
+  assert.ok(hit('https://github.com/a/b'), 'skill at repo root');
+  assert.ok(hit('https://github.com/a/b/tree/main/x'));
+  assert.ok(!hit('https://github.com/a/b-other/tree/main/x'));
+  assert.ok(!hit('https://github.com/a/b.js'));
 });
 test('summarizeFindings groups by skill and severity, tracks latest scan', () => {
   const out = summarizeFindings([
