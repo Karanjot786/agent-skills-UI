@@ -155,7 +155,8 @@ async function translateMap(map, locale, extraMask) {
   for (let i = 0; i < keys.length; i += 60) {
     const part = Object.fromEntries(keys.slice(i, i + 60).map((k) => [k, masked[k]]));
     for (let attempt = 0; ; attempt++) {
-      let parsed; try { parsed = parseJson(await generate(jsonRequest(sys, JSON.stringify(part)), MODEL)); } catch { parsed = {}; }
+      const raw = await generate(jsonRequest(sys, JSON.stringify(part)), MODEL); // API errors propagate; only bad JSON is retried
+      let parsed; try { parsed = parseJson(raw); } catch { parsed = {}; }
       const bad = [];
       for (const k of Object.keys(part)) {
         const t = parsed[k];
