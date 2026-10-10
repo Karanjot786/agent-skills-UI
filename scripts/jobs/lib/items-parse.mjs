@@ -135,7 +135,7 @@ export function itemSitemapPages(rows, now, perFile = SITEMAP_URLS_PER_FILE) {
 }
 export function sitemapPagesSql(pages) {
   return [
-    `DELETE FROM sitemap_pages WHERE name GLOB 'mcp-[0-9]*' OR name GLOB 'agents-[0-9]*' OR name GLOB 'plugins-[0-9]*';`,
+    `DELETE FROM sitemap_pages WHERE name GLOB 'mcp-[0-9]*' OR name GLOB 'agents-[0-9]*' OR name GLOB 'plugins-[0-9]*' OR name GLOB 'tools-[0-9]*';`,
     ...pages.map((p) => `INSERT INTO sitemap_pages (name, start_key, url_count, lastmod) VALUES (${[p.name, p.start_key, p.url_count, p.lastmod].map(sqlValue).join(', ')});`),
   ];
 }

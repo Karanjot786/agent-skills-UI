@@ -28,7 +28,7 @@ export default function middleware(request: NextRequest) {
     }
 
     // Only apply bot logic to skill detail pages (the 31K invocation route)
-    const isSkillPage = /\/marketplace\/.+/.test(pathname);
+    const isSkillPage = /\/(marketplace|mcp|agents|plugins|tools)\/.+/.test(pathname);
 
     if (isSkillPage) {
         // SEO bots: return 429 with Retry-After to enforce crawl budget

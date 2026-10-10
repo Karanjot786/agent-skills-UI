@@ -16,6 +16,8 @@ export async function applyStatements(statements, { remote, outDir, dryRun }) {
 export async function refreshItemSitemaps({ remote, outDir, dryRun = false }) {
   const rows = await query(`SELECT type, slug, updated_at FROM items WHERE indexable = 1 AND type IN ('mcp','agent','plugin')`, { remote });
   const pages = itemSitemapPages(rows, new Date().toISOString());
+  const [{ n: toolCount }] = await query('SELECT count(*) AS n FROM tools WHERE EXISTS (SELECT 1 FROM item_tools it WHERE it.tool_id = tools.id)', { remote });
+  if (toolCount > 0) pages.push({ name: 'tools-0', start_key: '', url_count: toolCount, lastmod: new Date().toISOString() });
   console.log(`item sitemaps: ${pages.map((p) => `${p.name}=${p.url_count}`).join(' ') || 'none'}`);
   return applyStatements(sitemapPagesSql(pages), { remote, outDir, dryRun });
 }

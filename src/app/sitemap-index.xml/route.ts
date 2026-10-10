@@ -5,8 +5,11 @@ import { indexXml } from '@/lib/sitemap';
 export const dynamic = 'force-dynamic';
 
 // sitemap_pages.name -> URL path. Section E extends this for mcp/agents/plugins families, D for locale skill files.
-const sitemapPath = (name: string) =>
-    name === 'pages' ? '/sitemap.xml' : name === 'structure' ? '/sitemap-structure.xml' : name.startsWith('skills-') ? `/sitemap-skills/${name.slice('skills-'.length)}.xml` : null;
+const sitemapPath = (name: string) => {
+    const item = /^(mcp|agents|plugins|tools)-(\d+)$/.exec(name);
+    if (item) return `/sitemap-${item[1]}/${item[2]}.xml`;
+    return name === 'pages' ? '/sitemap.xml' : name === 'structure' ? '/sitemap-structure.xml' : name.startsWith('skills-') ? `/sitemap-skills/${name.slice('skills-'.length)}.xml` : null;
+};
 
 export async function GET() {
     const { results } = await getDb().prepare('SELECT name, lastmod FROM sitemap_pages ORDER BY name').all<{ name: string; lastmod: string }>();
