@@ -27,6 +27,7 @@ for (let n = 0; ; n++) {
   start = end;
 }
 pages.push({ name: 'pages', start_key: '', url_count: 0, lastmod: now });
+pages.push({ name: 'structure', start_key: '', url_count: 0, lastmod: now }); // C14 hubs sitemap
 
 const stmts = [
   `INSERT OR REPLACE INTO skill_stats (id, total_skills, unique_authors, top_authors, updated_at) VALUES ('global', ${total}, ${authors}, ${sqlValue(JSON.stringify(top))}, ${sqlValue(now)});`,
