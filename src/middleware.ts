@@ -6,15 +6,13 @@ import { NextRequest, NextResponse } from 'next/server';
 // Do NOT include Googlebot/Bingbot/Applebot — they drive organic search traffic
 const RATE_LIMITED_BOT_PATTERN = /SemrushBot|AhrefsBot|MJ12bot|DotBot|DataForSeoBot|BrightEdge|Screaming|serpstatbot|seokicks|linkdexbot|PetalBot|BaiduspiderBot|YandexBot/i;
 
-// AI crawlers — serve llms.txt instead of full pages (no user traffic value)
-const AI_BOT_PATTERN = /GPTBot|Claude-Web|anthropic-ai|CCBot|PerplexityBot|cohere-ai|YouBot|BraveBot|GoogleOther|Google-Extended/i;
-
 const intlMiddleware = createMiddleware({
     locales,
     defaultLocale,
     localePrefix: 'as-needed',
     localeDetection: false,
     localeCookie: false,
+    alternateLinks: false, // hreflang comes only from page metadata (buildAlternates)
 });
 
 export default function middleware(request: NextRequest) {
@@ -25,14 +23,6 @@ export default function middleware(request: NextRequest) {
     const isSkillPage = /\/marketplace\/.+/.test(pathname);
 
     if (isSkillPage) {
-        // AI bots: redirect to llms.txt (they don't need rendered HTML)
-        if (AI_BOT_PATTERN.test(ua)) {
-            return NextResponse.redirect(new URL('/llms.txt', request.url), {
-                status: 301,
-                headers: { 'Cache-Control': 'private, no-store' },
-            });
-        }
-
         // SEO bots: return 429 with Retry-After to enforce crawl budget
         // They will back off and re-crawl later — won't drive continuous function invocations
         if (RATE_LIMITED_BOT_PATTERN.test(ua)) {
