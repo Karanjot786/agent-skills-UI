@@ -1,9 +1,10 @@
 // Pure naming + SQL builders for the items catalog (spec §7). No framework or alias imports: `node --test` runs it.
 export type ItemType = 'mcp' | 'agent' | 'plugin' | 'rule';
-export const LIVE_ITEM_TYPES: readonly ItemType[] = ['mcp', 'agent', 'plugin']; // 'rule' after day 30
+export type LiveItemType = Exclude<ItemType, 'rule'>;
+export const LIVE_ITEM_TYPES: readonly LiveItemType[] = ['mcp', 'agent', 'plugin']; // 'rule' after day 30
 export const TYPE_SEGMENT: Record<ItemType, string> = { mcp: 'mcp', agent: 'agents', plugin: 'plugins', rule: 'rules' };
 // ponytail: no 'rule' label until rules ship (LIVE_ITEM_TYPES excludes them).
-export const TYPE_LABELS: Record<Exclude<ItemType, 'rule'>, { singular: string; plural: string; blurb: string }> = {
+export const TYPE_LABELS: Record<LiveItemType, { singular: string; plural: string; blurb: string }> = {
     mcp: { singular: 'MCP Server', plural: 'MCP Servers',
         blurb: 'MCP servers from the official registry and GitHub, with ready-to-paste config for Claude Code, Cursor, VS Code, Codex, Windsurf and Gemini.' },
     agent: { singular: 'Subagent', plural: 'Claude Code Subagents',
@@ -15,8 +16,8 @@ export const PAGE_SIZE = 48;
 export const MAX_PAGE = 200;
 export const PERMISSIVE_LICENSES: ReadonlySet<string> = new Set(['MIT', 'Apache-2.0', 'CC0-1.0', 'BSD-2-Clause', 'BSD-3-Clause']);
 
-export function isItemType(v: string): v is ItemType { return (LIVE_ITEM_TYPES as readonly string[]).includes(v); }
-export function typeFromSegment(seg: string): ItemType | null { return LIVE_ITEM_TYPES.find((t) => TYPE_SEGMENT[t] === seg) ?? null; }
+export function isItemType(v: string): v is LiveItemType { return (LIVE_ITEM_TYPES as readonly string[]).includes(v); }
+export function typeFromSegment(seg: string): LiveItemType | null { return LIVE_ITEM_TYPES.find((t) => TYPE_SEGMENT[t] === seg) ?? null; }
 export const isValidSlug = (s: string) => /^[a-z0-9](?:[a-z0-9-]{0,198}[a-z0-9])?$/.test(s);
 export const itemPath = (type: ItemType, slug: string) => `/${TYPE_SEGMENT[type]}/${slug}`;
 
