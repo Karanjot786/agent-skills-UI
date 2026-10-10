@@ -13,7 +13,8 @@ export async function GET(request: Request) {
   const sp = new URL(request.url).searchParams;
   const q = parseSkillsQuery(new URLSearchParams({ search: sp.get('q') ?? '', category: sp.get('category') ?? '', sortBy: 'stars',
     limit: String(Math.min(25, Number(sp.get('limit')) || 10)), offset: '0' }));
-  if (!q.search) return NextResponse.json({ error: 'q is required' }, { status: 400, headers: { 'Cache-Control': 'no-store' } });
+  // 1-2 character queries would run an unindexed LIKE over every skill; the trigram FTS path needs 3+.
+  if ([...q.search].length < 3) return NextResponse.json({ error: 'q must be at least 3 characters' }, { status: 400, headers: { 'Cache-Control': 'no-store' } });
   try {
     const { sql, binds } = buildSkillsSql(q); // stars order only; paid placements never enter this query
     const { results } = await getDb().prepare(sql).bind(...binds, q.limit, 0).all<Row>();
