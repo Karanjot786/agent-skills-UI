@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getDocSection, getAllDocSlugs, getAdjacentSections, getAllDocSectionsMeta } from '@/lib/mdx';
+import { getDocSection, getAllDocSlugs, getAdjacentSections, getAllDocSectionsMeta, docLocales } from '@/lib/mdx';
 import { DocPageClient } from '@/components/doc-page-client';
 import { buildAlternates, ogLocale } from '@/lib/seo';
 import { SITE_URL as siteUrl } from '@/lib/site';
@@ -16,7 +16,7 @@ export async function generateMetadata({
     params: Promise<{ locale: string; slug: string }>
 }): Promise<Metadata> {
     const { locale, slug } = await params;
-    const section = getDocSection(slug);
+    const section = getDocSection(slug, locale);
 
     if (!section) {
         return { title: 'Not Found' };
@@ -26,7 +26,8 @@ export async function generateMetadata({
     const description = section.description || `Documentation for ${section.title} in the Agent Skills CLI.`;
     const docPath = `/docs/${slug}`;
 
-    const alt = buildAlternates(docPath, ['en'], locale);
+    // Translated file => self-canonical + hreflang among locales with that file; otherwise canonical to en, no hreflang.
+    const alt = buildAlternates(docPath, docLocales(slug), locale);
 
     return {
         title,
@@ -54,15 +55,15 @@ export default async function DocPage({
 }: {
     params: Promise<{ locale: string; slug: string }>
 }) {
-    const { slug } = await params;
-    const section = getDocSection(slug);
+    const { locale, slug } = await params;
+    const section = getDocSection(slug, locale);
 
     if (!section) {
         notFound();
     }
 
-    const { prev, next } = getAdjacentSections(slug);
-    const allSections = getAllDocSectionsMeta();
+    const { prev, next } = getAdjacentSections(slug, locale);
+    const allSections = getAllDocSectionsMeta(locale);
 
     return (
         <DocPageClient

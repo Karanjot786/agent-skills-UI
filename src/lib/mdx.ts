@@ -38,85 +38,25 @@ export interface TOCItem {
 
 // ── Paths ────────────────────────────────────────────────────────────────
 
-const CONTENT_DIR = path.join(process.cwd(), 'content', 'docs');
+// English at content/docs/*.mdx; translations at content/docs/<locale>/<slug>.mdx (+ faq.json).
+const ROOT = path.join(process.cwd(), 'content', 'docs');
 
 // ── Functions ────────────────────────────────────────────────────────────
 
-/**
- * Get all doc sections, sorted by order.
- */
-export function getAllDocSections(): DocSection[] {
-    if (!fs.existsSync(CONTENT_DIR)) return [];
-
-    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.mdx'));
-
-    return files
-        .map(file => {
-            const slug = file.replace('.mdx', '');
-            const filePath = path.join(CONTENT_DIR, file);
-            const raw = fs.readFileSync(filePath, 'utf-8');
-            const { data, content } = matter(raw);
-
-            return {
-                slug,
-                title: data.title || slug,
-                order: data.order || 0,
-                icon: data.icon || 'terminal',
-                description: data.description || '',
-                commands: data.commands || [],
-                content,
-            };
-        })
-        .sort((a, b) => a.order - b.order);
+/** Translated file if present, otherwise the English file (spec 6.3: en fallback). */
+function fileFor(slug: string, locale?: string): string | null {
+    if (locale && locale !== 'en') {
+        const p = path.join(ROOT, locale, `${slug}.mdx`);
+        if (fs.existsSync(p)) return p;
+    }
+    const en = path.join(ROOT, `${slug}.mdx`);
+    return fs.existsSync(en) ? en : null;
 }
 
-/**
- * Get metadata for all doc sections (without content, for sidebar/index).
- */
-export function getAllDocSectionsMeta(): DocSectionMeta[] {
-    if (!fs.existsSync(CONTENT_DIR)) return [];
-
-    const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.mdx'));
-
-    return files
-        .map(file => {
-            const slug = file.replace('.mdx', '');
-            const filePath = path.join(CONTENT_DIR, file);
-            const raw = fs.readFileSync(filePath, 'utf-8');
-            const { data } = matter(raw);
-
-            return {
-                slug,
-                title: data.title || slug,
-                order: data.order || 0,
-                icon: data.icon || 'terminal',
-                description: data.description || '',
-                commands: data.commands || [],
-            };
-        })
-        .sort((a, b) => a.order - b.order);
-}
-
-/**
- * Get all doc slugs (for generateStaticParams).
- */
-export function getAllDocSlugs(): string[] {
-    if (!fs.existsSync(CONTENT_DIR)) return [];
-    return fs.readdirSync(CONTENT_DIR)
-        .filter(f => f.endsWith('.mdx'))
-        .map(f => f.replace('.mdx', ''));
-}
-
-/**
- * Get a single doc section by slug.
- */
-export function getDocSection(slug: string): DocSection | null {
-    const filePath = path.join(CONTENT_DIR, `${slug}.mdx`);
-    if (!fs.existsSync(filePath)) return null;
-
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    const { data, content } = matter(raw);
-
+function read(slug: string, locale?: string): DocSection | null {
+    const file = fileFor(slug, locale);
+    if (!file) return null;
+    const { data, content } = matter(fs.readFileSync(file, 'utf-8'));
     return {
         slug,
         title: data.title || slug,
@@ -128,18 +68,60 @@ export function getDocSection(slug: string): DocSection | null {
     };
 }
 
-/**
- * Get prev/next sections for navigation.
- */
-export function getAdjacentSections(slug: string): { prev: DocSectionMeta | null; next: DocSectionMeta | null } {
-    const allMeta = getAllDocSectionsMeta();
-    const index = allMeta.findIndex(s => s.slug === slug);
-    
+/** Get all doc sections for a locale (en fallback per file), sorted by order. */
+export function getAllDocSections(locale?: string): DocSection[] {
+    return getAllDocSlugs().map((s) => read(s, locale)!).sort((a, b) => a.order - b.order);
+}
+
+/** Metadata for all doc sections (without content, for sidebar/index). */
+export function getAllDocSectionsMeta(locale?: string): DocSectionMeta[] {
+    return getAllDocSections(locale).map(({ content: _content, ...meta }) => meta);
+}
+
+/** All English doc slugs (for generateStaticParams). */
+export function getAllDocSlugs(): string[] {
+    return fs.existsSync(ROOT) ? fs.readdirSync(ROOT).filter((f) => f.endsWith('.mdx')).map((f) => f.slice(0, -4)) : [];
+}
+
+/** Get a single doc section by slug. */
+export function getDocSection(slug: string, locale?: string): DocSection | null {
+    return read(slug, locale);
+}
+
+/** Get prev/next sections for navigation. */
+export function getAdjacentSections(slug: string, locale?: string): { prev: DocSectionMeta | null; next: DocSectionMeta | null } {
+    const allMeta = getAllDocSectionsMeta(locale);
+    const index = allMeta.findIndex((s) => s.slug === slug);
     return {
         prev: index > 0 ? allMeta[index - 1] : null,
-        next: index < allMeta.length - 1 ? allMeta[index + 1] : null,
+        next: index >= 0 && index < allMeta.length - 1 ? allMeta[index + 1] : null,
     };
 }
+
+const localeDirs = () =>
+    fs.existsSync(ROOT) ? fs.readdirSync(ROOT, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name) : [];
+
+/** Locales that have a translated file for this doc (always includes en). Feeds hreflang and sitemaps. */
+export function docLocales(slug: string): string[] {
+    return ['en', ...localeDirs().filter((l) => fs.existsSync(path.join(ROOT, l, `${slug}.mdx`)))];
+}
+
+export interface FaqData {
+    hero: { badge: string; title: string; subtitle: string };
+    cta: { title: string; body: string; docs: string; issue: string };
+    categories: { title: string; icon: string; questions: { question: string; answer: string }[] }[];
+}
+
+/** FAQ strings for a locale; icons always come from the English file, so translated files may omit them. */
+export function getFaq(locale: string): FaqData {
+    const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'faq.json'), 'utf-8'));
+    const p = path.join(ROOT, locale, 'faq.json');
+    if (locale === 'en' || !fs.existsSync(p)) return en;
+    const t = JSON.parse(fs.readFileSync(p, 'utf-8'));
+    return { ...t, categories: t.categories.map((c: FaqData['categories'][number], i: number) => ({ ...c, icon: en.categories[i]?.icon ?? c.icon })) };
+}
+
+export const faqLocales = (): string[] => ['en', ...localeDirs().filter((l) => fs.existsSync(path.join(ROOT, l, 'faq.json')))];
 
 /**
  * Extract heading structure for TOC generation.

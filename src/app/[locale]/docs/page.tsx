@@ -50,8 +50,9 @@ export async function generateMetadata({
     };
 }
 
-export default function DocsPage() {
-    const sections = getAllDocSectionsMeta();
+export default async function DocsPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const sections = getAllDocSectionsMeta(locale); // ponytail: index stays canonical to en until a locale's docs are released
 
     return <DocsOverview sections={sections} />;
 }
