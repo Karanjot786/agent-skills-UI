@@ -21,10 +21,17 @@ export const requestBody = (prompt, maxOutputTokens) => ({
   contents: [{ parts: [{ text: prompt }] }],
   generation_config: { temperature: 0, max_output_tokens: maxOutputTokens },
 });
+// An item may carry a full `request` (system instruction, JSON mime type) instead of a plain prompt.
 export const toJsonl = (items, maxOutputTokens) =>
-  items.map(({ key, prompt }) => JSON.stringify({ key, request: requestBody(prompt, maxOutputTokens) })).join('\n') + '\n';
+  items.map(({ key, prompt, request }) => JSON.stringify({ key, request: request ?? requestBody(prompt, maxOutputTokens) })).join('\n') + '\n';
 export const textOf = (response) => response?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('').trim() ?? '';
 export const stateOf = (b) => b.metadata?.state ?? b.state ?? '';
+
+// Synchronous call (2x batch price): judge samples, UI messages and docs only.
+export async function generate(request, model = DEFAULT_MODEL) {
+  const res = await call(`${API}/v1beta/models/${model}:generateContent`, { method: 'POST', headers: json, body: JSON.stringify(request) });
+  return textOf(await res.json());
+}
 
 export function parseResultLines(jsonl) {
   const out = new Map();
