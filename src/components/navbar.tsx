@@ -69,7 +69,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
 
             {/* Desktop Header */}
             <header
-                className={`sticky top-4 z-[9999] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-background/80 md:flex backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ${isScrolled ? "max-w-4xl px-2" : "max-w-5xl px-4"
+                className={`sticky top-4 z-[9999] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-background/80 lg:flex backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ${isScrolled ? "max-w-5xl px-2" : "max-w-5xl px-4"
                     } py-2`}
                 style={{
                     willChange: "transform",
@@ -103,7 +103,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
                 </nav>
 
                 <div className="flex items-center gap-3 ml-4">
-                    <NavGitHubStars />
+                    <div className="hidden xl:block"><NavGitHubStars /></div>
                     <Button
                         variant="ghost"
                         size="sm"
@@ -118,7 +118,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
                     {showGetStarted && (
                         <Link
                             href="#install"
-                            className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-4 py-2 text-sm"
+                            className="rounded-full font-semibold relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center whitespace-nowrap shrink-0 bg-gradient-to-b from-cyan-400 to-cyan-600 text-black shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset] px-4 py-2 text-sm"
                         >
                             {tc('getStarted')}
                         </Link>
@@ -127,7 +127,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
             </header>
 
             {/* Mobile Header */}
-            <header className="fixed top-4 left-4 right-4 z-[9999] flex md:hidden flex-row items-center justify-between rounded-full bg-black/80 backdrop-blur-md border border-white/10 shadow-lg shadow-black/20 px-4 py-3">
+            <header className="fixed top-4 left-4 right-4 z-[9999] flex lg:hidden flex-row items-center justify-between rounded-full bg-black/80 backdrop-blur-md border border-white/10 shadow-lg shadow-black/20 px-4 py-3">
                 <Link
                     className="flex items-center justify-center gap-2"
                     href="/"
@@ -163,7 +163,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
 
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-                <div className="sticky top-4 z-[9999] mx-4 flex w-auto flex-row items-center justify-between rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg md:hidden px-4 py-3fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm md:hidden">
+                <div className="sticky top-4 z-[9999] mx-4 flex w-auto flex-row items-center justify-between rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg lg:hidden px-4 py-3fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm lg:hidden">
                     <div className="absolute top-20 left-4 right-4 max-h-[calc(100dvh-6rem)] overflow-y-auto bg-zinc-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6">
                         <nav className="flex flex-col space-y-2">
                             {[...NAV_LINKS, { href: '/categories', key: 'categories' } as const, { href: '/faq', key: 'faq' } as const].map((l) => (
