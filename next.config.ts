@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
         headers: [{ key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' }],
       },
       // Marketplace listing and home — 1h CDN cache
-      ...['/:locale/marketplace', '/:locale'].map((source) => ({
+      ...['/', '/:locale/marketplace', '/:locale'].map((source) => ({
         source,
         headers: [{ key: 'Cache-Control', value: 'public, s-maxage=3600, stale-while-revalidate=86400' }],
       })),
