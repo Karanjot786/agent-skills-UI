@@ -4,8 +4,9 @@ import { getCategories } from '@/lib/lists';
 import { Listing } from '@/components/listing';
 import { buildAlternates } from '@/lib/seo';
 
-export const revalidate = 86400;
-export async function generateStaticParams() { return []; }
+// No own dynamic segment: the layout's locale params would prerender this at build, where D1 is unavailable.
+// Rendered per request; the CDN caches it via the s-maxage header in next.config.
+export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   return {
     title: 'AI Agent Skill Categories',

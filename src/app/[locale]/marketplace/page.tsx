@@ -65,8 +65,9 @@ export async function generateMetadata({
     };
 }
 
-export const revalidate = 3600;
-export async function generateStaticParams() { return []; }
+// No own dynamic segment: the layout's locale params would prerender this at build, where D1 is unavailable.
+// Rendered per request; the CDN caches it via the s-maxage header in next.config.
+export const dynamic = 'force-dynamic';
 
 export default function MarketplacePage() {
     return (
