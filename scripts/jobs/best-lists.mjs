@@ -22,11 +22,11 @@ const lists = [
 const stmts = [];
 for (const l of lists) {
   const match = l.terms.map((t) => `"${t.replace(/"/g, '""')}"`).join(' OR ');
-  // -- ponytail: F adds `AND NOT EXISTS (open high/critical finding)` once the findings table exists.
   const rows = await query(
     `SELECT s.id, s.name, substr(s.content,1,3000) AS head
      FROM skills_fts JOIN skills s ON s.seq = skills_fts.rowid
      WHERE skills_fts MATCH ${sqlValue(match)} AND s.indexable = 1 AND s.scoped_name IS NOT NULL AND s.updated_at >= ${sqlValue(since)}
+       AND NOT EXISTS (SELECT 1 FROM findings f WHERE f.item_type = 'skill' AND f.item_ref = s.id AND f.status = 'open' AND f.severity IN ('high','critical'))
      ORDER BY s.stars DESC LIMIT 80`, { remote });
   const hashes = new Set(), names = new Set(), picked = [];
   for (const r of rows) {
