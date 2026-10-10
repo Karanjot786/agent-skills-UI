@@ -17,8 +17,8 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import type { Metadata } from 'next';
 
-// Permanent ISR — no time-based revalidation; pages stay cached until the R2 entry expires (30-day lifecycle) or the next deploy.
-export const revalidate = false;
+// ISR: pages are cached in R2 and refreshed at most once a day so stars/dates/badges do not go stale.
+export const revalidate = 86400;
 
 // Allow on-demand ISR for skills not pre-rendered at build time
 export const dynamicParams = true;
@@ -122,6 +122,9 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
     const row = await getSkillBySlug(scopedName);
     if (!row) notFound(); // real 404: stops junk URLs from being rendered + cached with 200
     const skill = toSkill(row, await getSkillContent(scopedName));
+    // ponytail: hard 25K cut; an unclosed code fence only affects the tail, add line/fence-aware cut if it shows up.
+    const BODY_MAX = 25_000;
+    const truncated = (skill.content?.length ?? 0) > BODY_MAX;
 
     const relatedSkills = (await getRelatedSkills(row.author, row.id)).map((r) => toSkill(r, null));
 
@@ -355,20 +358,20 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                                         ),
                                         // Enhanced headers
                                         h1: ({ children, ...props }) => (
-                                            <h1 className="text-2xl font-bold text-white border-b border-cyan-500/30 pb-3 mb-6 mt-8" {...props}>
-                                                {children}
-                                            </h1>
-                                        ),
-                                        h2: ({ children, ...props }) => (
-                                            <h2 className="text-xl font-bold text-cyan-50 border-b border-white/10 pb-2 mb-4 mt-8 flex items-center gap-2" {...props}>
-                                                <span className="size-1.5 rounded-full bg-cyan-500" />
+                                            <h2 className="text-2xl font-bold text-white border-b border-cyan-500/30 pb-3 mb-6 mt-8" {...props}>
                                                 {children}
                                             </h2>
                                         ),
-                                        h3: ({ children, ...props }) => (
-                                            <h3 className="text-lg font-semibold text-cyan-100 mb-3 mt-6" {...props}>
+                                        h2: ({ children, ...props }) => (
+                                            <h3 className="text-xl font-bold text-cyan-50 border-b border-white/10 pb-2 mb-4 mt-8 flex items-center gap-2" {...props}>
+                                                <span className="size-1.5 rounded-full bg-cyan-500" />
                                                 {children}
                                             </h3>
+                                        ),
+                                        h3: ({ children, ...props }) => (
+                                            <h4 className="text-lg font-semibold text-cyan-100 mb-3 mt-6" {...props}>
+                                                {children}
+                                            </h4>
                                         ),
                                         // Enhanced list items
                                         li: ({ children, ...props }) => (
@@ -406,9 +409,15 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
                                         ),
                                     }}
                                 >
-                                    {skill.content}
+                                    {skill.content.slice(0, BODY_MAX)}
                                 </ReactMarkdown>
                             </div>
+                            {truncated && (
+                                <a href={skill.github_url} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 mt-4 text-sm text-cyan-400 hover:underline">
+                                    View full SKILL.md on GitHub <ExternalLink className="size-3" />
+                                </a>
+                            )}
                         </Card>
                     )}
 
