@@ -47,3 +47,6 @@ next-env.d.ts
 # wrangler local state
 .wrangler/
 migrations-data/
+# job scratch
+scripts/jobs/.state/
+scripts/jobs/.out/
