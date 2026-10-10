@@ -3,6 +3,7 @@ import { locales } from '@/i18n/config';
 import { buildAlternates, ogLocale } from '@/lib/seo';
 import { SITE_URL as siteUrl } from '@/lib/site';
 import MarketplaceClient from './marketplace-client';
+import { MarketplaceListing } from '@/components/marketplace-listing';
 
 export async function generateMetadata({
     params
@@ -64,55 +65,13 @@ export async function generateMetadata({
     };
 }
 
-// CollectionPage + ItemList structured data for SEO/GEO
-const marketplaceJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "AI Skills Marketplace",
-    "description": "Browse, search, and install 220,000+ AI coding skills for 42+ agents including Cursor, Claude Code, GitHub Copilot, Gemini CLI, Windsurf, and Cline.",
-    "url": `${siteUrl}/marketplace`,
-    "isPartOf": {
-        "@type": "WebSite",
-        "@id": `${siteUrl}/#website`,
-    },
-    "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": siteUrl,
-            },
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "Marketplace",
-                "item": `${siteUrl}/marketplace`,
-            },
-        ],
-    },
-    "mainEntity": {
-        "@type": "ItemList",
-        "name": "AI Coding Skills",
-        "description": "220,000+ skills for AI coding agents",
-        "numberOfItems": 100000,
-        "itemListOrder": "https://schema.org/ItemListOrderDescending",
-    },
-    "speakable": {
-        "@type": "SpeakableSpecification",
-        "cssSelector": ["h1", ".text-zinc-400"]
-    },
-};
+export const revalidate = 3600;
+export async function generateStaticParams() { return []; }
 
 export default function MarketplacePage() {
     return (
-        <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(marketplaceJsonLd) }}
-            />
-            <MarketplaceClient />
-        </>
+        <MarketplaceClient>
+            <MarketplaceListing page={1} />
+        </MarketplaceClient>
     );
 }

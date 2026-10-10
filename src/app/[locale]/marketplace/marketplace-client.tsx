@@ -541,13 +541,14 @@ function MarketplaceContent() {
     );
 }
 
-export default function MarketplaceClient() {
+// children = server-rendered list: useSearchParams makes Next emit only the fallback as HTML, so crawlers get real links.
+export default function MarketplaceClient({ children }: { children?: React.ReactNode }) {
     return (
-        <Suspense fallback={
+        <Suspense fallback={children ?? (
             <div className="min-h-screen bg-black text-white flex items-center justify-center">
                 <Loader2 className="size-8 animate-spin text-cyan-500" />
             </div>
-        }>
+        )}>
             <MarketplaceContent />
         </Suspense>
     );
