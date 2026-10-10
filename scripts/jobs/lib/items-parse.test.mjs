@@ -207,3 +207,20 @@ test('skillToolsSql tags skills on word boundaries via skills_fts', () => {
   assert.deepEqual(db.prepare(`SELECT item_ref || ':' || tool_id AS e FROM item_tools WHERE item_type = 'skill' ORDER BY e`).all().map((r) => r.e),
     ['k1:stripe', 'k3:aws']);
 });
+
+import { pool } from './github.mjs';
+import { readFileSync } from 'node:fs';
+
+test('pool runs with bounded concurrency and keeps order', async () => {
+  let live = 0, peak = 0;
+  const out = await pool([5, 1, 3, 2], 2, async (x) => { live++; peak = Math.max(peak, live); await new Promise((r) => setTimeout(r, x)); live--; return x * 10; });
+  assert.deepEqual(out, [50, 10, 30, 20]);
+  assert.equal(peak, 2);
+});
+
+test('tools.json: unique ids, every tool has lowercase aliases', () => {
+  const tools = JSON.parse(readFileSync(new URL('../data/tools.json', import.meta.url), 'utf8'));
+  assert.ok(tools.length >= 40);
+  assert.equal(new Set(tools.map((t) => t.id)).size, tools.length);
+  for (const t of tools) assert.ok(t.aliases.length && t.aliases.every((a) => a === a.toLowerCase()), t.id);
+});
