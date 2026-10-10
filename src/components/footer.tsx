@@ -44,6 +44,10 @@ export function Footer() {
                             <li><a href="https://www.npmjs.com/package/agent-skills-cli" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">npm Package</a></li>
                             <li><a href="https://github.com/Karanjot786/agent-skills-cli/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Changelog</a></li>
                             <li><a href="https://github.com/Karanjot786/agent-skills-cli/issues" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Report Issue</a></li>
+                            <li><Link href="/advertise" className="hover:text-cyan-400 transition-colors">Advertise</Link></li>
+                            <li><Link href="/terms" className="hover:text-cyan-400 transition-colors">Terms</Link></li>
+                            <li><Link href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</Link></li>
+                            <li><Link href="/takedown" className="hover:text-cyan-400 transition-colors">Takedown</Link></li>
                         </ul>
                     </div>
 
@@ -67,7 +71,7 @@ export function Footer() {
                         {t('copyright', { year: new Date().getFullYear() })}
                     </div>
                     <div className="flex gap-6 text-xs text-zinc-600">
-                        <span>Made with ♥ for the AI developer community</span>
+                        <span>Sponsored and affiliate links are labelled. Payment never changes ranking.</span>
                     </div>
                 </div>
             </div>
