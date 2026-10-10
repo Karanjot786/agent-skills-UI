@@ -28,5 +28,5 @@ export default async function ItemTypePage({ params }: P) {
     if (locale !== 'en') permanentRedirect(`/${seg}/page/${n}`);
     const [{ items, hasNext }, categories] = await Promise.all([listItems({ type, page: n }), listCategories()]);
     if (items.length === 0) notFound();
-    return <ItemListView type={type} page={n} category={null} items={items} hasNext={hasNext} categories={categories} />;
+    return <ItemListView type={type} page={n} category={null} items={items} hasNext={hasNext} categories={categories} locale={locale} />;
 }

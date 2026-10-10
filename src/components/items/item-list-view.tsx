@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Link } from '@/i18n/navigation';
+import { SponsorSlot } from '@/components/sponsor-slot';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { ItemCard } from '@/components/items/item-card';
@@ -28,8 +29,8 @@ export function itemListMetadata(type: ItemType, page: number, category: Categor
     };
 }
 
-export function ItemListView({ type, page, category, items, hasNext, categories }: {
-    type: ItemType; page: number; category: CategoryRow | null; items: ItemListRow[]; hasNext: boolean; categories: CategoryRow[];
+export function ItemListView({ type, page, category, items, hasNext, categories, locale }: {
+    type: ItemType; page: number; category: CategoryRow | null; items: ItemListRow[]; hasNext: boolean; categories: CategoryRow[]; locale: string;
 }) {
     const L = TYPE_LABELS[type];
     const seg = TYPE_SEGMENT[type];
@@ -55,6 +56,9 @@ export function ItemListView({ type, page, category, items, hasNext, categories 
                 </nav>
                 <h1 className="text-3xl md:text-4xl font-bold text-cyan-50 mb-3">{heading}{page > 1 ? ` — page ${page}` : ''}</h1>
                 <p className="text-zinc-400 max-w-3xl mb-8">{L.blurb}</p>
+                <div className="mb-8">
+                    <SponsorSlot placement={category ? `category:${category.id}` : TYPE_SEGMENT[type]} locale={locale} />
+                </div>
                 <div className="flex flex-wrap gap-2 mb-8">
                     {categories.map((c) => (
                         <Link key={c.id} href={`/${seg}/category/${c.id}`}

@@ -22,5 +22,5 @@ export default async function ItemTypeIndex({ params }: P) {
     if (!type) notFound();
     if (locale !== 'en') permanentRedirect(`/${seg}`); // §6.3: no item translations yet -> English URL
     const [{ items, hasNext }, categories] = await Promise.all([listItems({ type, page: 1 }), listCategories()]);
-    return <ItemListView type={type} page={1} category={null} items={items} hasNext={hasNext} categories={categories} />;
+    return <ItemListView type={type} page={1} category={null} items={items} hasNext={hasNext} categories={categories} locale={locale} />;
 }

@@ -32,5 +32,5 @@ export default async function ItemCategoryPage({ params }: P) {
     const [{ items }, categories] = await Promise.all([
         listItems({ type, category: category.id, page: 1, pageSize: CATEGORY_PAGE_SIZE }), listCategories(),
     ]);
-    return <ItemListView type={type} page={1} category={category} items={items} hasNext={false} categories={categories} />;
+    return <ItemListView type={type} page={1} category={category} items={items} hasNext={false} categories={categories} locale={p.locale} />;
 }
