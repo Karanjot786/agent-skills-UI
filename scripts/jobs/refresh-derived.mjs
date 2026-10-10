@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { query } from './lib/d1-query.mjs';
 import { writeSqlChunks, applySqlFiles, sqlValue } from './lib/d1.mjs';
 import { INDEXABLE_SITEMAP_WHERE as WHERE, SKILLS_PER_SITEMAP } from '../../src/lib/skills-sql.ts';
+import { sitemapLocales } from '../../src/i18n/config.ts';
 
 const remote = process.argv.includes('--remote');
 const q = (sql) => query(sql, { remote });
@@ -26,12 +27,19 @@ for (let n = 0; ; n++) {
   if (end === undefined) break;
   start = end;
 }
+// Translated-locale skill files (D8): only locales cleared by native review; the route pages them by OFFSET.
+for (const loc of sitemapLocales) {
+  const [{ cnt, lm }] = q(`SELECT count(*) AS cnt, max(s.updated_at) AS lm FROM skill_i18n i JOIN skills s ON s.seq = i.skill_seq WHERE i.locale = ${sqlValue(loc)} AND ${WHERE.replace(/(indexable|scoped_name)/g, 's.$1')}`);
+  for (let n = 0; n * SKILLS_PER_SITEMAP < cnt; n++) {
+    pages.push({ name: `skills-${loc}-${n}`, start_key: '', url_count: Math.min(SKILLS_PER_SITEMAP, cnt - n * SKILLS_PER_SITEMAP), lastmod: lm ?? now });
+  }
+}
 pages.push({ name: 'pages', start_key: '', url_count: 0, lastmod: now });
 pages.push({ name: 'structure', start_key: '', url_count: 0, lastmod: now }); // C14 hubs sitemap
 
 const stmts = [
   `INSERT OR REPLACE INTO skill_stats (id, total_skills, unique_authors, top_authors, updated_at) VALUES ('global', ${total}, ${authors}, ${sqlValue(JSON.stringify(top))}, ${sqlValue(now)});`,
-  `DELETE FROM sitemap_pages WHERE name LIKE 'skills-en-%' AND name NOT IN (${pages.map((p) => sqlValue(p.name)).join(',')});`,
+  `DELETE FROM sitemap_pages WHERE name LIKE 'skills-%' AND name NOT IN (${pages.map((p) => sqlValue(p.name)).join(',')});`,
   ...pages.map((p) => `INSERT OR REPLACE INTO sitemap_pages (name, start_key, url_count, lastmod) VALUES (${sqlValue(p.name)}, ${sqlValue(p.start_key)}, ${p.url_count}, ${sqlValue(p.lastmod)});`),
 ];
 applySqlFiles(writeSqlChunks(stmts, mkdtempSync(join(tmpdir(), 'refresh-derived-'))), { remote });
