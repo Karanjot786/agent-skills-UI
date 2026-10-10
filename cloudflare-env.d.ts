@@ -5,6 +5,8 @@ interface __BaseEnv_CloudflareEnv {
 	NEXT_INC_CACHE_R2_BUCKET: R2Bucket;
 	NEXT_TAG_CACHE_D1: D1Database;
 	DB: D1Database;
+	SUBMIT_LIMITER: RateLimit;
+	TELEMETRY_LIMITER: RateLimit;
 	ASSETS: Fetcher;
 	DATABASE_URL: string;
 	GITHUB_TOKEN: string;

@@ -14,16 +14,6 @@ interface RateLimitEntry {
 // In-memory store (works for single instance, use Redis for multi-instance)
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
-// Cleanup old entries every 5 minutes
-setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of rateLimitStore.entries()) {
-        if (entry.resetTime < now) {
-            rateLimitStore.delete(key);
-        }
-    }
-}, 5 * 60 * 1000);
-
 export interface RateLimitConfig {
     /** Maximum number of requests allowed in the window */
     limit: number;
@@ -141,3 +131,16 @@ export const RATE_LIMITS = {
     // Sitemap: 10 requests per minute per sitemap
     sitemap: { limit: 10, windowSeconds: 60 },
 } as const;
+
+/**
+ * Workers Rate Limiting binding check. Pass env.<BINDING> from getCloudflareContext().
+ * Keys on cf-connecting-ip (set by Cloudflare; x-forwarded-for is client-controlled). Fails open when the binding is missing (next dev).
+ */
+export async function limitByIp(
+    limiter: { limit(o: { key: string }): Promise<{ success: boolean }> } | undefined,
+    request: Request,
+): Promise<boolean> {
+    if (!limiter) return true;
+    const { success } = await limiter.limit({ key: request.headers.get('cf-connecting-ip') ?? getClientIp(request) });
+    return success;
+}
