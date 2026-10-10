@@ -160,5 +160,9 @@
     "skill": {
         "machineTranslated": "機械翻訳",
         "viewOriginal": "原文を見る"
+    },
+    "sponsor": {
+        "label": "スポンサー",
+        "newTab": "新しいタブで開きます"
     }
 }

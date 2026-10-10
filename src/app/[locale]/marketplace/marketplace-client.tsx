@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
+import { SponsorSlot } from '@/components/sponsor-slot';
 import { motion } from "framer-motion";
 import { Search, Loader2, Star, Copy, Terminal, Filter, ChevronDown, ArrowUpDown, Package, Code2, TestTube, Sparkles, Zap, Cloud, FileText, Image, Plug, Bot, Settings, GraduationCap, MessageSquare, Database, Wrench, X, Check, GitBranch } from "lucide-react";
 import { SubmitRepoForm } from "@/components/submit-repo-form";
@@ -540,6 +541,7 @@ function MarketplaceContent() {
                 </div>
             </div>
 
+            {category && category !== 'all' && <SponsorSlot placement={`category:${category}`} locale={locale} />}
             <Footer />
         </div>
     );

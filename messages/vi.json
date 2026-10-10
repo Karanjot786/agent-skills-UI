@@ -160,5 +160,9 @@
     "skill": {
         "machineTranslated": "Dịch tự động",
         "viewOriginal": "Xem bản gốc"
+    },
+    "sponsor": {
+        "label": "Được tài trợ",
+        "newTab": "mở trong thẻ mới"
     }
 }

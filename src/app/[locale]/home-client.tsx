@@ -11,7 +11,8 @@ import { Footer } from "@/components/footer";
 import { TerminalAnimation } from "@/components/terminal-animation";
 import { CategoriesShowcase, TrendingSkills, TopContributors, RecentSkills } from "@/components/home";
 import { SubmitRepoForm } from "@/components/submit-repo-form";
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { SponsorSlot } from "@/components/sponsor-slot";
 
 interface Skill {
   id: string;
@@ -45,6 +46,7 @@ const categories = [
 
 export default function Home({ children }: { children?: React.ReactNode }) {
   const t = useTranslations('home');
+  const locale = useLocale();
   const tc = useTranslations('common');
   const [stats, setStats] = useState<Stats>({ totalSkills: 0, uniqueAuthors: 0 });
   const [trending, setTrending] = useState<Skill[]>([]);
@@ -319,6 +321,7 @@ export default function Home({ children }: { children?: React.ReactNode }) {
 
         {/* Trending Skills */}
         <TrendingSkills skills={trending} />
+        <SponsorSlot placement="home" locale={locale} />
 
         {/* Top Authors */}
         <TopContributors authors={topAuthors} />

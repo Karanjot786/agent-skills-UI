@@ -160,5 +160,9 @@
     "skill": {
         "machineTranslated": "Traducción automática",
         "viewOriginal": "Ver original"
+    },
+    "sponsor": {
+        "label": "Patrocinado",
+        "newTab": "se abre en una pestaña nueva"
     }
 }

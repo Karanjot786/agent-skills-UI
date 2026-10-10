@@ -160,5 +160,9 @@
     "skill": {
         "machineTranslated": "机器翻译",
         "viewOriginal": "查看原文"
+    },
+    "sponsor": {
+        "label": "赞助",
+        "newTab": "在新标签页中打开"
     }
 }

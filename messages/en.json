@@ -160,5 +160,9 @@
     "skill": {
         "machineTranslated": "Machine-translated",
         "viewOriginal": "View original"
+    },
+    "sponsor": {
+        "label": "Sponsored",
+        "newTab": "opens in a new tab"
     }
 }
