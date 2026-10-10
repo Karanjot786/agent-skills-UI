@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
       })),
     ];
   },
-  // Middleware skips dotted paths, so rewrite <skill-url>.md to the markdown route here.
+  // Middleware passes .md paths through, so rewrite <skill-url>.md to the markdown route here.
   async rewrites() {
     return { beforeFiles: [{ source: '/marketplace/:owner/:name.md', destination: '/api/md/:owner/:name' }] };
   },

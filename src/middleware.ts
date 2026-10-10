@@ -19,6 +19,9 @@ export default function middleware(request: NextRequest) {
     const ua = request.headers.get('user-agent') || '';
     const { pathname } = request.nextUrl;
 
+    // <skill-url>.md mirrors are rewritten by next.config (beforeFiles); leave them untouched.
+    if (pathname.endsWith('.md')) return NextResponse.next();
+
     // zh-TW was retired for zh-CN: permanent 301, path and query kept.
     if (/^\/zh-TW(\/|$)/.test(pathname)) {
         return NextResponse.redirect(new URL(pathname.replace('/zh-TW', '/zh-CN') + request.nextUrl.search, request.url), {
@@ -48,5 +51,7 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/((?!api|_next|.*\\..*).*)'],
+    // Dotted paths are skipped (static files), except under listing routes where names and slugs may contain dots
+    // (@a/Next.js, io.github.acme--weather).
+    matcher: ['/((?!api|_next|.*\\..*).*)', '/(marketplace|mcp|agents|plugins)/:path+', '/:locale/(marketplace|mcp|agents|plugins)/:path+'],
 };
