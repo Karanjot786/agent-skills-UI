@@ -9,6 +9,8 @@ import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
 import { notFound } from 'next/navigation';
 import { getSkillBySlug, getSkillContent, getRelatedSkills, type SkillRow } from '@/lib/skills';
+import { buildAlternates, ogLocale, skillTitle, skillDescription } from '@/lib/seo';
+import { SITE_URL, absoluteUrl, skillPath } from '@/lib/site';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -29,53 +31,37 @@ export async function generateStaticParams() {
 // Generate dynamic metadata for SEO
 const safeDecode = (s: string) => { try { return decodeURIComponent(s); } catch { return null; } };
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string[] }> }): Promise<Metadata> {
-    const { slug } = await params;
-    // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string[] }> }): Promise<Metadata> {
+    const { locale, slug } = await params;
     const parts = slug.map(safeDecode);
     const scopedName = parts.join('/');
-
     const skill = parts.includes(null) ? null : await getSkillBySlug(scopedName);
 
     if (!skill) {
-        return {
-            title: 'Skill Not Found | Agent Skills',
-            description: 'The requested skill could not be found.',
-        };
+        return { title: 'Skill not found', description: 'The requested skill could not be found.', robots: { index: false, follow: false } };
     }
 
-    const siteUrl = 'https://www.agentskills.in';
-    const skillPath = `/marketplace/${(skill.scoped_name ?? scopedName).split('/').map(encodeURIComponent).join('/')}`;
-    const ogImageUrl = `${siteUrl}/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`;
+    // Skill content is English-only until WS3: every locale variant canonicalises to en, no hreflang.
+    const alt = buildAlternates(skillPath(skill.scoped_name ?? scopedName), ['en'], locale);
+    const title = skillTitle(skill.name, skill.author);
+    const description = skillDescription(skill.name, skill.description);
+    const ogImageUrl = absoluteUrl(`/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`);
 
     return {
-        title: `${skill.name} — AI Agent Skill for Cursor, Claude & Copilot | agentskills.in`,
-        description: skill.description?.slice(0, 155) || `Install the ${skill.name} skill for Cursor, Claude Code, GitHub Copilot and 40+ AI agents.`,
+        title: { absolute: title },
+        description,
         robots: skill.indexable ? { index: true, follow: true } : { index: false, follow: true },
-        alternates: {
-            // Skill content is English-only: every locale variant canonicalises to the English URL,
-            // so no hreflang set here (hreflang on non-canonical URLs is ignored/invalid).
-            canonical: `${siteUrl}${skillPath}`,
-        },
+        alternates: alt,
         openGraph: {
-            title: `${skill.scoped_name} | Agent Skills`,
-            description: skill.description || `Install ${skill.scoped_name} for your AI coding assistant.`,
+            title,
+            description,
             type: 'website',
-            url: `${siteUrl}${skillPath}`,
+            url: alt.canonical,
+            locale: ogLocale(locale),
             siteName: 'Agent Skills',
-            images: [{
-                url: ogImageUrl,
-                width: 1200,
-                height: 630,
-                alt: `${skill.name} - AI Skill for Cursor, Claude, Copilot`,
-            }],
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${skill.name} - Agent Skill for Claude Code, Cursor, Copilot` }],
         },
-        twitter: {
-            card: 'summary_large_image',
-            title: `${skill.scoped_name} | Agent Skills`,
-            description: skill.description || `Install ${skill.scoped_name} for your AI coding assistant.`,
-            images: [ogImageUrl],
-        },
+        twitter: { card: 'summary_large_image', title, description, images: [ogImageUrl] },
     };
 }
 
@@ -139,84 +125,29 @@ export default async function SkillPage({ params }: { params: Promise<{ slug: st
 
     const relatedSkills = (await getRelatedSkills(row.author, row.id)).map((r) => toSkill(r, null));
 
-    // JSON-LD Structured Data for SEO
+    const skillUrl = absoluteUrl(skillPath(skill.scoped_name || scopedName));
     const jsonLd = {
         "@context": "https://schema.org",
         "@graph": [
             {
                 "@type": "BreadcrumbList",
                 "itemListElement": [
-                    {
-                        "@type": "ListItem",
-                        "position": 1,
-                        "name": "Home",
-                        "item": "https://www.agentskills.in"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 2,
-                        "name": "Marketplace",
-                        "item": "https://www.agentskills.in/marketplace"
-                    },
-                    {
-                        "@type": "ListItem",
-                        "position": 3,
-                        "name": skill.name,
-                        "item": `https://www.agentskills.in/marketplace/${(skill.scoped_name || scopedName).split('/').map(encodeURIComponent).join('/')}`
-                    }
-                ]
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+                    { "@type": "ListItem", "position": 2, "name": "Marketplace", "item": absoluteUrl('/marketplace') },
+                    { "@type": "ListItem", "position": 3, "name": skill.name, "item": skillUrl },
+                ],
             },
             {
-                "@type": "SoftwareApplication",
+                "@type": "SoftwareSourceCode",
                 "name": skill.name,
                 "description": skill.description || `${skill.scoped_name} - A skill for AI coding assistants`,
-                "applicationCategory": "DeveloperApplication",
-                "operatingSystem": "Any",
-                "offers": {
-                    "@type": "Offer",
-                    "price": "0",
-                    "priceCurrency": "USD"
-                },
-                "author": {
-                    "@type": "Person",
-                    "name": skill.author,
-                    "url": `https://github.com/${skill.author}`
-                },
-                "aggregateRating": skill.stars > 0 ? {
-                    "@type": "AggregateRating",
-                    "ratingValue": Math.min(5, 3 + skill.stars / 100).toFixed(1),
-                    "ratingCount": String(skill.stars),
-                    "bestRating": "5",
-                    "worstRating": "1"
-                } : undefined
+                "url": skillUrl,
+                "codeRepository": skill.repo_full_name ? `https://github.com/${skill.repo_full_name}` : skill.github_url,
+                "dateModified": skill.updated_at ? new Date(skill.updated_at).toISOString() : undefined,
+                "inLanguage": "en",
+                "author": { "@type": "Person", "name": skill.author, "url": `https://github.com/${skill.author}` },
             },
-            {
-                "@type": "HowTo",
-                "name": `How to Install ${skill.name}`,
-                "description": `Step-by-step guide to install the ${skill.name} skill for your AI coding assistant`,
-                "step": [
-                    {
-                        "@type": "HowToStep",
-                        "position": 1,
-                        "name": "Install Agent Skills CLI",
-                        "text": "Install the CLI globally: npm install -g agent-skills-cli (or use npx)"
-                    },
-                    {
-                        "@type": "HowToStep",
-                        "position": 2,
-                        "name": "Install the skill",
-                        "text": `Run: npx agent-skills-cli install ${skill.scoped_name}`
-                    },
-                    {
-                        "@type": "HowToStep",
-                        "position": 3,
-                        "name": "Verify installation",
-                        "text": "Check installed skills with: npx agent-skills-cli list"
-                    }
-                ],
-                "totalTime": "PT1M"
-            }
-        ]
+        ],
     };
 
     return (
