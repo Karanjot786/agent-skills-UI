@@ -1,0 +1,46 @@
+// Shared by scripts/jobs/best-lists.mjs and the /best and /for pages.
+// Tool ids = agent keys in the CLI src/cli/agents.ts (per-agent /for pages; not the D1 tools table).
+export const TOOLS = [
+  { id: 'claude', name: 'Claude Code', dir: '.claude/skills/', terms: ['claude code'] },
+  { id: 'cursor', name: 'Cursor', dir: '.cursor/skills/', terms: ['cursor'] },
+  { id: 'copilot', name: 'GitHub Copilot', dir: '.github/skills/', terms: ['copilot'] },
+  { id: 'codex', name: 'OpenAI Codex', dir: '.codex/skills/', terms: ['codex'] },
+  { id: 'gemini-cli', name: 'Gemini CLI', dir: '.gemini/skills/', terms: ['gemini cli'] },
+  { id: 'windsurf', name: 'Windsurf', dir: '.windsurf/skills/', terms: ['windsurf'] },
+  { id: 'cline', name: 'Cline', dir: '.cline/skills/', terms: ['cline'] },
+  { id: 'antigravity', name: 'Antigravity', dir: '.agent/workflows/', terms: ['antigravity'] },
+];
+
+const T = (slug, label, ...terms) => ({ slug, label, terms });
+export const BEST_TOPICS = [
+  T('code-review', 'code review', 'code review', 'pull request review'),
+  T('unit-testing', 'unit testing', 'unit test', 'test generation'),
+  T('debugging', 'debugging', 'debugging', 'bug fix'),
+  T('git-workflow', 'git workflows', 'git commit', 'git workflow'),
+  T('pull-requests', 'pull requests', 'pull request', 'pr description'),
+  T('refactoring', 'refactoring', 'refactor'),
+  T('documentation', 'writing documentation', 'documentation generator', 'readme'),
+  T('api-design', 'API design', 'api design', 'openapi'),
+  T('sql-databases', 'SQL and databases', 'sql', 'postgres', 'database migration'),
+  T('docker', 'Docker', 'docker', 'dockerfile'),
+  T('kubernetes', 'Kubernetes', 'kubernetes', 'helm'),
+  T('ci-cd', 'CI/CD', 'github actions', 'ci cd pipeline'),
+  T('security-audit', 'security audits', 'security audit', 'vulnerability'),
+  T('web-scraping', 'web scraping', 'web scraping', 'scraper'),
+  T('react', 'React', 'react component', 'react hooks'),
+  T('nextjs', 'Next.js', 'next.js', 'nextjs'),
+  T('python', 'Python', 'python best practices', 'python'),
+  T('typescript', 'TypeScript', 'typescript'),
+  T('data-analysis', 'data analysis', 'data analysis', 'pandas'),
+  T('machine-learning', 'machine learning', 'machine learning', 'pytorch'),
+  T('prompt-engineering', 'prompt engineering', 'prompt engineering', 'prompt optimizer'),
+  T('mcp-servers', 'building MCP servers', 'mcp server', 'model context protocol'),
+  T('pdf-documents', 'PDF documents', 'pdf'),
+  T('spreadsheets', 'spreadsheets', 'excel', 'spreadsheet'),
+  T('seo', 'SEO', 'seo audit', 'seo'),
+  T('writing', 'writing and editing', 'copywriting', 'blog writing'),
+  T('ui-design', 'UI design', 'ui design', 'design system'),
+  T('playwright-testing', 'browser testing', 'playwright', 'end-to-end testing'),
+  T('aws-cloud', 'AWS and cloud', 'aws', 'terraform'),
+  T('project-planning', 'project planning', 'project planning', 'task breakdown'),
+];
