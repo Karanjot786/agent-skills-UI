@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { motion } from "framer-motion";
 import { Search, Loader2, Star, Copy, Terminal, Filter, ChevronDown, ArrowUpDown, Package, Code2, TestTube, Sparkles, Zap, Cloud, FileText, Image, Plug, Bot, Settings, GraduationCap, MessageSquare, Database, Wrench, X, Check, GitBranch } from "lucide-react";
 import { SubmitRepoForm } from "@/components/submit-repo-form";
@@ -105,6 +106,7 @@ function highlightText(text: string, searchQuery: string): React.ReactNode {
 function MarketplaceContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const locale = useLocale();
 
     // Read initial values from URL
     const [query, setQuery] = useState(searchParams.get('search') || '');
@@ -171,6 +173,7 @@ function MarketplaceContent() {
                     sortBy,
                     ...(category && { category }),
                     ...(author && { author }),
+                    locale,
                 });
                 const res = await fetch(`/api/skills?${params}`);
                 const data = await res.json<{ skills?: Skill[]; total?: number }>();
@@ -185,7 +188,7 @@ function MarketplaceContent() {
 
         const timer = setTimeout(searchSkills, 300);
         return () => clearTimeout(timer);
-    }, [query, category, sortBy, author]);
+    }, [query, category, sortBy, author, locale]);
 
     const loadMore = async () => {
         setLoadingMore(true);
@@ -197,6 +200,7 @@ function MarketplaceContent() {
                 sortBy,
                 ...(category && { category }),
                 ...(author && { author }),
+                locale,
             });
             const res = await fetch(`/api/skills?${params}`);
             const data = await res.json<{ skills?: Skill[] }>();

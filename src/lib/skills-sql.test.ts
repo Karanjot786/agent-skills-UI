@@ -56,3 +56,26 @@ test('category=all is ignored; never selects content', () => {
 test('name sort is case-insensitive so it can use idx_skills_name_nc', () => {
   assert.match(buildSkillsSql(q('sortBy=name')).sql, /ORDER BY s\.name COLLATE NOCASE ASC/);
 });
+
+test('locale defaults to en and is validated', () => {
+  assert.equal(q('').locale, 'en');
+  assert.equal(q('locale=ja').locale, 'ja');
+  assert.equal(q('locale=pt-BR').locale, 'pt-BR');
+  assert.equal(q('locale=x;drop').locale, 'en');
+});
+
+test('non-en 3+ char search also matches translated descriptions; join bind comes first', () => {
+  const s = buildSkillsSql(q('search=excel&locale=ja'));
+  assert.match(s.sql, /LEFT JOIN skill_i18n t ON t\.skill_seq = s\.seq AND t\.locale = \?/);
+  assert.match(s.sql, /COALESCE\(t\.description, s\.description\) AS description/);
+  assert.match(s.sql, /s\.seq IN \(SELECT rowid FROM skills_fts WHERE skills_fts MATCH \?\) OR s\.seq IN \(SELECT skill_seq FROM skill_i18n WHERE locale = \? AND description LIKE \?\)/);
+  assert.deepEqual(s.binds, ['ja', '"excel"', 'ja', '%excel%']);
+  assert.match(s.countSql, /LEFT JOIN skill_i18n/);
+});
+
+test('en search is unchanged (FTS join, no i18n join)', () => {
+  const s = buildSkillsSql(q('search=excel'));
+  assert.match(s.sql, /skills_fts JOIN skills s/);
+  assert.doesNotMatch(s.sql, /skill_i18n/);
+  assert.deepEqual(s.binds, ['"excel"']);
+});
