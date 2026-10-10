@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         title: { absolute: title },
         description,
         robots: skill.indexable ? { index: true, follow: true } : { index: false, follow: true },
-        alternates: { ...alt, types: { 'text/markdown': `${alt.canonical}.md` } },
+        alternates: { ...alt, types: { 'text/markdown': `${absoluteUrl(skillPath(skill.scoped_name ?? scopedName))}.md` } }, // mirror is English-only
         openGraph: {
             title,
             description,
