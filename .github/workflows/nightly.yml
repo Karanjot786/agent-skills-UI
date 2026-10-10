@@ -1,0 +1,44 @@
+name: nightly
+on:
+  schedule:
+    - cron: '17 2 * * *'   # 02:17 UTC daily
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Full MCP registry crawl (ignore updated_since)'
+        type: boolean
+        default: false
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Job unit tests
+        run: node --test scripts/jobs/lib/*.test.mjs
+      - name: refresh-derived (before)
+        run: node scripts/jobs/refresh-derived.mjs --remote
+      - name: ingest-mcp
+        run: node scripts/jobs/ingest-mcp.mjs --remote ${{ github.event.inputs.full == 'true' && '--full' || '' }}
+      - name: ingest-trees
+        run: node scripts/jobs/ingest-trees.mjs --remote
+      # Section F inserts `scan` here (before best-lists).
+      - name: best-lists
+        run: node scripts/jobs/best-lists.mjs --remote --apply
+      - name: refresh-derived (after)
+        if: ${{ !cancelled() }}
+        run: node scripts/jobs/refresh-derived.mjs --remote
