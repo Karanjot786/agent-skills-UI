@@ -20,7 +20,12 @@
         "faq": "FAQ",
         "stats": "Stats",
         "github": "GitHub",
-        "getStarted": "Get Started"
+        "getStarted": "Get Started",
+        "mcp": "MCP Servers",
+        "agents": "Subagents",
+        "plugins": "Plugins",
+        "tools": "Tools",
+        "categories": "Categories"
     },
     "home": {
         "badge": "{count}+ Skills Available",
@@ -147,7 +152,20 @@
             "github": "GitHub",
             "npm": "npm"
         },
-        "copyright": "© {year} Agent Skills. Open Source."
+        "copyright": "© {year} Agent Skills. Open Source.",
+        "browse": "Browse",
+        "product": "Product",
+        "resources": "Resources",
+        "legal": "Legal",
+        "submit": "Submit a repo",
+        "advertise": "Advertise",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "takedown": "Takedown & disputes",
+        "advisories": "Security advisories",
+        "changelog": "Changelog",
+        "npm": "npm package",
+        "issue": "Report an issue"
     },
     "categories": {
         "development": "Development",

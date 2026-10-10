@@ -1,17 +1,51 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
+import { NavLink } from '@/components/navbar';
 import { Terminal } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+
+const GH = 'https://github.com/Karanjot786/agent-skills-cli';
+// en: English-only page, linked without a locale prefix (see NavLink).
+const COLUMNS: { title: string; links: { href: string; label: string; en?: true }[] }[] = [
+    { title: 'browse', links: [
+        { href: '/marketplace', label: 'nav.marketplace' },
+        { href: '/mcp', label: 'nav.mcp', en: true },
+        { href: '/agents', label: 'nav.agents', en: true },
+        { href: '/plugins', label: 'nav.plugins', en: true },
+        { href: '/tools', label: 'nav.tools', en: true },
+        { href: '/categories', label: 'nav.categories' },
+    ] },
+    { title: 'product', links: [
+        { href: '/docs', label: 'nav.docs' },
+        { href: '/faq', label: 'nav.faq' },
+        { href: '/#submit', label: 'submit' },
+        { href: '/advertise', label: 'advertise' },
+    ] },
+    { title: 'resources', links: [
+        { href: GH, label: 'nav.github' },
+        { href: 'https://www.npmjs.com/package/agent-skills-cli', label: 'npm' },
+        { href: `${GH}/blob/main/CHANGELOG.md`, label: 'changelog' },
+        { href: '/advisories.json', label: 'advisories' },
+        { href: `${GH}/issues`, label: 'issue' },
+    ] },
+    { title: 'legal', links: [
+        { href: '/terms', label: 'terms' },
+        { href: '/privacy', label: 'privacy' },
+        { href: '/takedown', label: 'takedown' },
+    ] },
+];
 
 export function Footer() {
     const t = useTranslations('footer');
     const tn = useTranslations('nav');
+    // 'nav.x' keys come from the navbar namespace, the rest from footer.
+    const label = (k: string) => (k.startsWith('nav.') ? tn(k.slice(4)) : t(k));
 
     return (
         <footer className="border-t border-white/10 py-16 bg-black">
             <div className="container mx-auto px-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
                     {/* Brand */}
                     <div className="col-span-2 md:col-span-1">
                         <Link href="/" className="flex items-center gap-2 font-bold text-xl hover:opacity-80 transition-opacity mb-4">
@@ -25,44 +59,22 @@ export function Footer() {
                         </p>
                     </div>
 
-                    {/* Product */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wider">Product</h3>
-                        <ul className="space-y-3 text-sm text-zinc-400">
-                            <li><Link href="/marketplace" className="hover:text-cyan-400 transition-colors">{tn('marketplace')}</Link></li>
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">{tn('docs')}</Link></li>
-                            <li><Link href="/faq" className="hover:text-cyan-400 transition-colors">{tn('faq')}</Link></li>
-                            {/* <li><Link href="/stats" className="hover:text-cyan-400 transition-colors">Statistics</Link></li> */}
-                        </ul>
-                    </div>
-
-                    {/* Resources */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wider">Resources</h3>
-                        <ul className="space-y-3 text-sm text-zinc-400">
-                            <li><a href="https://github.com/Karanjot786/agent-skills-cli" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">{tn('github')}</a></li>
-                            <li><a href="https://www.npmjs.com/package/agent-skills-cli" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">npm Package</a></li>
-                            <li><a href="https://github.com/Karanjot786/agent-skills-cli/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Changelog</a></li>
-                            <li><a href="https://github.com/Karanjot786/agent-skills-cli/issues" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Report Issue</a></li>
-                            <li><Link href="/advertise" className="hover:text-cyan-400 transition-colors">Advertise</Link></li>
-                            <li><Link href="/terms" className="hover:text-cyan-400 transition-colors">Terms</Link></li>
-                            <li><Link href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy</Link></li>
-                            <li><Link href="/takedown" className="hover:text-cyan-400 transition-colors">Takedown</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Agents */}
-                    <div>
-                        <h3 className="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wider">Supported Agents</h3>
-                        <ul className="space-y-3 text-sm text-zinc-400">
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">Cursor</Link></li>
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">Claude Code</Link></li>
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">GitHub Copilot</Link></li>
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">Gemini CLI</Link></li>
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">Windsurf & Cline</Link></li>
-                            <li><Link href="/docs" className="hover:text-cyan-400 transition-colors">+37 more agents</Link></li>
-                        </ul>
-                    </div>
+                    {COLUMNS.map((col) => (
+                        <nav key={col.title} aria-labelledby={`footer-${col.title}`}>
+                            <h3 id={`footer-${col.title}`} className="text-sm font-semibold text-zinc-300 mb-4 uppercase tracking-wider">{t(col.title)}</h3>
+                            <ul className="space-y-3 text-sm text-zinc-400">
+                                {col.links.map((l) => (
+                                    <li key={l.href}>
+                                        {l.href.startsWith('http')
+                                            ? <a href={l.href} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">{label(l.label)}</a>
+                                            : l.href.endsWith('.json') // not a localized page: no locale prefix
+                                                ? <a href={l.href} className="hover:text-cyan-400 transition-colors">{label(l.label)}</a>
+                                                : <NavLink href={l.href} en={l.en} className="hover:text-cyan-400 transition-colors">{label(l.label)}</NavLink>}
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    ))}
                 </div>
 
                 {/* Bottom bar */}

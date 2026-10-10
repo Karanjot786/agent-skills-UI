@@ -1,12 +1,28 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
+import NextLink from 'next/link';
 import { Terminal, Search, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavGitHubStars } from '@/components/nav-github-stars';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+
+// Main browse pages; FAQ, legal and the rest live in the footer. en: English-only page (see NavLink).
+const NAV_LINKS = [
+    { href: '/marketplace', key: 'marketplace' },
+    { href: '/mcp', key: 'mcp', en: true },
+    { href: '/agents', key: 'agents', en: true },
+    { href: '/plugins', key: 'plugins', en: true },
+    { href: '/tools', key: 'tools', en: true },
+    { href: '/docs', key: 'docs' },
+] as const;
+
+// English-only pages (items, tools) use a plain next/link so translated pages link to /mcp, not /en/mcp -> 307.
+export function NavLink({ en, href, ...props }: Omit<React.ComponentProps<'a'>, 'href'> & { href: string; en?: boolean }) {
+    return en ? <NextLink href={href} {...props} /> : <Link href={href} {...props} />;
+}
 
 interface NavbarProps {
     showGetStarted?: boolean;
@@ -53,7 +69,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
 
             {/* Desktop Header */}
             <header
-                className={`sticky top-4 z-[9999] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-background/80 md:flex backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ${isScrolled ? "max-w-3xl px-2" : "max-w-5xl px-4"
+                className={`sticky top-4 z-[9999] mx-auto hidden w-full flex-row items-center justify-between self-start rounded-full bg-background/80 md:flex backdrop-blur-sm border border-border/50 shadow-lg transition-all duration-300 ${isScrolled ? "max-w-4xl px-2" : "max-w-5xl px-4"
                     } py-2`}
                 style={{
                     willChange: "transform",
@@ -63,7 +79,7 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
                 }}
             >
                 <Link
-                    className={`z-50 flex items-center justify-center gap-2 transition-all duration-300 mr-8 ${isScrolled ? "ml-2" : ""
+                    className={`z-50 flex items-center justify-center gap-2 transition-all duration-300 mr-4 ${isScrolled ? "ml-2" : ""
                         }`}
                     href="/"
                 >
@@ -78,34 +94,15 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
                     </span>
                 </Link>
 
-                <nav className="flex flex-1 flex-row items-center justify-center gap-1 text-sm font-medium">
-                    <Link
-                        className="relative px-4 py-2 text-zinc-400 hover:text-cyan-400 transition-colors"
-                        href="/marketplace"
-                    >
-                        <span className="relative z-20">{t('marketplace')}</span>
-                    </Link>
-                    <Link
-                        className="relative px-4 py-2 text-zinc-400 hover:text-cyan-400 transition-colors"
-                        href="/docs"
-                    >
-                        <span className="relative z-20">{t('docs')}</span>
-                    </Link>
-                    <Link
-                        className="relative px-4 py-2 text-zinc-400 hover:text-cyan-400 transition-colors"
-                        href="/faq"
-                    >
-                        <span className="relative z-20">{t('faq')}</span>
-                    </Link>
-                    {/* <Link
-                        className="relative px-4 py-2 text-zinc-400 hover:text-cyan-400 transition-colors"
-                        href="/stats"
-                    >
-                        <span className="relative z-20">Stats</span>
-                    </Link> */}
+                <nav className="flex flex-1 flex-row items-center justify-center gap-0.5 text-sm font-medium whitespace-nowrap">
+                    {NAV_LINKS.map((l) => (
+                        <NavLink key={l.href} en={'en' in l} className="relative px-3 py-2 text-zinc-400 hover:text-cyan-400 transition-colors" href={l.href}>
+                            <span className="relative z-20">{t(l.key)}</span>
+                        </NavLink>
+                    ))}
                 </nav>
 
-                <div className="flex items-center gap-4 ml-8">
+                <div className="flex items-center gap-3 ml-4">
                     <NavGitHubStars />
                     <Button
                         variant="ghost"
@@ -167,36 +164,19 @@ export function Navbar({ showGetStarted = false }: NavbarProps) {
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div className="sticky top-4 z-[9999] mx-4 flex w-auto flex-row items-center justify-between rounded-full bg-background/80 backdrop-blur-sm border border-border/50 shadow-lg md:hidden px-4 py-3fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm md:hidden">
-                    <div className="absolute top-20 left-4 right-4 bg-zinc-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6">
+                    <div className="absolute top-20 left-4 right-4 max-h-[calc(100dvh-6rem)] overflow-y-auto bg-zinc-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-6">
                         <nav className="flex flex-col space-y-2">
-                            <Link
-                                href="/marketplace"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="px-4 py-3 text-lg font-medium text-zinc-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-white/5"
-                            >
-                                {t('marketplace')}
-                            </Link>
-                            <Link
-                                href="/docs"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="px-4 py-3 text-lg font-medium text-zinc-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-white/5"
-                            >
-                                {t('docs')}
-                            </Link>
-                            <Link
-                                href="/faq"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="px-4 py-3 text-lg font-medium text-zinc-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-white/5"
-                            >
-                                {t('faq')}
-                            </Link>
-                            {/* <Link
-                                href="/stats"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="px-4 py-3 text-lg font-medium text-zinc-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-white/5"
-                            >
-                                Stats
-                            </Link> */}
+                            {[...NAV_LINKS, { href: '/categories', key: 'categories' } as const, { href: '/faq', key: 'faq' } as const].map((l) => (
+                                <NavLink
+                                    key={l.href}
+                                    href={l.href}
+                                    en={'en' in l}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="px-4 py-3 text-lg font-medium text-zinc-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-white/5"
+                                >
+                                    {t(l.key)}
+                                </NavLink>
+                            ))}
                             <div className="border-t border-white/10 pt-4 mt-4 flex flex-col space-y-3">
                                 <a
                                     href="https://github.com/Karanjot786/agent-skills-cli"

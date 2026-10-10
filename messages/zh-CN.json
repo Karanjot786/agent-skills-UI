@@ -20,7 +20,12 @@
         "faq": "常见问题",
         "stats": "统计",
         "github": "GitHub",
-        "getStarted": "开始使用"
+        "getStarted": "开始使用",
+        "mcp": "MCP 服务器",
+        "agents": "子代理",
+        "plugins": "插件",
+        "tools": "工具",
+        "categories": "分类"
     },
     "home": {
         "badge": "{count}+ 个技能可用",
@@ -147,7 +152,20 @@
             "github": "GitHub",
             "npm": "npm"
         },
-        "copyright": "© {year} Agent Skills. 开源。"
+        "copyright": "© {year} Agent Skills. 开源。",
+        "browse": "浏览",
+        "product": "产品",
+        "resources": "资源",
+        "legal": "法律",
+        "submit": "提交仓库",
+        "advertise": "广告合作",
+        "terms": "服务条款",
+        "privacy": "隐私",
+        "takedown": "下架与申诉",
+        "advisories": "安全公告",
+        "changelog": "更新日志",
+        "npm": "npm 包",
+        "issue": "报告问题"
     },
     "categories": {
         "development": "开发",

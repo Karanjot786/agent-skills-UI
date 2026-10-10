@@ -20,7 +20,12 @@
         "faq": "よくある質問",
         "stats": "統計",
         "github": "GitHub",
-        "getStarted": "始める"
+        "getStarted": "始める",
+        "mcp": "MCPサーバー",
+        "agents": "サブエージェント",
+        "plugins": "プラグイン",
+        "tools": "ツール",
+        "categories": "カテゴリ"
     },
     "home": {
         "badge": "{count}+ スキルが利用可能",
@@ -147,7 +152,20 @@
             "github": "GitHub",
             "npm": "npm"
         },
-        "copyright": "© {year} Agent Skills. オープンソース。"
+        "copyright": "© {year} Agent Skills. オープンソース。",
+        "browse": "閲覧",
+        "product": "製品",
+        "resources": "リソース",
+        "legal": "法的情報",
+        "submit": "リポジトリを登録",
+        "advertise": "広告掲載",
+        "terms": "利用規約",
+        "privacy": "プライバシー",
+        "takedown": "削除依頼と異議申し立て",
+        "advisories": "セキュリティアドバイザリ",
+        "changelog": "変更履歴",
+        "npm": "npm パッケージ",
+        "issue": "問題を報告"
     },
     "categories": {
         "development": "開発",

@@ -20,7 +20,12 @@
         "faq": "Câu hỏi thường gặp",
         "stats": "Thống kê",
         "github": "GitHub",
-        "getStarted": "Bắt đầu"
+        "getStarted": "Bắt đầu",
+        "mcp": "Máy chủ MCP",
+        "agents": "Subagent",
+        "plugins": "Plugin",
+        "tools": "Công cụ",
+        "categories": "Danh mục"
     },
     "home": {
         "badge": "{count}+ Kỹ năng có sẵn",
@@ -147,7 +152,20 @@
             "github": "GitHub",
             "npm": "npm"
         },
-        "copyright": "© {year} Agent Skills. Mã nguồn mở."
+        "copyright": "© {year} Agent Skills. Mã nguồn mở.",
+        "browse": "Duyệt",
+        "product": "Sản phẩm",
+        "resources": "Tài nguyên",
+        "legal": "Pháp lý",
+        "submit": "Gửi kho mã",
+        "advertise": "Quảng cáo",
+        "terms": "Điều khoản",
+        "privacy": "Quyền riêng tư",
+        "takedown": "Gỡ bỏ và khiếu nại",
+        "advisories": "Cảnh báo bảo mật",
+        "changelog": "Nhật ký thay đổi",
+        "npm": "Gói npm",
+        "issue": "Báo lỗi"
     },
     "categories": {
         "development": "Phát triển",
