@@ -9,6 +9,7 @@ import { Footer } from '@/components/footer';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { InstallTabs } from '@/components/install-tabs';
+import { ScanBadge } from '@/components/scan-badge';
 import { ItemCard } from '@/components/items/item-card';
 import { getItem, getItemBySeq, getItemTools, getRelatedItems } from '@/lib/items';
 import { isValidSlug, itemMetaDescription, itemPath, PERMISSIVE_LICENSES, TYPE_LABELS, TYPE_SEGMENT, typeFromSegment } from '@/lib/items-sql';
@@ -115,6 +116,7 @@ export default async function ItemPage({ params }: P) {
                             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 rounded-full text-yellow-400"><Star className="size-3.5 fill-yellow-400" /> {item.stars.toLocaleString('en-US')}</span>
                             <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800/50 rounded-full text-zinc-400"><Scale className="size-3.5" /> {item.license ?? 'No license'}</span>
                             {item.updated_at && <span className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800/50 rounded-full text-zinc-400"><Clock className="size-3.5" /> Updated {item.updated_at.slice(0, 10)}</span>}
+                            <ScanBadge itemType={item.type} itemRef={String(item.seq)} name={item.name} />
                         </div>
                         <p className="text-lg text-zinc-300 leading-relaxed max-w-3xl">{item.description || `${item.name} ${L.singular.toLowerCase()}.`}</p>
                     </div>

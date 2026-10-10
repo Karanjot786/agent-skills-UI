@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/copy-button";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
+import { ScanBadge } from "@/components/scan-badge";
 import { notFound, permanentRedirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { locales, defaultLocale } from '@/i18n/config';
@@ -239,7 +240,7 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                                             <span>{category.name}</span>
                                         </Link>
                                     )}
-                                    {/* scan-badge: F adds <ScanBadge itemType="skill" itemRef={row.id} /> here */}
+                                    <ScanBadge itemType="skill" itemRef={row.id} name={skill.scoped_name || skill.name} />
                                 </div>
                             </div>
                             {skill.github_url && (

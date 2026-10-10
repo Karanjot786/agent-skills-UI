@@ -1,0 +1,16 @@
+name: Scan finding dispute
+description: Tell us a scan finding on agentskills.in is wrong
+labels: [scan-dispute]
+body:
+  - type: input
+    id: page
+    attributes: { label: Page URL, placeholder: "https://www.agentskills.in/marketplace/@owner/skill" }
+    validations: { required: true }
+  - type: input
+    id: rule
+    attributes: { label: Rule id(s), placeholder: "PI002" }
+    validations: { required: true }
+  - type: textarea
+    id: why
+    attributes: { label: Why is it a false positive?, description: Link to the exact lines if you can. }
+    validations: { required: true }
