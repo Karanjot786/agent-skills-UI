@@ -3,31 +3,11 @@
 // Reads DATABASE_URL from .env. Never logs it.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { MAX_STATEMENT_BYTES, sqlValue, insertStatement } from './jobs/lib/d1.mjs';
+export { MAX_STATEMENT_BYTES, sqlValue, insertStatement };
 
-export const MAX_STATEMENT_BYTES = 100_000;
 const SKILLS_PER_FILE = 25_000;
 const PAGE = 2_000;
-
-export function sqlValue(v) {
-  if (v === null || v === undefined) return 'NULL';
-  if (typeof v === 'boolean') return v ? '1' : '0';
-  if (typeof v === 'number' || typeof v === 'bigint') return String(v);
-  if (v instanceof Date) return `'${v.toISOString()}'`;
-  if (typeof v === 'object') return sqlValue(JSON.stringify(v)); // text[] and json -> JSON text
-  // wrangler rejects any file containing the literal "BEGIN TRANSACTION" (even inside content): split it via ||
-  return `'${String(v).replace(/'/g, "''").replaceAll('BEGIN TRANSACTION', "BEGIN TRANS'||'ACTION")}'`;
-}
-
-export function insertStatement(table, row) {
-  const cols = Object.keys(row);
-  const build = (r) => `INSERT OR IGNORE INTO ${table} (${cols.join(',')}) VALUES (${cols.map((c) => sqlValue(r[c])).join(',')});`;
-  let sql = build(row);
-  if (Buffer.byteLength(sql) >= MAX_STATEMENT_BYTES && 'content' in row) {
-    sql = build({ ...row, content: null }); // ponytail: page falls back to raw_url for these 148 rows
-  }
-  if (Buffer.byteLength(sql) >= MAX_STATEMENT_BYTES) throw new Error(`row ${row.id} too big for one D1 statement`);
-  return sql;
-}
 
 const SKILL_COLS = 'id,name,author,scoped_name,description,author_avatar,github_url,raw_url,repo_full_name,stars,forks,path,branch,has_marketplace,indexed_at,updated_at,content,folder_url,from_manifest,manifest_version,category';
 
