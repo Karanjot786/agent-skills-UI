@@ -156,5 +156,9 @@
         "ai": "AI & ML",
         "security": "Bảo mật",
         "all": "Tất cả kỹ năng"
+    },
+    "skill": {
+        "machineTranslated": "Dịch tự động",
+        "viewOriginal": "Xem bản gốc"
     }
 }

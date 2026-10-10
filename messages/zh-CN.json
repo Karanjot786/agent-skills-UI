@@ -156,5 +156,9 @@
         "ai": "AI & ML",
         "security": "安全",
         "all": "所有技能"
+    },
+    "skill": {
+        "machineTranslated": "机器翻译",
+        "viewOriginal": "查看原文"
     }
 }

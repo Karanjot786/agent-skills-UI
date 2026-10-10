@@ -156,5 +156,9 @@
         "ai": "IA y ML",
         "security": "Seguridad",
         "all": "Todas las habilidades"
+    },
+    "skill": {
+        "machineTranslated": "Traducción automática",
+        "viewOriginal": "Ver original"
     }
 }

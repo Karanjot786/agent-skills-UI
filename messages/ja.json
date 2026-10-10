@@ -157,5 +157,9 @@
         "ai": "AI・ML",
         "security": "セキュリティ",
         "all": "すべてのスキル"
+    },
+    "skill": {
+        "machineTranslated": "機械翻訳",
+        "viewOriginal": "原文を見る"
     }
 }

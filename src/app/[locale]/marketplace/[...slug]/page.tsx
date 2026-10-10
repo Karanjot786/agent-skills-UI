@@ -8,7 +8,10 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
 import { notFound, permanentRedirect } from 'next/navigation';
-import { defaultLocale } from '@/i18n/config';
+import { getTranslations } from 'next-intl/server';
+import { locales, defaultLocale } from '@/i18n/config';
+import { resolveLocale } from '@/lib/i18n-state';
+import { getSkillTranslations } from '@/lib/i18n-content';
 import { getSkillBySlug, getSkillContent, getRelatedSkills, getSkillSummary, type SkillRow } from '@/lib/skills';
 import { getCategory, getRelatedByCategory } from '@/lib/lists';
 import { SkillList } from '@/components/listing';
@@ -44,11 +47,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         return { title: 'Skill not found', description: 'The requested skill could not be found.', robots: { index: false, follow: false } };
     }
 
-    // Skill content is English-only until WS3: every locale variant canonicalises to en, no hreflang.
-    const alt = buildAlternates(skillPath(skill.scoped_name ?? scopedName), ['en'], locale);
+    // Spec 6.3: translated locale = self-canonical + hreflang among existing translations; others redirect (page) to en.
+    const trs = await getSkillTranslations(skill.seq);
+    const loc = resolveLocale(locale, locales, defaultLocale, trs.map((t) => t.locale), trs.find((t) => t.locale === locale) ?? null, skill);
+    const effective = loc.state === 'translated' ? locale : defaultLocale;
+    const alt = buildAlternates(skillPath(skill.scoped_name ?? scopedName), loc.hreflang, effective);
     const title = skillTitle(skill.name, skill.author);
-    const description = skillDescription(skill.name, skill.description);
-    const ogImageUrl = absoluteUrl(`/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent((skill.description || '').slice(0, 100))}`);
+    const description = skillDescription(skill.name, loc.description);
+    const ogImageUrl = absoluteUrl(`/api/og?title=${encodeURIComponent(skill.name)}&description=${encodeURIComponent(loc.description.slice(0, 100))}`);
 
     return {
         title: { absolute: title },
@@ -60,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
             description,
             type: 'website',
             url: alt.canonical,
-            locale: ogLocale(locale),
+            locale: ogLocale(effective),
             siteName: 'Agent Skills',
             images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${skill.name} - Agent Skill for Claude Code, Cursor, Copilot` }],
         },
@@ -126,7 +132,14 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
     const action = slugAction(scopedName, row);
     if (action === 'notfound') notFound();
     if (action === 'redirect') permanentRedirect(`${locale === defaultLocale ? '' : `/${locale}`}${skillPath(row.scoped_name!)}`);
-    const skill = toSkill(row, await getSkillContent(scopedName));
+    const trs = await getSkillTranslations(row.seq);
+    const have = trs.map((t) => t.locale);
+    // 308 (permanent): no translation row for this locale => English URL (spec 6.3).
+    if (locale !== defaultLocale && !have.includes(locale)) permanentRedirect(skillPath(row.scoped_name ?? scopedName));
+    const src = toSkill(row, await getSkillContent(scopedName));
+    const loc = resolveLocale(locale, locales, defaultLocale, have, trs.find((t) => t.locale === locale) ?? null, { description: src.description, content: src.content ?? null });
+    const t = await getTranslations({ locale, namespace: 'skill' });
+    const skill = { ...src, description: loc.description, content: loc.body ?? undefined };
     // ponytail: hard 25K cut; an unclosed code fence only affects the tail, add line/fence-aware cut if it shows up.
     const BODY_MAX = 25_000;
     const truncated = (skill.content?.length ?? 0) > BODY_MAX;
@@ -157,7 +170,7 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                 "url": skillUrl,
                 "codeRepository": skill.repo_full_name ? `https://github.com/${skill.repo_full_name}` : skill.github_url,
                 "dateModified": skill.updated_at ? new Date(skill.updated_at).toISOString() : undefined,
-                "inLanguage": "en",
+                "inLanguage": loc.translated ? locale : "en",
                 "author": { "@type": "Person", "name": skill.author, "url": `https://github.com/${skill.author}` },
             },
         ],
@@ -242,6 +255,17 @@ export default async function SkillPage({ params }: { params: Promise<{ locale: 
                         <p className="text-lg text-zinc-300 leading-relaxed max-w-3xl">
                             {skill.description || 'A useful skill for AI development.'}
                         </p>
+                        {loc.translated && loc.summary && (
+                            <p className="mt-4 text-base text-zinc-400 leading-relaxed max-w-3xl">{loc.summary}</p>
+                        )}
+                        {loc.translated && (
+                            <p className="mt-4 text-xs text-zinc-500">
+                                {t('machineTranslated')} ·{' '}
+                                <Link href={skillPath(skill.scoped_name)} locale={defaultLocale} className="text-cyan-400 hover:underline">
+                                    {t('viewOriginal')}
+                                </Link>
+                            </p>
+                        )}
                     </div>
                 </div>
 
