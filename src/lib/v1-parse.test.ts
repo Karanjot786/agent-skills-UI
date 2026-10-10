@@ -20,6 +20,10 @@ test('repoUrlRange gives the repo root plus the bracketed prefix on the unique i
   assert.ok(!hit('https://github.com/a/b-other/tree/main/x'));
   assert.ok(!hit('https://github.com/a/b.js'));
 });
+test('repoUrlRange is lowercase so lower(github_url) matches any casing', () => {
+  assert.deepEqual(repoUrlRange('Karanjot786', 'Agent-Skills-CLI'),
+    ['https://github.com/karanjot786/agent-skills-cli', 'https://github.com/karanjot786/agent-skills-cli/', 'https://github.com/karanjot786/agent-skills-cli0']);
+});
 test('summarizeFindings groups by skill and severity, tracks latest scan', () => {
   const out = summarizeFindings([
     { item_ref: 's1', severity: 'high', n: 2, scanned_at: '2026-10-01' },

@@ -12,9 +12,10 @@ export function parseRepo(raw: string | null): { owner: string; repo: string } |
 }
 
 // Root match for a SKILL.md at the repo root; '0' is the character after '/', so [lo, hi) covers every URL
-// under the repo. Both use the UNIQUE(github_url) index.
+// under the repo. Lowercase, compared against lower(github_url) (idx_skills_github_url_lower): GitHub names are
+// case-insensitive.
 export function repoUrlRange(owner: string, repo: string): [string, string, string] {
-  const root = `https://github.com/${owner}/${repo}`;
+  const root = `https://github.com/${owner}/${repo}`.toLowerCase();
   return [root, `${root}/`, `${root}0`];
 }
 
