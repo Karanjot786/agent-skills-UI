@@ -1,6 +1,8 @@
 // Pure SQL builders for D1. No framework imports so `node --test` can run them.
 export const MAX_LIMIT = 100;
 export const SKILLS_PER_SITEMAP = 45_000;
+// Rows eligible for sitemaps (same filter the old routes used). Shared with scripts/jobs/refresh-derived.mjs.
+export const INDEXABLE_SITEMAP_WHERE = "indexable = 1 AND scoped_name IS NOT NULL AND instr(scoped_name, '.') = 0 AND instr(scoped_name, '//') = 0";
 
 export interface SkillsQuery {
     search: string; name: string; category: string | null; author: string | null;
