@@ -301,3 +301,35 @@ test('repo state SQL: opt-out removes items; missing files get removed; scan row
   assert.equal(db.prepare(`SELECT count(*) AS n FROM items WHERE status = 'active'`).get().n, 0);
   assert.deepEqual({ ...db.prepare(`SELECT head_sha, created_at, stars FROM repo_scan WHERE repo_full_name = 'acme/tools'`).get() }, { head_sha: 'abc', created_at: '2020-01-01', stars: 5 });
 });
+
+import { parseMarketplace, pluginComponents } from './items-parse.mjs';
+
+const MARKET = JSON.stringify({ name: 'acme-tools', owner: { name: 'Acme' }, plugins: [
+  { name: 'review', source: './plugins/review', description: 'Code review bundle', keywords: ['review', 'qa'] },
+  { name: 'remote-one', source: { source: 'github', repo: 'acme/remote-one' } },
+  { source: './plugins/nameless' },
+  { name: 'escape', source: './../evil' },
+] });
+const TREE = new Set(['plugins/review/skills/lint/SKILL.md', 'plugins/review/agents/reviewer.md', 'plugins/review/commands/review.md',
+  'plugins/review/.mcp.json', 'plugins/review/README.md', 'plugins/other/agents/x.md']);
+
+test('pluginComponents lists bundled parts under the plugin dir only', () => {
+  assert.deepEqual(pluginComponents(TREE, 'plugins/review'), { skills: ['lint'], agents: ['reviewer'], commands: ['review'], mcp: true, hooks: false });
+  assert.deepEqual(pluginComponents(new Set(['agents/a.md', 'hooks/hooks.json']), ''), { skills: [], agents: ['a'], commands: [], mcp: false, hooks: true });
+});
+
+test('parseMarketplace: one row per valid plugin entry, rejects nameless and ".." sources', () => {
+  const rows = parseMarketplace(MARKET, { repo: 'Acme/Kit', paths: TREE });
+  assert.deepEqual(rows.map((r) => r.slug), ['acme--kit--review', 'acme--kit--remote-one']);
+  const [review, remote] = rows;
+  assert.equal(review.path, 'plugins/review');
+  assert.equal(review.source_url, 'https://github.com/Acme/Kit/blob/HEAD/.claude-plugin/marketplace.json#review');
+  assert.deepEqual(review.tags, ['review', 'qa']);
+  assert.deepEqual(review.install_json, { type: 'plugin', marketplace: 'Acme/Kit', marketplaceName: 'acme-tools', plugin: 'review',
+    components: { skills: ['lint'], agents: ['reviewer'], commands: ['review'], mcp: true, hooks: false } });
+  assert.equal(remote.path, null);
+  assert.equal(remote.install_json.components, null);
+  assert.equal(review.content_hash.length, 32);
+  assert.deepEqual(parseMarketplace('{bad', { repo: 'a/b', paths: TREE }), []);
+  assert.deepEqual(parseMarketplace('{"plugins":[]}', { repo: 'a/b', paths: TREE }), []); // no marketplace name
+});

@@ -274,3 +274,46 @@ export const optOutSql = (repo, m, now) => [removeRepoSql(repo), repoScanSql(rep
 export const goneSql = (repo, now) => [removeRepoSql(repo),
   `UPDATE repo_scan SET head_sha = '-', scanned_at = ${sqlValue(now)} WHERE repo_full_name = ${sqlValue(repo)};`];
 export const starsSql = (repo, stars) => `UPDATE items SET stars = ${Number(stars) || 0} WHERE repo_full_name = ${sqlValue(repo)};`;
+// ---- plugins (spec §7.2 step 4: manifests -> bundle edges) ----
+export const MAX_PLUGINS_PER_REPO = 500;
+
+export function pluginComponents(paths, dir) {
+  const pre = dir ? `${dir}/` : '';
+  const names = (re) => {
+    const out = [];
+    for (const p of paths) if (p.startsWith(pre)) { const m = re.exec(p.slice(pre.length)); if (m) out.push(m[1]); }
+    return out;
+  };
+  return {
+    skills: names(/^skills\/([^/]+)\/SKILL\.md$/),
+    agents: names(/^agents\/([^/]+)\.md$/),
+    commands: names(/^commands\/([^/]+)\.md$/),
+    mcp: paths.has(`${pre}.mcp.json`),
+    hooks: paths.has(`${pre}hooks/hooks.json`),
+  };
+}
+
+export function parseMarketplace(text, { repo, paths }) {
+  let m;
+  try { m = JSON.parse(text); } catch { return []; }
+  if (typeof m?.name !== 'string' || !Array.isArray(m.plugins)) return [];
+  const owner = repo.split('/')[0];
+  return m.plugins.slice(0, MAX_PLUGINS_PER_REPO).flatMap((p) => {
+    if (typeof p?.name !== 'string' || !p.name.trim() || !p.source) return [];
+    const dir = typeof p.source === 'string' ? p.source.replace(/^\.(?:\/|$)/, '').replace(/\/+$/, '') : null;
+    if (dir?.split('/').includes('..')) return [];
+    const kw = Array.isArray(p.keywords) ? p.keywords : Array.isArray(p.tags) ? p.tags : [];
+    return [{
+      type: 'plugin', slug: slugify(...repo.split('/'), p.name), name: p.name.slice(0, 200), author: owner,
+      description: typeof p.description === 'string' ? p.description.slice(0, 1000) : null, repo_full_name: repo,
+      source_url: `https://github.com/${repo}/blob/HEAD/.claude-plugin/marketplace.json#${encodeURIComponent(p.name)}`,
+      path: dir, branch: null, stars: 0, license: null, homepage: `https://github.com/${repo}`,
+      author_avatar: `https://github.com/${owner}.png`, category: null, // set by categorize() in the job; marketplace categories are free text
+      tags: kw.length ? kw.map(String).slice(0, 20) : null,
+      install_json: { type: 'plugin', marketplace: repo, marketplaceName: m.name, plugin: p.name,
+        components: dir === null ? null : pluginComponents(paths, dir) },
+      readme: null, content_hash: contentHash(JSON.stringify({ name: p.name, source: p.source, description: p.description ?? null })),
+      status: 'active', pushed_at: null, updated_at: null,
+    }];
+  });
+}

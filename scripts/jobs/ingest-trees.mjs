@@ -8,7 +8,7 @@ import { query } from './lib/d1-query.mjs';
 import { repoMeta, treePaths, raw, search, pool } from './lib/github.mjs';
 import { applyStatements, getState, loadCategories, loadTools, refreshItemSitemaps } from './lib/items-db.mjs';
 import {
-  findTargets, parseAgentFile, packageJsonToMcp, registryToItem, gateReadme, categorize, matchTools, seedToolsSql,
+  findTargets, parseAgentFile, parseMarketplace, packageJsonToMcp, registryToItem, gateReadme, categorize, matchTools, seedToolsSql,
   upsertItemSql, itemToolsSql, setStateSql, dripPlan, removeMissingSql, repoScanSql, optOutSql, goneSql, starsSql, DEDUPE_SQL,
 } from './lib/items-parse.mjs';
 
@@ -38,6 +38,20 @@ async function discover(repos, statements, now) {
   console.log(`drip: ${queries.length} searches, ${added} new repos`);
 }
 
+async function pluginRows(repo, ref, t) {
+  if (!t.marketplace) return [];
+  const rows = parseMarketplace(await raw(repo, ref, t.marketplace) ?? '', { repo, paths: t.paths });
+  await pool(rows, 4, async (row) => {
+    if (row.path === null) return;
+    const pre = row.path ? `${row.path}/` : '';
+    if (t.paths.has(`${pre}README.md`)) row.readme = await raw(repo, ref, `${pre}README.md`);
+    if (!row.description && t.paths.has(`${pre}.claude-plugin/plugin.json`)) {
+      try { row.description = JSON.parse(await raw(repo, ref, `${pre}.claude-plugin/plugin.json`) ?? '{}').description ?? null; } catch { /* keep null */ }
+    }
+  });
+  return rows;
+}
+
 async function scanRepo(r, ctx) {
   const repo = r.repo_full_name, m = r.m, ref = m.headSha;
   const list = await treePaths(repo, ref);
@@ -50,6 +64,7 @@ async function scanRepo(r, ctx) {
     return text ? parseAgentFile(text, { repo, path: p }) : null;
   });
   rows.push(...agents.filter(Boolean));
+  rows.push(...await pluginRows(repo, ref, t));
   for (const p of t.serverJson) {
     let json;
     try { json = JSON.parse(await raw(repo, ref, p) ?? ''); } catch { continue; }
