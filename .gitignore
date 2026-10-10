@@ -50,3 +50,5 @@ migrations-data/
 # job scratch
 scripts/jobs/.state/
 scripts/jobs/.out/
+# offline job SQL output
+.jobs-out/
