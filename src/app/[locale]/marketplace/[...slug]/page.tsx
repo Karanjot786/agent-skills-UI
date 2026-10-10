@@ -7,9 +7,10 @@ import { CopyButton } from "@/components/copy-button";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PlatformInstallTabs } from "@/components/platform-install-tabs";
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { defaultLocale } from '@/i18n/config';
 import { getSkillBySlug, getSkillContent, getRelatedSkills, type SkillRow } from '@/lib/skills';
-import { buildAlternates, ogLocale, skillTitle, skillDescription } from '@/lib/seo';
+import { buildAlternates, ogLocale, skillTitle, skillDescription, slugAction } from '@/lib/seo';
 import { SITE_URL, absoluteUrl, skillPath } from '@/lib/site';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     const scopedName = parts.join('/');
     const skill = parts.includes(null) ? null : await getSkillBySlug(scopedName);
 
-    if (!skill) {
+    if (!skill || slugAction(scopedName, skill) === 'notfound') {
         return { title: 'Skill not found', description: 'The requested skill could not be found.', robots: { index: false, follow: false } };
     }
 
@@ -113,14 +114,16 @@ function toSkill(row: SkillRow, content: string | null): Skill {
     };
 }
 
-export default async function SkillPage({ params }: { params: Promise<{ slug: string[] }> }) {
-    const { slug } = await params;
-    // Join slug array: ['@langgenius', 'frontend-code-review'] -> '@langgenius/frontend-code-review'
+export default async function SkillPage({ params }: { params: Promise<{ locale: string; slug: string[] }> }) {
+    const { locale, slug } = await params;
     const parts = slug.map(safeDecode);
     if (parts.includes(null)) notFound();
     const scopedName = parts.join('/');
     const row = await getSkillBySlug(scopedName);
     if (!row) notFound(); // real 404: stops junk URLs from being rendered + cached with 200
+    const action = slugAction(scopedName, row);
+    if (action === 'notfound') notFound();
+    if (action === 'redirect') permanentRedirect(`${locale === defaultLocale ? '' : `/${locale}`}${skillPath(row.scoped_name!)}`);
     const skill = toSkill(row, await getSkillContent(scopedName));
     // ponytail: hard 25K cut; an unclosed code fence only affects the tail, add line/fence-aware cut if it shows up.
     const BODY_MAX = 25_000;

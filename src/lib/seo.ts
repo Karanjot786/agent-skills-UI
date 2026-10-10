@@ -32,3 +32,12 @@ export function skillDescription(name: string, description: string | null): stri
     if (d.length < 50) return `Install ${name} for Claude Code, Cursor, Codex and 40+ agents.`;
     return d.length <= 155 ? d : `${d.slice(0, 154).trimEnd()}…`;
 }
+
+export function slugAction(requested: string, row: { scoped_name: string | null; author: string }): 'ok' | 'redirect' | 'notfound' {
+    const canon = row.scoped_name;
+    if (!canon) return 'ok';
+    if (requested.toLowerCase() === canon.toLowerCase()) return requested === canon ? 'ok' : 'redirect';
+    const [first, ...rest] = requested.split('/');
+    if (!rest.length) return 'redirect'; // bare name: send to the highest-starred owner
+    return rest.length === 1 && first.toLowerCase() === `@${row.author}`.toLowerCase() ? 'redirect' : 'notfound';
+}

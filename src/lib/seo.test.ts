@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { absoluteUrl, skillPath } from './site.ts';
-import { buildAlternates, ogLocale, skillTitle, skillDescription } from './seo.ts';
+import { buildAlternates, ogLocale, skillTitle, skillDescription, slugAction } from './seo.ts';
 
 test('absoluteUrl always uses the www host', () => {
   assert.equal(absoluteUrl(''), 'https://www.agentskills.in');
@@ -57,4 +57,26 @@ test('skillDescription: ≤155 chars with ellipsis, fallback under 50 chars', ()
 test('skillPath encodes each segment once (@ -> %40), keeps dots and case', () => {
   assert.equal(skillPath('@a.b/Skill.Name'), '/marketplace/%40a.b/Skill.Name');
   assert.equal(skillPath('@owner/naïve skill'), '/marketplace/%40owner/na%C3%AFve%20skill');
+});
+
+const row = { scoped_name: '@majiayu000/jira-search', author: 'majiayu000' };
+
+test('slugAction: exact match is ok', () => {
+  assert.equal(slugAction('@majiayu000/jira-search', row), 'ok');
+});
+test('slugAction: case-only difference redirects to canonical', () => {
+  assert.equal(slugAction('@MajiaYu000/Jira-Search', row), 'redirect');
+});
+test('slugAction: bare name redirects to the top-starred owner', () => {
+  assert.equal(slugAction('jira-search', row), 'redirect');
+});
+test('slugAction: wrong author or extra segments is a 404', () => {
+  assert.equal(slugAction('@random-author/jira-search', row), 'notfound');
+  assert.equal(slugAction('nonexistent/foo/jira-search', row), 'notfound');
+});
+test('slugAction: row without scoped_name is left alone', () => {
+  assert.equal(slugAction('@a/b', { scoped_name: null, author: 'a' }), 'ok');
+});
+test('slugAction: decoded %40 form of a dotted name is ok', () => {
+  assert.equal(slugAction(decodeURIComponent('%40a.b/Skill.Name'), { scoped_name: '@a.b/Skill.Name', author: 'a.b' }), 'ok');
 });
