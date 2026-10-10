@@ -7,6 +7,7 @@ interface __BaseEnv_CloudflareEnv {
 	DB: D1Database;
 	SUBMIT_LIMITER: RateLimit;
 	TELEMETRY_LIMITER: RateLimit;
+	SEARCH_LIMITER: RateLimit;
 	ASSETS: Fetcher;
 	DATABASE_URL: string;
 	GITHUB_TOKEN: string;
