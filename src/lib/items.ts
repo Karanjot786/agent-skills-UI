@@ -59,3 +59,21 @@ export async function listItemsForTool(toolId: string, perType = 12): Promise<Re
     const [m, a, p] = await db.batch([stmt('mcp'), stmt('agent'), stmt('plugin')]);
     return { mcp: m.results as ItemListRow[], agent: a.results as ItemListRow[], plugin: p.results as ItemListRow[] };
 }
+
+export interface ToolRow { id: string; name: string; homepage: string | null; description: string | null }
+export interface SkillHit { id: string; name: string; author: string; description: string | null; stars: number; scoped_name: string | null }
+
+export const getTool = cache(async (id: string): Promise<ToolRow | null> =>
+    getDb().prepare('SELECT id, name, homepage, description FROM tools WHERE id = ?').bind(id).first<ToolRow>());
+
+export const listTools = cache(async (): Promise<ToolRow[]> => (await getDb().prepare(
+    'SELECT id, name, homepage, description FROM tools t WHERE EXISTS (SELECT 1 FROM item_tools it WHERE it.tool_id = t.id) ORDER BY name',
+).all<ToolRow>()).results);
+
+export async function listSkillsForTool(toolId: string, limit = 12): Promise<SkillHit[]> {
+    const { results } = await getDb().prepare(
+        `SELECT s.id, s.name, s.author, s.description, s.stars, s.scoped_name FROM item_tools it JOIN skills s ON s.id = it.item_ref
+         WHERE it.tool_id = ? AND it.item_type = 'skill' AND s.indexable = 1 ORDER BY s.stars DESC LIMIT ?`,
+    ).bind(toolId, limit).all<SkillHit>();
+    return results;
+}
