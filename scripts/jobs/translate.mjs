@@ -29,7 +29,8 @@ const { values: o, positionals: [cmd] } = parseArgs({ allowPositionals: true, op
 const die = (m) => { console.error(m); process.exit(1); };
 const remote = !!o.remote;
 const locales = o.locales.split(',').map((s) => s.trim());
-for (const l of locales) if (!TARGETS.includes(l)) die(`unsupported locale ${l} (targets: ${TARGETS.join(', ')})`);
+// messages/docs may target a locale before it joins src/i18n/config.ts (D7 adds de/pt-BR with their message files).
+if (cmd === 'skills') for (const l of locales) if (!TARGETS.includes(l)) die(`unsupported locale ${l} (targets: ${TARGETS.join(', ')})`);
 const parseJson = (t) => JSON.parse(t.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, ''));
 const jsonRequest = (system, user, temperature = 0.2) => ({
   system_instruction: { parts: [{ text: system }] },
