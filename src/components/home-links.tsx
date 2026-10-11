@@ -1,26 +1,19 @@
 import { Link } from '@/i18n/navigation';
-import { getCategories, listSkills } from '@/lib/lists';
+import { listSkills } from '@/lib/lists';
 import { getDb } from '@/lib/db';
 import { skillPath } from '@/lib/site';
 
 export async function HomeLinks() {
-  const [cats, top, best] = await Promise.all([
-    getCategories(),
+  // Categories are covered by the "Browse by category" showcase above, whose "View all" links to /categories.
+  const [top, best] = await Promise.all([
     listSkills({ page: 1, limit: 50 }),
     getDb().prepare("SELECT topic, title FROM best_lists WHERE locale = 'en' AND topic NOT LIKE 'tool-%' ORDER BY updated_at DESC, topic LIMIT 12")
       .all<{ topic: string; title: string }>().then((r) => r.results),
   ]);
   const h2 = 'text-2xl font-bold mb-6';
-  const chip = 'px-3 py-1.5 rounded-full bg-zinc-800/60 text-sm text-zinc-300 hover:text-cyan-400';
   return (
     <section className="py-16 border-t border-white/5">
       <div className="container mx-auto px-6 max-w-7xl space-y-14">
-        <div>
-          <h2 className={h2}>Browse skills by category</h2>
-          <div className="flex flex-wrap gap-2">
-            {cats.map((c) => <Link key={c.id} href={`/categories/${c.id}`} className={chip}>{c.name} ({c.skill_count.toLocaleString('en-US')})</Link>)}
-          </div>
-        </div>
         {best.length > 0 && (
           <div>
             <h2 className={h2}>Best-of guides</h2>

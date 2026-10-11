@@ -91,8 +91,9 @@ export function CategoriesShowcase({ totalSkills, categoryCounts = {} }: Categor
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
+                        {/* /categories lists every category hub, so the home page keeps crawlable links to all of them. */}
                         <Link
-                            href="/marketplace"
+                            href="/categories"
                             className="hidden md:flex items-center gap-2 text-zinc-400 hover:text-cyan-400 transition-colors group"
                         >
                             {tcm('viewAll')}
