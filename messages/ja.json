@@ -25,7 +25,10 @@
         "agents": "サブエージェント",
         "plugins": "プラグイン",
         "tools": "ツール",
-        "categories": "カテゴリ"
+        "categories": "カテゴリ",
+        "search": "スキルを検索",
+        "language": "言語を変更",
+        "menu": "メニュー"
     },
     "home": {
         "badge": "{count}+ スキルが利用可能",

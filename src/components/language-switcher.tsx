@@ -1,7 +1,7 @@
 'use client';
 
 import { Globe } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config';
 import {
@@ -16,6 +16,7 @@ export function LanguageSwitcher() {
     const locale = useLocale() as Locale;
     const pathname = usePathname();
     const router = useRouter();
+    const t = useTranslations('nav');
 
     const switchLocale = (newLocale: Locale) => {
         router.replace(pathname, { locale: newLocale });
@@ -28,9 +29,10 @@ export function LanguageSwitcher() {
                     variant="ghost"
                     size="sm"
                     className="gap-2 text-zinc-400 hover:text-white hover:bg-white/5"
+                    aria-label={`${t('language')} (${localeNames[locale]})`}
                 >
-                    <Globe className="size-4" />
-                    <span className="hidden sm:inline">{localeFlags[locale]}</span>
+                    <Globe className="size-4" aria-hidden="true" />
+                    <span className="hidden sm:inline" aria-hidden="true">{localeFlags[locale]}</span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent

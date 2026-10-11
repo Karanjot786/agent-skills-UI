@@ -25,7 +25,10 @@
         "agents": "Subagentes",
         "plugins": "Plugins",
         "tools": "Herramientas",
-        "categories": "Categorías"
+        "categories": "Categorías",
+        "search": "Buscar habilidades",
+        "language": "Cambiar idioma",
+        "menu": "Menú"
     },
     "home": {
         "badge": "{count}+ Habilidades disponibles",

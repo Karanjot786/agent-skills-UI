@@ -7,7 +7,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 const GITHUB_REPO = "Karanjot786/agent-skills-cli";
 
 export function NavGitHubStars() {
-    const [stargazersCount, setStargazersCount] = useState(2100); // Default fallback
+    // No made-up fallback: show the icon alone until the real count arrives (or if GitHub rate-limits us).
+    const [stargazersCount, setStargazersCount] = useState<number | null>(null);
 
     useEffect(() => {
         // Fetch latest star count

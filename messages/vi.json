@@ -25,7 +25,10 @@
         "agents": "Subagent",
         "plugins": "Plugin",
         "tools": "Công cụ",
-        "categories": "Danh mục"
+        "categories": "Danh mục",
+        "search": "Tìm kỹ năng",
+        "language": "Đổi ngôn ngữ",
+        "menu": "Menu"
     },
     "home": {
         "badge": "{count}+ Kỹ năng có sẵn",

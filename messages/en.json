@@ -25,7 +25,10 @@
         "agents": "Subagents",
         "plugins": "Plugins",
         "tools": "Tools",
-        "categories": "Categories"
+        "categories": "Categories",
+        "search": "Search skills",
+        "language": "Change language",
+        "menu": "Menu"
     },
     "home": {
         "badge": "{count}+ Skills Available",
