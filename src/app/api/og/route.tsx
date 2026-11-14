@@ -5,7 +5,7 @@ export async function GET(request: Request) {
     const title = searchParams.get('title') || 'Agent Skills CLI';
     const description = searchParams.get('description') || 'The Package Manager for AI Agent Skills';
 
-    return new ImageResponse(
+    const res = new ImageResponse(
         (
             <div
                 style={{
@@ -142,4 +142,8 @@ export async function GET(request: Request) {
             height: 630,
         }
     );
+    // Same query string -> same image. Cache at the edge for 7 days (not longer: titles of
+    // taken-down skills must not linger), so link-preview bots don't re-render on every hit.
+    res.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+    return res;
 }
