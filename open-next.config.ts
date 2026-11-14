@@ -1,5 +1,5 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import r2IncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache";
+import r2IncrementalCache from "./open-next-r2-cache";
 
 export default defineCloudflareConfig({
   incrementalCache: r2IncrementalCache, // ISR pages (revalidate=false) live in R2 (NEXT_INC_CACHE_R2_BUCKET)

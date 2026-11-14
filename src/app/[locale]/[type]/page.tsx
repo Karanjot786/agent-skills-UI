@@ -4,7 +4,7 @@ import { typeFromSegment } from '@/lib/items-sql';
 import { listCategories, listItems } from '@/lib/items';
 import { ItemListView, itemListMetadata } from '@/components/items/item-list-view';
 
-export const revalidate = 3600;
+export const revalidate = 21600;
 export async function generateStaticParams() { return []; } // no DB at build: render on first hit, then ISR
 
 type P = { params: Promise<{ locale: string; type: string }> };

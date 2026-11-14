@@ -25,8 +25,8 @@ import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github-dark.css';
 import type { Metadata } from 'next';
 
-// ISR: pages are cached in R2 and refreshed at most once a day so stars/dates/badges do not go stale.
-export const revalidate = 86400;
+// ISR: pages are cached in R2 and refreshed at most every 3 days so stars/dates/badges do not go stale.
+export const revalidate = 259200;
 
 // Allow on-demand ISR for skills not pre-rendered at build time
 export const dynamicParams = true;

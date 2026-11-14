@@ -17,7 +17,7 @@ import { buildInstallTabs, parseInstall } from '@/lib/install-snippets';
 import { absoluteUrl } from '@/lib/site';
 import { buildAlternates } from '@/lib/seo';
 
-export const revalidate = 86400; // daily: stars/badges refresh (spec §4.5)
+export const revalidate = 259200; // 3 days: stars/badges refresh (spec §4.5)
 export async function generateStaticParams() { return []; }
 
 type P = { params: Promise<{ locale: string; type: string; slug: string }> };
