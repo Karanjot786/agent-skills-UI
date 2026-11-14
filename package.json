@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "node scripts/gen-docs-index.mjs",
     "dev": "node scripts/gen-docs-index.mjs && next dev",
     "build": "node scripts/gen-docs-index.mjs && next build",
     "start": "next start",
