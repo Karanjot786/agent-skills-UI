@@ -8,6 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import enFaq from '../../content/docs/faq.json'; // bundled: Workers have no runtime fs, so a readFileSync here 500s
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -114,7 +115,7 @@ export interface FaqData {
 
 /** FAQ strings for a locale; icons always come from the English file, so translated files may omit them. */
 export function getFaq(locale: string): FaqData {
-    const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'faq.json'), 'utf-8'));
+    const en = enFaq as FaqData;
     const p = path.join(ROOT, locale, 'faq.json');
     if (locale === 'en' || !fs.existsSync(p)) return en;
     const t = JSON.parse(fs.readFileSync(p, 'utf-8'));
