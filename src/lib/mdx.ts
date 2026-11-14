@@ -1,13 +1,12 @@
 /**
  * MDX Utilities — Server-side MDX processing
- * 
- * Reads .mdx files from content/docs/, serializes them,
- * and extracts heading structure for sidebar generation.
+ *
+ * Serves the docs index generated from content/docs/ at build time
+ * (scripts/gen-docs-index.mjs) and extracts heading structure for sidebar generation.
+ * Nothing here touches the filesystem: Cloudflare Workers have none at runtime.
  */
 
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
+import index from '../generated/docs-index.json'; // written by scripts/gen-docs-index.mjs before every build
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -36,36 +35,23 @@ export interface TOCItem {
     level: number;
 }
 
-// ── Paths ────────────────────────────────────────────────────────────────
+export interface FaqData {
+    hero: { badge: string; title: string; subtitle: string };
+    cta: { title: string; body: string; docs: string; issue: string };
+    categories: { title: string; icon: string; questions: { question: string; answer: string }[] }[];
+}
+
+// ── Data ─────────────────────────────────────────────────────────────────
 
 // English at content/docs/*.mdx; translations at content/docs/<locale>/<slug>.mdx (+ faq.json).
-const ROOT = path.join(process.cwd(), 'content', 'docs');
+type Index = { slugs: string[]; docs: Record<string, Record<string, DocSection>>; faq: Record<string, FaqData> };
+const IDX = index as unknown as Index;
 
 // ── Functions ────────────────────────────────────────────────────────────
 
-/** Translated file if present, otherwise the English file (spec 6.3: en fallback). */
-function fileFor(slug: string, locale?: string): string | null {
-    if (locale && locale !== 'en') {
-        const p = path.join(ROOT, locale, `${slug}.mdx`);
-        if (fs.existsSync(p)) return p;
-    }
-    const en = path.join(ROOT, `${slug}.mdx`);
-    return fs.existsSync(en) ? en : null;
-}
-
+/** Translated section if present, otherwise the English one (spec 6.3: en fallback). */
 function read(slug: string, locale?: string): DocSection | null {
-    const file = fileFor(slug, locale);
-    if (!file) return null;
-    const { data, content } = matter(fs.readFileSync(file, 'utf-8'));
-    return {
-        slug,
-        title: data.title || slug,
-        order: data.order || 0,
-        icon: data.icon || 'terminal',
-        description: data.description || '',
-        commands: data.commands || [],
-        content,
-    };
+    return (locale && locale !== 'en' ? IDX.docs[locale]?.[slug] : undefined) ?? IDX.docs.en[slug] ?? null;
 }
 
 /** Get all doc sections for a locale (en fallback per file), sorted by order. */
@@ -80,7 +66,7 @@ export function getAllDocSectionsMeta(locale?: string): DocSectionMeta[] {
 
 /** All English doc slugs (for generateStaticParams). */
 export function getAllDocSlugs(): string[] {
-    return fs.existsSync(ROOT) ? fs.readdirSync(ROOT).filter((f) => f.endsWith('.mdx')).map((f) => f.slice(0, -4)) : [];
+    return IDX.slugs;
 }
 
 /** Get a single doc section by slug. */
@@ -98,30 +84,20 @@ export function getAdjacentSections(slug: string, locale?: string): { prev: DocS
     };
 }
 
-const localeDirs = () =>
-    fs.existsSync(ROOT) ? fs.readdirSync(ROOT, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name) : [];
-
 /** Locales that have a translated file for this doc (always includes en). Feeds hreflang and sitemaps. */
 export function docLocales(slug: string): string[] {
-    return ['en', ...localeDirs().filter((l) => fs.existsSync(path.join(ROOT, l, `${slug}.mdx`)))];
-}
-
-export interface FaqData {
-    hero: { badge: string; title: string; subtitle: string };
-    cta: { title: string; body: string; docs: string; issue: string };
-    categories: { title: string; icon: string; questions: { question: string; answer: string }[] }[];
+    return ['en', ...Object.keys(IDX.docs).filter((l) => l !== 'en' && IDX.docs[l][slug])];
 }
 
 /** FAQ strings for a locale; icons always come from the English file, so translated files may omit them. */
 export function getFaq(locale: string): FaqData {
-    const en = JSON.parse(fs.readFileSync(path.join(ROOT, 'faq.json'), 'utf-8'));
-    const p = path.join(ROOT, locale, 'faq.json');
-    if (locale === 'en' || !fs.existsSync(p)) return en;
-    const t = JSON.parse(fs.readFileSync(p, 'utf-8'));
+    const en = IDX.faq.en;
+    const t = IDX.faq[locale];
+    if (locale === 'en' || !t) return en;
     return { ...t, categories: t.categories.map((c: FaqData['categories'][number], i: number) => ({ ...c, icon: en.categories[i]?.icon ?? c.icon })) };
 }
 
-export const faqLocales = (): string[] => ['en', ...localeDirs().filter((l) => fs.existsSync(path.join(ROOT, l, 'faq.json')))];
+export const faqLocales = (): string[] => ['en', ...Object.keys(IDX.faq).filter((l) => l !== 'en')];
 
 /**
  * Extract heading structure for TOC generation.
