@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/gen-docs-index.mjs && next dev",
+    "build": "node scripts/gen-docs-index.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "node --test \"src/**/*.test.ts\" \"scripts/**/*.test.mjs\"",
