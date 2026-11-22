@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/config';
 import { NextRequest, NextResponse } from 'next/server';
+import { withTrail } from 'trail-analytics/next/proxy';
 
 // Commercial SEO audit tools — pure cost, drive zero real user traffic
 // Do NOT include Googlebot/Bingbot/Applebot — they drive organic search traffic
@@ -15,9 +16,12 @@ const intlMiddleware = createMiddleware({
     alternateLinks: false, // hreflang comes only from page metadata (buildAlternates)
 });
 
-export default function middleware(request: NextRequest) {
+function middleware(request: NextRequest) {
     const ua = request.headers.get('user-agent') || '';
     const { pathname } = request.nextUrl;
+
+    // Trail's first-party tracker paths: let withTrail proxy them (no locale rewrite).
+    if (pathname === '/t/t.js' || pathname === '/t/e') return NextResponse.next();
 
     // <skill-url>.md mirrors are rewritten by next.config (beforeFiles); leave them untouched.
     if (pathname.endsWith('.md')) return NextResponse.next();
@@ -50,8 +54,13 @@ export default function middleware(request: NextRequest) {
     return res;
 }
 
+// withTrail proxies /t/t.js and /t/e to Trail and reports AI-crawler page hits (background fetch).
+// Next passes a NextRequest (a Request subclass); withTrail types its handler with plain Request.
+export default withTrail(middleware as unknown as Parameters<typeof withTrail>[0]);
+
 export const config = {
     // Dotted paths are skipped (static files), except under listing routes where names and slugs may contain dots
     // (@a/Next.js, io.github.acme--weather).
-    matcher: ['/((?!api|_next|.*\\..*).*)', '/(marketplace|mcp|agents|plugins)/:path+', '/:locale/(marketplace|mcp|agents|plugins)/:path+'],
+    // /t/t.js is listed explicitly because the first pattern skips dotted paths.
+    matcher: ['/((?!api|_next|.*\\..*).*)', '/(marketplace|mcp|agents|plugins)/:path+', '/:locale/(marketplace|mcp|agents|plugins)/:path+', '/t/t.js'],
 };
