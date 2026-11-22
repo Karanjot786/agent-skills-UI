@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import { locales } from '@/i18n/config';
 import { SITE_URL } from '@/lib/site';
 import { buildAlternates, ogLocale } from '@/lib/seo';
@@ -233,6 +234,13 @@ export default async function LocaleLayout({
             <body
                 className={`${inter.variable} ${jetbrainsMono.variable} antialiased font-sans bg-black text-white`}
             >
+                {/* Trail analytics: cookieless, tracks SPA route changes itself */}
+                <Script
+                    src="https://stats.karanjot.co.in/_t/t.js"
+                    data-site="agent-skills"
+                    data-api="https://stats.karanjot.co.in/_t/e"
+                    strategy="afterInteractive"
+                />
                 <NextIntlClientProvider messages={messages}>
                     {children}
                 </NextIntlClientProvider>
