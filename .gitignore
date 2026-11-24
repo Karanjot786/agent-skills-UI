@@ -54,3 +54,4 @@ scripts/jobs/.out/
 # offline job SQL output
 .jobs-out/
 .env.local
+.dev.vars

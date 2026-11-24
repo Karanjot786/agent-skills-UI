@@ -62,5 +62,5 @@ export const config = {
     // Dotted paths are skipped (static files), except under listing routes where names and slugs may contain dots
     // (@a/Next.js, io.github.acme--weather).
     // /t/t.js is listed explicitly because the first pattern skips dotted paths.
-    matcher: ['/((?!api|_next|.*\\..*).*)', '/(marketplace|mcp|agents|plugins)/:path+', '/:locale/(marketplace|mcp|agents|plugins)/:path+', '/t/t.js'],
+    matcher: ['/((?!api|_next|.*\\..*).*)', '/(marketplace|mcp|agents|plugins)/:path+', '/:locale/(marketplace|mcp|agents|plugins)/:path+', '/t/t.js', '/t/t.x.js', '/t/t.p.js'],
 };
